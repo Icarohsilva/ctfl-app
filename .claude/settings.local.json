@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(claude plugin *)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Read(//c/Users/conta/.claude/plugins/marketplaces/claude-plugins-official/plugins/**)",
+      "Read(//c/Users/conta/.claude/**)"
+    ]
+  }
+}
