@@ -2,173 +2,201 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 
-// Tipos
 type Perfil = {
   nome: string;
   nivel: string;
   objetivo: string;
   semana_atual: number;
   pontos: number;
+  streak: number;
+  ultimo_estudo: string | null;
+  maior_streak: number;
 };
 
-// Dados dos 6 capítulos do CTFL
-const capitulos = [
-  {
-    num: 1,
-    titulo: "Fundamentos de Teste",
-    peso: "27%",
-    cor: "#c9a84c",
-    semanas: [1],
-    topicos: ["Por que testar?", "7 princípios", "Erro / defeito / falha", "Atividades e papéis"],
-  },
-  {
-    num: 2,
-    titulo: "Ciclo de Vida de Desenvolvimento",
-    peso: "17%",
-    cor: "#7c9e6e",
-    semanas: [2],
-    topicos: ["V-Model / Ágil", "Níveis de teste", "Tipos de teste", "Regressão"],
-  },
-  {
-    num: 3,
-    titulo: "Teste Estático",
-    peso: "10%",
-    cor: "#6e8fa8",
-    semanas: [3],
-    topicos: ["Revisão informal", "Walkthrough", "Inspeção formal", "Análise estática"],
-  },
-  {
-    num: 4,
-    titulo: "Análise e Modelagem de Testes",
-    peso: "25%",
-    cor: "#c9a84c",
-    semanas: [4, 5],
-    topicos: ["Partição de equivalência", "Valor limite", "Tabela de decisão", "Transição de estado"],
-  },
-  {
-    num: 5,
-    titulo: "Gerenciamento de Testes",
-    peso: "17%",
-    cor: "#7c9e6e",
-    semanas: [6],
-    topicos: ["Plano de teste", "Estimativas", "Monitoramento", "Gestão de defeitos"],
-  },
-  {
-    num: 6,
-    titulo: "Ferramentas de Teste",
-    peso: "5%",
-    cor: "#6e8fa8",
-    semanas: [7],
-    topicos: ["Categorias", "Benefícios e riscos", "Seleção de ferramenta", "Piloto"],
-  },
+type ProgressoCapitulo = {
+  capitulo: number;
+  total_topicos: number;
+  concluidos: number;
+};
+
+const semanas = [
+  { num: 1, cap: 1, titulo: "Fundamentos de Teste", rota: "/capitulo/1" },
+  { num: 2, cap: 2, titulo: "Ciclo de Vida", rota: "/capitulo/2" },
+  { num: 3, cap: 3, titulo: "Teste Estático", rota: "/capitulo/3" },
+  { num: 4, cap: 4, titulo: "Técnicas Caixa-Preta", rota: "/capitulo/4" },
+  { num: 5, cap: 4, titulo: "Técnicas Caixa-Branca", rota: "/capitulo/4b" },
+  { num: 6, cap: 5, titulo: "Gerenciamento", rota: "/capitulo/5" },
+  { num: 7, cap: 6, titulo: "Ferramentas", rota: "/capitulo/6" },
+  { num: 8, cap: 0, titulo: "Simulado Final", rota: "/simulado-final" },
 ];
 
-// Dados das semanas
-const semanas = [
-  { num: 1, cap: 1, titulo: "Fundamentos de Teste", status: "ativa" },
-  { num: 2, cap: 2, titulo: "Ciclo de Vida", status: "bloqueada" },
-  { num: 3, cap: 3, titulo: "Teste Estático", status: "bloqueada" },
-  { num: 4, cap: 4, titulo: "Técnicas Caixa-Preta", status: "bloqueada" },
-  { num: 5, cap: 4, titulo: "Técnicas Caixa-Branca", status: "bloqueada" },
-  { num: 6, cap: 5, titulo: "Gerenciamento", status: "bloqueada" },
-  { num: 7, cap: 6, titulo: "Ferramentas", status: "bloqueada" },
-  { num: 8, cap: 0, titulo: "Simulado Final", status: "bloqueada" },
+const totalTopicosPorCap: Record<number, number> = { 1: 4, 2: 4, 3: 3, 4: 4, 5: 4, 6: 3 };
+
+const frasesMotivadoras = [
+  "Um passo por dia, e a certificação é sua. 🎯",
+  "QAs que estudam consistentemente passam na primeira tentativa. 💪",
+  "Você já sabe mais do que sabia ontem. Continue! 🚀",
+  "O exame testa o que você pratica, não o que você leu. 📖",
+  "Consistência bate intensidade. Estuda hoje! ⚡",
+  "Cada tópico concluído é um defeito a menos no seu conhecimento. 🐛",
 ];
 
 export default function Dashboard() {
   const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [progresso, setProgresso] = useState<ProgressoCapitulo[]>([]);
   const [loading, setLoading] = useState(true);
   const [abaSelecionada, setAbaSelecionada] = useState<"trilha" | "capitulos">("trilha");
+  const [fraseHoje] = useState(() => frasesMotivadoras[Math.floor(Math.random() * frasesMotivadoras.length)]);
 
-  useEffect(() => {
-    carregarPerfil();
-  }, []);
+  useEffect(() => { carregarDados(); }, []);
 
-  const carregarPerfil = async () => {
+  const carregarDados = async () => {
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      window.location.href = "/login";
-      return;
+    if (!user) { window.location.href = "/login"; return; }
+
+    const { data: perfilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+
+    if (perfilData) {
+      const hoje = new Date().toISOString().split("T")[0];
+      const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+      let novoStreak = perfilData.streak || 0;
+      if (perfilData.ultimo_estudo !== hoje && perfilData.ultimo_estudo !== ontem && novoStreak > 0) {
+        novoStreak = 0;
+        await supabase.from("profiles").update({ streak: 0 }).eq("id", user.id);
+      }
+      setPerfil({ ...perfilData, streak: novoStreak });
     }
-    const { data } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("id", user.id)
-      .single();
-    if (data) setPerfil(data);
+
+    const { data: progressoData } = await supabase
+      .from("progresso_topicos").select("capitulo, topico_id").eq("user_id", user.id).eq("concluido", true);
+
+    if (progressoData) {
+      const agrupado: Record<number, Set<string>> = {};
+      progressoData.forEach(({ capitulo, topico_id }: { capitulo: number; topico_id: string }) => {
+        if (!agrupado[capitulo]) agrupado[capitulo] = new Set();
+        agrupado[capitulo].add(topico_id);
+      });
+      const resultado = Object.entries(totalTopicosPorCap).map(([cap, total]) => ({
+        capitulo: Number(cap), total_topicos: total, concluidos: agrupado[Number(cap)]?.size || 0,
+      }));
+      setProgresso(resultado);
+    }
     setLoading(false);
   };
 
-  const sair = async () => {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  };
+  const sair = async () => { await supabase.auth.signOut(); window.location.href = "/"; };
 
-  if (loading) {
-    return (
-      <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif", fontSize: "1.2rem" }}>Carregando sua trilha...</div>
-      </main>
-    );
-  }
+  if (loading) return (
+    <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif" }}>Carregando sua trilha...</div>
+    </main>
+  );
 
+  const totalTopicos = Object.values(totalTopicosPorCap).reduce((a, b) => a + b, 0);
+  const totalConcluidos = progresso.reduce((acc, p) => acc + p.concluidos, 0);
+  const progressoGeral = Math.round((totalConcluidos / totalTopicos) * 100);
   const semanaAtual = perfil?.semana_atual || 1;
-  const progressoGeral = Math.round(((semanaAtual - 1) / 8) * 100);
+  const xpTotal = perfil?.pontos || 0;
+  const streak = perfil?.streak || 0;
+  const maiorStreak = perfil?.maior_streak || 0;
+  const nivel = xpTotal < 100 ? "Aprendiz" : xpTotal < 300 ? "Praticante" : xpTotal < 600 ? "Analista" : "Especialista";
+  const nivelIcon = xpTotal < 100 ? "🌱" : xpTotal < 300 ? "📖" : xpTotal < 600 ? "🎯" : "🏆";
+  const xpProximoNivel = xpTotal < 100 ? 100 : xpTotal < 300 ? 300 : xpTotal < 600 ? 600 : 1000;
+  const xpPct = Math.min(100, Math.round((xpTotal / xpProximoNivel) * 100));
 
   return (
     <main style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0ede8", fontFamily: "sans-serif" }}>
-
       {/* NAV */}
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 2rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.95)", backdropFilter: "blur(12px)", zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "1.3rem" }}>🧪</span>
           <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", color: "#e8d5a3" }}>TestPath</span>
         </div>
-
-        <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          {/* Pontos */}
-          <div style={{ display: "flex", alignItems: "center", gap: "6px", background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "99px", padding: "6px 12px" }}>
-            <span>⭐</span>
-            <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "14px" }}>{perfil?.pontos || 0} pts</span>
+        <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px", background: streak > 0 ? "#1a1000" : "#141414", border: `1px solid ${streak > 0 ? "#c9a84c44" : "#2a2a2a"}`, borderRadius: "99px", padding: "5px 12px" }}>
+            <span>🔥</span>
+            <span style={{ color: streak > 0 ? "#c9a84c" : "#3a3a3a", fontWeight: "bold", fontSize: "13px" }}>{streak}</span>
           </div>
-          {/* Nome */}
-          <span style={{ color: "#7a7a8a", fontSize: "14px" }}>Olá, {perfil?.nome?.split(" ")[0]}</span>
-          <button onClick={sair} style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "6px 12px", color: "#7a7a8a", fontSize: "13px", cursor: "pointer" }}>
-            Sair
-          </button>
+          <div style={{ display: "flex", alignItems: "center", gap: "5px", background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "99px", padding: "5px 12px" }}>
+            <span>⭐</span>
+            <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "13px" }}>{xpTotal} XP</span>
+          </div>
+          <button onClick={sair} style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px", color: "#5a5a6a", fontSize: "12px", cursor: "pointer" }}>Sair</button>
         </div>
       </nav>
 
       <div style={{ maxWidth: "900px", margin: "0 auto", padding: "2rem" }}>
 
-        {/* HEADER */}
-        <div style={{ marginBottom: "2rem" }}>
-          <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "0.5rem" }}>
-            Sua trilha CTFL
+        {/* SAUDAÇÃO */}
+        <div style={{ marginBottom: "1.5rem" }}>
+          <h1 style={{ fontSize: "1.6rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "4px" }}>
+            Olá, {perfil?.nome?.split(" ")[0]}! {streak > 2 ? "🔥" : "👋"}
           </h1>
-          <p style={{ color: "#7a7a8a", fontSize: "14px" }}>
-            Semana {semanaAtual} de 8 · {perfil?.objetivo === "8semanas" ? "Ritmo equilibrado" : perfil?.objetivo === "4semanas" ? "Intensivo" : "Ritmo livre"}
-          </p>
+          <p style={{ color: "#5a5a6a", fontSize: "13px", margin: 0, fontStyle: "italic" }}>{fraseHoje}</p>
         </div>
 
-        {/* PROGRESSO GERAL */}
-        <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "12px", padding: "1.5rem", marginBottom: "1.5rem" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "10px" }}>
-            <span style={{ fontSize: "14px", color: "#a0998e" }}>Progresso geral</span>
-            <span style={{ fontSize: "14px", color: "#c9a84c", fontWeight: "bold" }}>{progressoGeral}%</span>
+        {/* STATS */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "10px", marginBottom: "1.5rem" }}>
+          {/* Progresso */}
+          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>PROGRESSO</div>
+            <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "8px" }}>{progressoGeral}%</div>
+            <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px" }}>
+              <div style={{ background: "linear-gradient(90deg,#c9a84c,#e8d5a3)", width: `${progressoGeral}%`, height: "4px", borderRadius: "99px", minWidth: progressoGeral > 0 ? "4px" : "0" }} />
+            </div>
+            <div style={{ fontSize: "11px", color: "#3a3a4a", marginTop: "6px" }}>{totalConcluidos}/{totalTopicos} tópicos</div>
           </div>
-          <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "8px" }}>
-            <div style={{ background: "linear-gradient(90deg, #c9a84c, #e8d5a3)", width: `${progressoGeral}%`, height: "8px", borderRadius: "99px", transition: "width 0.6s ease", minWidth: progressoGeral > 0 ? "8px" : "0" }} />
+
+          {/* Streak */}
+          <div style={{ background: streak > 0 ? "#1a1000" : "#0f0f18", border: `1px solid ${streak > 0 ? "#c9a84c33" : "#1e1e2e"}`, borderRadius: "14px", padding: "1.25rem" }}>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>SEQUÊNCIA</div>
+            <div style={{ fontSize: "2rem", fontWeight: "bold", color: streak > 0 ? "#c9a84c" : "#3a3a3a", marginBottom: "4px" }}>🔥 {streak}</div>
+            <div style={{ fontSize: "11px", color: "#5a5a6a" }}>
+              {streak === 0 ? "Estuda hoje para começar!" : `${streak} dia${streak > 1 ? "s" : ""} consecutivo${streak > 1 ? "s" : ""}`}
+            </div>
+            {maiorStreak > 0 && <div style={{ fontSize: "11px", color: "#3a3a3a", marginTop: "4px" }}>Recorde: {maiorStreak} dias</div>}
           </div>
-          <div style={{ display: "flex", justifyContent: "space-between", marginTop: "8px" }}>
-            <span style={{ fontSize: "12px", color: "#3a3a4a" }}>Início</span>
-            <span style={{ fontSize: "12px", color: "#3a3a4a" }}>Prova 🏆</span>
+
+          {/* Nível */}
+          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>NÍVEL</div>
+            <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "6px" }}>{nivelIcon} {nivel}</div>
+            <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px", marginBottom: "6px" }}>
+              <div style={{ background: "#7c9e6e", width: `${xpPct}%`, height: "4px", borderRadius: "99px" }} />
+            </div>
+            <div style={{ fontSize: "11px", color: "#3a3a4a" }}>{xpTotal}/{xpProximoNivel} XP</div>
           </div>
+
+          {/* Semana */}
+          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>SEMANA</div>
+            <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{semanaAtual}/8</div>
+            <div style={{ fontSize: "11px", color: "#5a5a6a" }}>
+              {perfil?.objetivo === "4semanas" ? "Intensivo ~2h/dia" : "Equilibrado ~1h/dia"}
+            </div>
+          </div>
+        </div>
+
+        {/* CONTINUAR */}
+        <div onClick={() => window.location.href = "/capitulo/1"}
+          style={{ background: "#0f0f18", border: "1px solid #c9a84c44", borderRadius: "14px", padding: "1.25rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "border-color 0.2s" }}
+          onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c"}
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"}
+        >
+          <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "#1a1a0e", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", flexShrink: 0 }}>▶️</div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "3px", letterSpacing: "0.04em" }}>CONTINUAR</div>
+            <div style={{ fontSize: "15px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "2px" }}>Cap. 1 — Fundamentos de Teste</div>
+            <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
+              {totalConcluidos === 0 ? "Começar do início" : `${progresso.find(p => p.capitulo === 1)?.concluidos || 0}/4 tópicos concluídos`}
+            </div>
+          </div>
+          <span style={{ color: "#c9a84c", fontSize: "1.4rem" }}>›</span>
         </div>
 
         {/* ABAS */}
-        <div style={{ display: "flex", gap: "4px", marginBottom: "1.5rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "10px", padding: "4px" }}>
-          {(["trilha", "capitulos"] as const).map((aba) => (
+        <div style={{ display: "flex", gap: "4px", marginBottom: "1.25rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "10px", padding: "4px" }}>
+          {(["trilha", "capitulos"] as const).map(aba => (
             <button key={aba} onClick={() => setAbaSelecionada(aba)}
               style={{ flex: 1, padding: "8px", borderRadius: "7px", border: "none", background: abaSelecionada === aba ? "#1e1e2e" : "transparent", color: abaSelecionada === aba ? "#e8d5a3" : "#5a5a6a", fontSize: "14px", cursor: "pointer", fontWeight: abaSelecionada === aba ? "bold" : "normal", transition: "all 0.15s" }}>
               {aba === "trilha" ? "📅 Trilha semanal" : "📚 Capítulos"}
@@ -176,114 +204,107 @@ export default function Dashboard() {
           ))}
         </div>
 
-        {/* ABA TRILHA */}
+        {/* TRILHA */}
         {abaSelecionada === "trilha" && (
-          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-            {semanas.map((s) => {
+          <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
+            {semanas.map(s => {
+              const capProgresso = progresso.find(p => p.capitulo === s.cap);
+              const concluida = s.cap > 0 && capProgresso ? capProgresso.concluidos === capProgresso.total_topicos : false;
               const isAtiva = s.num === semanaAtual;
-              const isConcluida = s.num < semanaAtual;
-              const isBloqueada = s.num > semanaAtual;
+              const isBloqueada = s.num > semanaAtual && !concluida;
+              const pctSemana = capProgresso ? Math.round((capProgresso.concluidos / capProgresso.total_topicos) * 100) : 0;
 
               return (
                 <div key={s.num}
-                  style={{ background: isAtiva ? "#1a1a0e" : "#0f0f18", border: `1px solid ${isAtiva ? "#c9a84c" : isConcluida ? "#2e3e2e" : "#1e1e2e"}`, borderRadius: "12px", padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem", opacity: isBloqueada ? 0.5 : 1, transition: "all 0.2s" }}>
-
-                  {/* Ícone de status */}
-                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: isConcluida ? "#2e3e2e" : isAtiva ? "#c9a84c22" : "#1e1e2e", border: `2px solid ${isConcluida ? "#4e7e4e" : isAtiva ? "#c9a84c" : "#2e2e3e"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1.1rem" }}>
-                    {isConcluida ? "✓" : isAtiva ? "▶" : s.num === 8 ? "🏆" : s.num.toString()}
+                  onClick={() => !isBloqueada && (window.location.href = s.rota)}
+                  style={{ background: isAtiva ? "#1a1a0e" : "#0f0f18", border: `1px solid ${isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"}`, borderRadius: "12px", padding: "1.1rem 1.25rem", display: "flex", alignItems: "center", gap: "1rem", opacity: isBloqueada ? 0.4 : 1, cursor: isBloqueada ? "not-allowed" : "pointer", transition: "all 0.15s" }}
+                  onMouseEnter={e => { if (!isBloqueada) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
+                  onMouseLeave={e => { if (!isBloqueada) (e.currentTarget as HTMLElement).style.borderColor = isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"; }}
+                >
+                  <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: concluida ? "#1e3e1e" : isAtiva ? "#c9a84c22" : "#1a1a2a", border: `2px solid ${concluida ? "#4e7e4e" : isAtiva ? "#c9a84c" : "#2e2e4e"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1rem" }}>
+                    {concluida ? "✓" : isAtiva ? "▶" : s.num === 8 ? "🏆" : s.num}
                   </div>
-
                   <div style={{ flex: 1 }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "2px" }}>
-                      <span style={{ fontSize: "14px", fontWeight: "bold", color: isAtiva ? "#e8d5a3" : isConcluida ? "#6a8a6a" : "#5a5a6a" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
+                      <span style={{ fontSize: "14px", fontWeight: "bold", color: isAtiva ? "#e8d5a3" : concluida ? "#6a8a6a" : "#5a5a6a" }}>
                         Semana {s.num} — {s.titulo}
                       </span>
-                      {isAtiva && (
-                        <span style={{ fontSize: "11px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "2px 7px", borderRadius: "99px" }}>
-                          Atual
-                        </span>
-                      )}
-                      {isConcluida && (
-                        <span style={{ fontSize: "11px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "2px 7px", borderRadius: "99px" }}>
-                          Concluída
-                        </span>
-                      )}
+                      {isAtiva && <span style={{ fontSize: "10px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "1px 6px", borderRadius: "99px" }}>Atual</span>}
+                      {concluida && <span style={{ fontSize: "10px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "1px 6px", borderRadius: "99px" }}>✓ Concluída</span>}
                     </div>
-                    <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
-                      {s.cap > 0 ? `Capítulo ${s.cap}` : "Revisão geral"} · {isBloqueada ? "🔒 Bloqueada" : "~1h por dia, seg–sex"}
-                    </div>
+                    {s.cap > 0 && !isBloqueada && (
+                      <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                        <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "3px", flex: 1 }}>
+                          <div style={{ background: concluida ? "#4e9e4e" : "#c9a84c", width: `${pctSemana}%`, height: "3px", borderRadius: "99px" }} />
+                        </div>
+                        <span style={{ fontSize: "11px", color: "#3a3a4a" }}>{pctSemana}%</span>
+                      </div>
+                    )}
+                    {isBloqueada && <div style={{ fontSize: "11px", color: "#3a3a4a" }}>🔒 Complete a semana anterior primeiro</div>}
                   </div>
-
-                  {isAtiva && (
-                    <button
-                      onClick={() => window.location.href = "/capitulo/1"}
-                      style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "8px 16px", color: "#0a0a0f", fontSize: "13px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>
-                      Estudar →
-                    </button>
-                  )}
+                  {!isBloqueada && <span style={{ color: "#3a3a5a", fontSize: "1.1rem" }}>›</span>}
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* ABA CAPÍTULOS */}
+        {/* CAPÍTULOS */}
         {abaSelecionada === "capitulos" && (
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "12px" }}>
-            {capitulos.map((c) => {
-              const desbloqueado = c.semanas.some((s) => s <= semanaAtual);
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "10px" }}>
+            {[
+              { num: 1, titulo: "Fundamentos de Teste", peso: "27%", rota: "/capitulo/1" },
+              { num: 2, titulo: "Ciclo de Vida", peso: "17%", rota: "/capitulo/2" },
+              { num: 3, titulo: "Teste Estático", peso: "10%", rota: "/capitulo/3" },
+              { num: 4, titulo: "Técnicas de Teste", peso: "25%", rota: "/capitulo/4" },
+              { num: 5, titulo: "Gerenciamento", peso: "17%", rota: "/capitulo/5" },
+              { num: 6, titulo: "Ferramentas", peso: "5%", rota: "/capitulo/6" },
+            ].map(c => {
+              const p = progresso.find(x => x.capitulo === c.num);
+              const concluidos = p?.concluidos || 0;
+              const total = totalTopicosPorCap[c.num] || 0;
+              const pct = total > 0 ? Math.round((concluidos / total) * 100) : 0;
+              const desbloqueado = c.num === 1;
+
               return (
                 <div key={c.num}
-                  style={{ background: "#0f0f18", border: `1px solid ${desbloqueado ? "#2e2e3e" : "#1a1a1e"}`, borderRadius: "12px", padding: "1.25rem", opacity: desbloqueado ? 1 : 0.4, transition: "border-color 0.2s" }}
-                  onMouseEnter={(e) => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
-                  onMouseLeave={(e) => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#2e2e3e"; }}>
-
-                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "10px" }}>
+                  onClick={() => desbloqueado && (window.location.href = c.rota)}
+                  style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "12px", padding: "1.25rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
+                  onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
+                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1e1e2e"; }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                     <span style={{ fontSize: "12px", color: "#5a5a6a" }}>Cap. {c.num}</span>
-                    <span style={{ fontSize: "12px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
+                    <span style={{ fontSize: "11px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
                   </div>
-
-                  <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "10px", lineHeight: 1.3 }}>{c.titulo}</div>
-
-                  <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
-                    {c.topicos.map((t, i) => (
-                      <div key={i} style={{ fontSize: "12px", color: "#5a5a6a", display: "flex", alignItems: "center", gap: "6px" }}>
-                        <span style={{ color: desbloqueado ? "#c9a84c44" : "#2a2a2a" }}>▸</span> {t}
-                      </div>
-                    ))}
+                  <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "10px" }}>{c.titulo}</div>
+                  <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px", marginBottom: "6px" }}>
+                    <div style={{ background: pct === 100 ? "#4e9e4e" : "#c9a84c", width: `${pct}%`, height: "4px", borderRadius: "99px" }} />
                   </div>
-
-                  {desbloqueado && (
-                    <button
-                      onClick={() => window.location.href = "/capitulo/1"}
-                      style={{ marginTop: "12px", width: "100%", background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "8px", color: "#a0998e", fontSize: "13px", cursor: "pointer" }}>
-                      Praticar este capítulo
-                    </button>
-                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span style={{ fontSize: "11px", color: "#3a3a4a" }}>{concluidos}/{total} tópicos</span>
+                    <span style={{ fontSize: "11px", color: pct === 100 ? "#4e9e4e" : "#3a3a4a" }}>{pct === 100 ? "✓ Completo" : `${pct}%`}</span>
+                  </div>
                 </div>
               );
             })}
           </div>
         )}
 
-        {/* CARD — PRÓXIMA AÇÃO */}
-        <div style={{ marginTop: "2rem", background: "#0f0f18", border: "1px solid #c9a84c33", borderRadius: "12px", padding: "1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
-          <span style={{ fontSize: "2rem" }}>📖</span>
+        {/* BANNER PROVA */}
+        <div style={{ marginTop: "2rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+          <span style={{ fontSize: "1.8rem" }}>📋</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>
-              Próxima sessão recomendada
-            </div>
-            <div style={{ fontSize: "13px", color: "#7a7a8a" }}>
-              Semana 1 · Os 7 princípios do teste — ~1h de estudo
+            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "3px" }}>Agendar o exame CTFL</div>
+            <div style={{ fontSize: "12px", color: "#5a5a6a", lineHeight: 1.5 }}>
+              Aplicado pela BSTQB no Brasil. ~R$ 800. Recomendamos após concluir a Semana 7.
             </div>
           </div>
-          <button
-            onClick={() => window.location.href = "/capitulo/1"}
-            style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "10px 20px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>
-            Começar →
-          </button>
+          <a href="https://bstqb.qa/credito-exame" target="_blank" rel="noopener noreferrer"
+            style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "8px 14px", color: "#a0998e", fontSize: "12px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+            Ver site →
+          </a>
         </div>
-
       </div>
     </main>
   );
