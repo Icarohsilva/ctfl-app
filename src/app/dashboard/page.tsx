@@ -216,7 +216,7 @@ export default function Dashboard() {
 
                   {isAtiva && (
                     <button
-                      onClick={() => alert("Simulado em breve! Estamos construindo essa parte.")}
+                      onClick={() => window.location.href = "/capitulo/1"}
                       style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "8px 16px", color: "#0a0a0f", fontSize: "13px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>
                       Estudar →
                     </button>
@@ -255,7 +255,7 @@ export default function Dashboard() {
 
                   {desbloqueado && (
                     <button
-                      onClick={() => alert("Simulado em breve!")}
+                      onClick={() => window.location.href = "/capitulo/1"}
                       style={{ marginTop: "12px", width: "100%", background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "8px", color: "#a0998e", fontSize: "13px", cursor: "pointer" }}>
                       Praticar este capítulo
                     </button>
@@ -278,7 +278,7 @@ export default function Dashboard() {
             </div>
           </div>
           <button
-            onClick={() => alert("Simulados com IA em breve!")}
+            onClick={() => window.location.href = "/capitulo/1"}
             style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "10px 20px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: "pointer", whiteSpace: "nowrap" }}>
             Começar →
           </button>
