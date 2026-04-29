@@ -1,462 +1,248 @@
-"use client";
-import { useState, useEffect } from "react";
+import CertsSelector from "@/components/CertsSelector";
+
+const features = [
+  { icon: "🤖", titulo: "Simulados com IA", desc: "Questões únicas a cada sessão, geradas com base no syllabus oficial de cada certificação. Feedback detalhado em cada resposta." },
+  { icon: "📊", titulo: "Progresso por certificação", desc: "Cada cert tem seu próprio progresso, XP, streak e meta. Avance no seu ritmo sem misturar os conteúdos." },
+  { icon: "🔔", titulo: "Lembretes inteligentes", desc: "Notificações push e e-mails personalizados por IA. Cada mensagem é contextualizada para seu momento e certificação." },
+  { icon: "📱", titulo: "App instalável (PWA)", desc: "Instale direto do navegador. Funciona offline. Notificações nativas. Sem passar pela loja de apps." },
+  { icon: "🎯", titulo: "Nível adaptativo", desc: "O sistema ajusta a dificuldade ao seu nível — iniciante, praticante ou especialista — em cada certificação." },
+  { icon: "🏆", titulo: "Simulado final cronometrado", desc: "Idêntico ao exame real em formato e distribuição. Aprovado? Link direto para agendar a prova oficial." },
+];
+
+const certs = [
+  { id: "ctfl", nome: "CTFL v4.0", org: "ISTQB", nivel: "Foundation", cor: "#c9a84c", status: "disponível", desc: "Base de toda carreira em QA. 24 tópicos, 6 capítulos.", emoji: "🎓" },
+  { id: "ctfl-at", nome: "CTFL-AT", org: "ISTQB", nivel: "Foundation", cor: "#7c9e6e", status: "em breve", desc: "Agile Tester — teste em ambientes ágeis.", emoji: "⚡" },
+  { id: "ctal-ta", nome: "CTAL-TA", org: "ISTQB", nivel: "Advanced", cor: "#6e8fa8", status: "em breve", desc: "Test Analyst — análise e modelagem avançada.", emoji: "🔬" },
+  { id: "ctal-tm", nome: "CTAL-TM", org: "ISTQB", nivel: "Advanced", cor: "#9e7c6e", status: "em breve", desc: "Test Manager — gestão avançada de testes.", emoji: "📋" },
+  { id: "playwright", nome: "Playwright", org: "Técnico", nivel: "Automação", cor: "#6e6e9e", status: "em breve", desc: "Automação de testes web com Playwright.", emoji: "🤖" },
+];
+
+const passos = [
+  { num: "01", titulo: "Crie sua conta e escolha a certificação", desc: "Cadastro em 30 segundos. Defina seu nível em QA e configure o ritmo de estudo para a certificação desejada.", cor: "#c9a84c" },
+  { num: "02", titulo: "Siga a trilha por capítulos e tópicos", desc: "Narrativas, cards de conceito, vídeos e simulados por tópico. Cada certificação tem trilha independente.", cor: "#7c9e6e" },
+  { num: "03", titulo: "Treine com simulados adaptativos por IA", desc: "Questões únicas a cada sessão. O sistema prioriza o que você errou e gera questões substitutas para cobrir lacunas.", cor: "#6e8fa8" },
+  { num: "04", titulo: "Faça o simulado final e agende a prova", desc: "Simulado cronometrado idêntico ao exame real. Aprovado? Link direto para marcar a prova oficial.", cor: "#c9a84c" },
+];
+
+const inclusos = [
+  "Trilhas completas por certificação",
+  "Simulados por IA ilimitados",
+  "Banco compartilhado de questões",
+  "Fila de revisão inteligente",
+  "Simulado final cronometrado",
+  "Notificações push no celular",
+  "Lembretes por e-mail com IA",
+  "App instalável (PWA)",
+  "Progresso salvo na nuvem",
+  "Múltiplas certificações simultâneas",
+];
 
 export default function Home() {
-  const [visible, setVisible] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => setVisible(true), 100);
-  }, []);
-
-  const features = [
-    {
-      icon: "🎯",
-      title: "Trilha baseada no Syllabus oficial",
-      desc: "Conteúdo 100% alinhado ao CTFL v4.0 da ISTQB, gerado com IA a partir do syllabus oficial.",
-    },
-    {
-      icon: "🤖",
-      title: "Simulados gerados por IA",
-      desc: "Questões novas a cada sessão, com feedback detalhado e explicação de cada resposta.",
-    },
-    {
-      icon: "⏱️",
-      title: "Temporizador e notificações",
-      desc: "Lembretes diários para manter o ritmo, com sessões cronometradas como na prova real.",
-    },
-    {
-      icon: "📊",
-      title: "Progresso visual por capítulo",
-      desc: "Veja exatamente onde você está em cada um dos 6 capítulos do exame.",
-    },
-    {
-      icon: "📱",
-      title: "Funciona como app",
-      desc: "Instale direto do navegador na tela inicial do celular. Sem loja, sem taxa.",
-    },
-    {
-      icon: "🏆",
-      title: "Do zero até a prova",
-      desc: "O sistema indica quando você está pronto e mostra como e onde agendar o exame.",
-    },
-  ];
-
-  const steps = [
-    { num: "01", title: "Crie sua conta grátis", desc: "Cadastro em 30 segundos, sem cartão." },
-    { num: "02", title: "Siga a trilha personalizada", desc: "8 semanas, ~1h por dia, no seu ritmo." },
-    { num: "03", title: "Pratique com simulados", desc: "IA gera questões novas a cada sessão." },
-    { num: "04", title: "Agende o exame", desc: "O app indica quando você está pronto e onde marcar." },
-  ];
-
   return (
-    <main
-      style={{
-        fontFamily: "'Georgia', 'Times New Roman', serif",
-        background: "#0a0a0f",
-        color: "#f0ede8",
-        minHeight: "100vh",
-        overflowX: "hidden",
-      }}
-    >
+    <main style={{ fontFamily: "sans-serif", background: "#0a0a0f", color: "#f0ede8", minHeight: "100vh", overflowX: "hidden" }}>
+
       {/* NAV */}
-      <nav
-        style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          padding: "1.25rem 2rem",
-          borderBottom: "1px solid #1e1e2e",
-          position: "sticky",
-          top: 0,
-          background: "rgba(10,10,15,0.92)",
-          backdropFilter: "blur(12px)",
-          zIndex: 100,
-        }}
-      >
-        <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-          <span
-            style={{
-              fontFamily: "'Georgia', serif",
-              fontWeight: "bold",
-              fontSize: "1.2rem",
-              color: "#e8d5a3",
-              letterSpacing: "0.02em",
-            }}
-          >
-            TestPath
-          </span>
-          <span
-            style={{
-              fontSize: "11px",
-              background: "#2a2a1a",
-              color: "#c9a84c",
-              border: "1px solid #c9a84c44",
-              padding: "2px 7px",
-              borderRadius: "99px",
-              marginLeft: "4px",
-            }}
-          >
-            CTFL
-          </span>
+      <nav style={{ 
+        display: "flex", 
+        justifyContent: "space-between", 
+        alignItems: "center", 
+        padding: "1rem 2rem", 
+        borderBottom: "1px solid #1e1e2e", 
+        position: "sticky", 
+        top: 0, 
+        background: "rgba(10,10,15,0.96)", 
+        backdropFilter: "blur(12px)", 
+        zIndex: 100 
+      }}>
+        {/* Logo e Nome */}
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "26px", height: "26px" }} />
+          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.15rem", color: "#e8d5a3" }}>TestPath</span>
         </div>
-        <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
-          <a
-            href="/login"
-            style={{
-              color: "#a0998e",
-              textDecoration: "none",
-              fontSize: "14px",
-              fontFamily: "sans-serif",
-            }}
-          >
+      
+        {/* Botões de Ação */}
+        <div className="nav-mobile" style={{ 
+          display: "flex",     // Garante que o gap funcione
+          alignItems: "center", 
+          gap: "16px"          // Aumentado para melhor visualização
+        }}>
+          <a href="/login" style={{ 
+            color: "#a0998e", 
+            textDecoration: "none", 
+            fontSize: "13px",
+            transition: "color 0.2s" 
+          }}>
             Entrar
           </a>
-          <a
-            href="/cadastro"
-            style={{
-              background: "#c9a84c",
-              color: "#0a0a0f",
-              padding: "8px 18px",
-              borderRadius: "8px",
-              fontWeight: "bold",
-              fontSize: "14px",
-              textDecoration: "none",
-              fontFamily: "sans-serif",
-            }}
-          >
+          <a href="/cadastro" style={{ 
+            background: "#c9a84c", 
+            color: "#0a0a0f", 
+            padding: "8px 16px", 
+            borderRadius: "8px", 
+            fontWeight: "bold", 
+            fontSize: "13px", 
+            textDecoration: "none",
+            transition: "opacity 0.2s"
+          }}>
             Começar grátis
           </a>
         </div>
       </nav>
 
       {/* HERO */}
-      <section
-        style={{
-          maxWidth: "860px",
-          margin: "0 auto",
-          padding: "6rem 2rem 5rem",
-          textAlign: "center",
-          opacity: visible ? 1 : 0,
-          transform: visible ? "translateY(0)" : "translateY(24px)",
-          transition: "all 0.8s ease",
-        }}
-      >
-        {/* Badge */}
-        <div
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            background: "#1a1a0e",
-            border: "1px solid #c9a84c44",
-            color: "#c9a84c",
-            padding: "6px 14px",
-            borderRadius: "99px",
-            fontSize: "12px",
-            fontFamily: "sans-serif",
-            marginBottom: "2rem",
-          }}
-        >
-          <span>✦</span> Baseado no Syllabus ISTQB CTFL v4.0
+      <section className="hero-section" style={{ maxWidth: "960px", margin: "0 auto", padding: "5rem 2rem 4rem", textAlign: "center" }}>
+        <div style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "#1a1a0e", border: "1px solid #c9a84c44", color: "#c9a84c", padding: "5px 14px", borderRadius: "99px", fontSize: "12px", marginBottom: "1.75rem" }}>
+          ✦ Plataforma de certificações para QA
         </div>
 
-        <h1
-          style={{
-            fontSize: "clamp(2.4rem, 6vw, 4rem)",
-            lineHeight: 1.1,
-            margin: "0 0 1.5rem",
-            color: "#f0ede8",
-            fontWeight: "normal",
-          }}
-        >
-          Conquiste a certificação{" "}
-          <span
-            style={{
-              color: "#c9a84c",
-              fontStyle: "italic",
-            }}
-          >
-            CTFL
-          </span>{" "}
-          com método e consistência
+        <h1 className="hero-title" style={{ fontSize: "clamp(2.2rem, 6vw, 3.8rem)", lineHeight: 1.1, marginBottom: "1.25rem", color: "#f0ede8", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
+          Do iniciante ao especialista —{" "}
+          <span style={{ color: "#c9a84c", fontStyle: "italic" }}>todas as certificações</span>{" "}
+          em um só lugar
         </h1>
 
-        <p
-          style={{
-            fontSize: "1.15rem",
-            color: "#a0998e",
-            maxWidth: "580px",
-            margin: "0 auto 2.5rem",
-            lineHeight: 1.7,
-            fontFamily: "sans-serif",
-            fontWeight: "normal",
-          }}
-        >
-          Trilha de 8 semanas, simulados gerados por IA e acompanhamento de progresso — tudo gratuito, direto no navegador.
+        <p style={{ fontSize: "1.05rem", color: "#a0998e", maxWidth: "580px", margin: "0 auto 2rem", lineHeight: 1.7 }}>
+          Trilhas personalizadas por nível, simulados gerados por IA e progresso visual para cada certificação da sua carreira em QA.
         </p>
 
-        <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-          <a
-            href="/cadastro"
-            style={{
-              background: "#c9a84c",
-              color: "#0a0a0f",
-              padding: "14px 32px",
-              borderRadius: "10px",
-              fontWeight: "bold",
-              fontSize: "1rem",
-              textDecoration: "none",
-              fontFamily: "sans-serif",
-              display: "inline-block",
-              transition: "transform 0.15s, box-shadow 0.15s",
-            }}
-            onMouseEnter={(e) => {
-              (e.target as HTMLElement).style.transform = "translateY(-2px)";
-              (e.target as HTMLElement).style.boxShadow = "0 8px 24px #c9a84c44";
-            }}
-            onMouseLeave={(e) => {
-              (e.target as HTMLElement).style.transform = "translateY(0)";
-              (e.target as HTMLElement).style.boxShadow = "none";
-            }}
-          >
-            Criar conta grátis →
+        {/* Componente interativo isolado */}
+        <CertsSelector />
+
+        <div className="hero-btns" style={{ display: "flex", gap: "12px", justifyContent: "center", marginBottom: "1.5rem" }}>
+          <a href="/cadastro" style={{ background: "#c9a84c", color: "#0a0a0f", padding: "14px 32px", borderRadius: "10px", fontWeight: "bold", fontSize: "1rem", textDecoration: "none", display: "block", textAlign: "center" }}>
+            Começar pelo CTFL →
           </a>
-          <a
-            href="#como-funciona"
-            style={{
-              background: "transparent",
-              color: "#f0ede8",
-              padding: "14px 32px",
-              borderRadius: "10px",
-              fontWeight: "normal",
-              fontSize: "1rem",
-              textDecoration: "none",
-              fontFamily: "sans-serif",
-              border: "1px solid #2e2e3e",
-              display: "inline-block",
-            }}
-          >
-            Ver como funciona
+          <a href="#certificacoes" style={{ background: "transparent", color: "#f0ede8", padding: "14px 32px", borderRadius: "10px", fontSize: "1rem", textDecoration: "none", border: "1px solid #2e2e3e", display: "block", textAlign: "center" }}>
+            Ver trilha completa
           </a>
         </div>
 
-        {/* Social proof */}
-        <p
-          style={{
-            marginTop: "2rem",
-            fontSize: "13px",
-            color: "#5a5a6a",
-            fontFamily: "sans-serif",
-          }}
-        >
-          Gratuito · Sem instalar · Funciona no celular e notebook
-        </p>
+        <p style={{ fontSize: "12px", color: "#3a3a4a" }}>Gratuito · Sem instalar · Funciona no celular e notebook</p>
       </section>
 
-      {/* FEATURES */}
-      <section
-        style={{
-          maxWidth: "1000px",
-          margin: "0 auto",
-          padding: "4rem 2rem",
-          borderTop: "1px solid #1e1e2e",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: "1.8rem",
-            marginBottom: "3rem",
-            color: "#e8d5a3",
-            fontWeight: "normal",
-          }}
-        >
-          Tudo que você precisa para passar
-        </h2>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "1.25rem",
-          }}
-        >
+      {/* TRILHA DE CERTIFICAÇÕES */}
+      <section id="certificacoes" className="section-pad" style={{ maxWidth: "960px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1e1e2e" }}>
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <h2 style={{ fontSize: "1.8rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
+            Trilha completa de certificações
+          </h2>
+          <p style={{ color: "#7a7a8a", fontSize: "14px" }}>Do primeiro certificado até o nível expert — tudo em uma plataforma</p>
+        </div>
+
+        <div className="certs-grid" style={{ display: "grid", gap: "12px", marginBottom: "2rem" }}>
+          {certs.map((c) => (
+            <div key={c.id}
+              style={{ background: "#0f0f18", border: `1px solid ${c.status === "disponível" ? c.cor + "66" : "#1e1e2e"}`, borderRadius: "14px", padding: "1.25rem", textAlign: "center", opacity: c.status === "disponível" ? 1 : 0.6 }}>
+              <div style={{ fontSize: "1.8rem", marginBottom: "8px" }}>{c.emoji}</div>
+              <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{c.nome}</div>
+              <div style={{ fontSize: "11px", color: c.cor, marginBottom: "6px" }}>{c.org}</div>
+              <div style={{ fontSize: "10px", background: c.status === "disponível" ? "#1e3e1e" : "#1e1e2e", color: c.status === "disponível" ? "#4e9e4e" : "#5a5a6a", padding: "2px 8px", borderRadius: "99px", display: "inline-block", marginBottom: "6px" }}>
+                {c.status === "disponível" ? "✓ Disponível" : "Em breve"}
+              </div>
+              <div style={{ fontSize: "11px", color: "#5a5a6a", lineHeight: 1.4 }}>{c.desc}</div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c33", borderRadius: "12px", padding: "1rem 1.5rem", display: "flex", gap: "10px", alignItems: "center" }}>
+          <span style={{ fontSize: "1.2rem", flexShrink: 0 }}>💡</span>
+          <p style={{ fontSize: "13px", color: "#a09060", lineHeight: 1.5, margin: 0 }}>
+            Comece pelo <strong style={{ color: "#c9a84c" }}>CTFL</strong> — é o pré-requisito para todas as certificações avançadas da ISTQB. As demais trilhas serão liberadas em breve.
+          </p>
+        </div>
+      </section>
+
+      {/* RECURSOS */}
+      <section id="recursos" className="section-pad" style={{ maxWidth: "960px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1e1e2e" }}>
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <h2 style={{ fontSize: "1.8rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
+            Uma plataforma para toda sua carreira em QA
+          </h2>
+          <p style={{ color: "#7a7a8a", fontSize: "14px" }}>Cada certificação tem trilha independente com progresso, simulados e metas próprias</p>
+        </div>
+
+        <div className="grid-3" style={{ display: "grid", gap: "12px" }}>
           {features.map((f, i) => (
-            <div
-              key={i}
-              style={{
-                background: "#0f0f18",
-                border: "1px solid #1e1e2e",
-                borderRadius: "12px",
-                padding: "1.5rem",
-                transition: "border-color 0.2s",
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.borderColor = "#1e1e2e";
-              }}
-            >
-              <div style={{ fontSize: "1.8rem", marginBottom: "0.75rem" }}>{f.icon}</div>
-              <div
-                style={{
-                  fontSize: "1rem",
-                  fontWeight: "bold",
-                  color: "#e8d5a3",
-                  marginBottom: "0.5rem",
-                  fontFamily: "sans-serif",
-                }}
-              >
-                {f.title}
-              </div>
-              <div
-                style={{
-                  fontSize: "14px",
-                  color: "#7a7a8a",
-                  lineHeight: 1.6,
-                  fontFamily: "sans-serif",
-                }}
-              >
-                {f.desc}
-              </div>
+            <div key={i} style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.5rem" }}>
+              <div style={{ fontSize: "1.5rem", marginBottom: "0.75rem" }}>{f.icon}</div>
+              <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "0.5rem" }}>{f.titulo}</div>
+              <div style={{ fontSize: "13px", color: "#7a7a8a", lineHeight: 1.6 }}>{f.desc}</div>
             </div>
           ))}
         </div>
       </section>
 
       {/* COMO FUNCIONA */}
-      <section
-        id="como-funciona"
-        style={{
-          maxWidth: "760px",
-          margin: "0 auto",
-          padding: "4rem 2rem",
-          borderTop: "1px solid #1e1e2e",
-        }}
-      >
-        <h2
-          style={{
-            textAlign: "center",
-            fontSize: "1.8rem",
-            marginBottom: "3rem",
-            color: "#e8d5a3",
-            fontWeight: "normal",
-          }}
-        >
-          Como funciona
-        </h2>
-        <div style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-          {steps.map((s, i) => (
-            <div
-              key={i}
-              style={{
-                display: "flex",
-                gap: "1.5rem",
-                alignItems: "flex-start",
-              }}
-            >
-              <div
-                style={{
-                  fontSize: "2rem",
-                  fontWeight: "bold",
-                  color: "#2a2a1a",
-                  minWidth: "56px",
-                  lineHeight: 1,
-                  fontFamily: "Georgia, serif",
-                  WebkitTextStroke: "1px #c9a84c44",
-                }}
-              >
-                {s.num}
+      <section id="como-funciona" className="section-pad" style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1e1e2e" }}>
+        <div style={{ textAlign: "center", marginBottom: "2.5rem" }}>
+          <h2 style={{ fontSize: "1.8rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>Como funciona</h2>
+          <p style={{ color: "#7a7a8a", fontSize: "14px" }}>Do cadastro à certificação em 4 passos</p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {passos.map((s, i) => (
+            <div key={i} style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", paddingBottom: "2rem", position: "relative" }}>
+              {i < 3 && <div style={{ position: "absolute", left: "23px", top: "48px", width: "2px", height: "calc(100% - 24px)", background: "#1e1e2e" }} />}
+              <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "#0f0f18", border: `2px solid ${s.cor}44`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, zIndex: 1 }}>
+                <span style={{ fontSize: "13px", fontWeight: "bold", color: s.cor, fontFamily: "Georgia, serif" }}>{s.num}</span>
               </div>
-              <div>
-                <div
-                  style={{
-                    fontSize: "1.05rem",
-                    fontWeight: "bold",
-                    color: "#e8d5a3",
-                    marginBottom: "0.25rem",
-                    fontFamily: "sans-serif",
-                  }}
-                >
-                  {s.title}
-                </div>
-                <div
-                  style={{
-                    fontSize: "14px",
-                    color: "#7a7a8a",
-                    fontFamily: "sans-serif",
-                    lineHeight: 1.6,
-                  }}
-                >
-                  {s.desc}
-                </div>
+              <div style={{ paddingTop: "10px" }}>
+                <div style={{ fontSize: "15px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{s.titulo}</div>
+                <div style={{ fontSize: "13px", color: "#7a7a8a", lineHeight: 1.6 }}>{s.desc}</div>
               </div>
             </div>
           ))}
         </div>
       </section>
 
+      {/* GRATUITO */}
+      <section className="section-pad" style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1e1e2e" }}>
+        <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "20px", padding: "2.5rem", textAlign: "center" }}>
+          <div style={{ fontSize: "11px", color: "#c9a84c", letterSpacing: "0.08em", marginBottom: "1rem" }}>PLANO GRATUITO — PARA SEMPRE</div>
+          <h2 style={{ fontSize: "1.8rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>Tudo incluído, zero custo</h2>
+          <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "2rem" }}>Para todas as certificações disponíveis e futuras</p>
+
+          <div className="grid-2" style={{ display: "grid", gap: "10px", marginBottom: "2rem", textAlign: "left" }}>
+            {inclusos.map((item, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "13px", color: "#a0998e" }}>
+                <span style={{ color: "#4e9e4e", flexShrink: 0 }}>✓</span>
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <a href="/cadastro" style={{ display: "inline-block", background: "#c9a84c", color: "#0a0a0f", padding: "14px 40px", borderRadius: "10px", fontWeight: "bold", fontSize: "1rem", textDecoration: "none" }}>
+            Criar conta grátis →
+          </a>
+          <p style={{ marginTop: "1rem", fontSize: "12px", color: "#3a3a4a" }}>
+            Já tem conta?{" "}
+            <a href="/login" style={{ color: "#c9a84c", textDecoration: "none" }}>Entrar</a>
+          </p>
+        </div>
+      </section>
+
       {/* CTA FINAL */}
-      <section
-        style={{
-          maxWidth: "640px",
-          margin: "0 auto",
-          padding: "5rem 2rem 6rem",
-          textAlign: "center",
-          borderTop: "1px solid #1e1e2e",
-        }}
-      >
-        <h2
-          style={{
-            fontSize: "2rem",
-            marginBottom: "1rem",
-            color: "#e8d5a3",
-            fontWeight: "normal",
-          }}
-        >
-          Pronto para começar?
+      <section className="section-pad" style={{ maxWidth: "640px", margin: "0 auto", padding: "4rem 2rem 5rem", textAlign: "center", borderTop: "1px solid #1e1e2e" }}>
+        <h2 style={{ fontSize: "2rem", marginBottom: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
+          Comece hoje pelo CTFL
         </h2>
-        <p
-          style={{
-            color: "#7a7a8a",
-            marginBottom: "2rem",
-            fontFamily: "sans-serif",
-            lineHeight: 1.6,
-          }}
-        >
-          Crie sua conta gratuita e comece a trilha hoje. Sem cartão, sem prazo.
+        <p style={{ color: "#7a7a8a", marginBottom: "2rem", lineHeight: 1.6, fontSize: "14px" }}>
+          A base de toda carreira em QA. Depois de certificado, continue com CTFL-AT, CTAL e muito mais.
         </p>
-        <a
-          href="/cadastro"
-          style={{
-            background: "#c9a84c",
-            color: "#0a0a0f",
-            padding: "16px 40px",
-            borderRadius: "10px",
-            fontWeight: "bold",
-            fontSize: "1rem",
-            textDecoration: "none",
-            fontFamily: "sans-serif",
-            display: "inline-block",
-          }}
-        >
+        <a href="/cadastro" style={{ background: "#c9a84c", color: "#0a0a0f", padding: "16px 40px", borderRadius: "10px", fontWeight: "bold", fontSize: "1rem", textDecoration: "none", display: "inline-block" }}>
           Criar conta grátis →
         </a>
+        <p style={{ marginTop: "1rem", fontSize: "12px", color: "#3a3a4a" }}>
+          Gratuito · Sem instalar · Funciona no celular e notebook
+        </p>
       </section>
 
       {/* FOOTER */}
-      <footer
-        style={{
-          borderTop: "1px solid #1e1e2e",
-          padding: "2rem",
-          textAlign: "center",
-          fontSize: "13px",
-          color: "#3a3a4a",
-          fontFamily: "sans-serif",
-        }}
-      >
-        TestPath © 2025 · Baseado no Syllabus ISTQB CTFL v4.0 · Gratuito para sempre
+      <footer style={{ borderTop: "1px solid #1e1e2e", padding: "2rem", textAlign: "center", fontSize: "12px", color: "#3a3a4a", display: "flex", justifyContent: "center", gap: "2rem", flexWrap: "wrap" }}>
+        <span>TestPath © 2025</span>
+        <span>Plataforma de certificações para QA</span>
+        <a href="/login" style={{ color: "#5a5a6a", textDecoration: "none" }}>Entrar</a>
+        <a href="/cadastro" style={{ color: "#5a5a6a", textDecoration: "none" }}>Cadastrar</a>
       </footer>
     </main>
   );
