@@ -31,7 +31,7 @@ type PerfilUsuario = {
 
 // URLs dos vídeos — preenche conforme você vai gravando
 const videosTopicos: Record<string, string | null> = {
-  "por-que-testar": null, "7-principios": null, "erro-defeito-falha": null,
+  "por-que-testar": "https://www.youtube.com/embed/GWs-BjMtcVc", "7-principios": null, "erro-defeito-falha": null,
   "atividades-e-papeis": null, "modelos-desenvolvimento": null, "niveis-teste": null,
   "tipos-teste": null, "teste-manutencao": null, "fundamentos-estatico": null,
   "processo-revisao": null, "analise-estatica": null, "particao-equivalencia": null,
