@@ -146,6 +146,21 @@ export default function SimuladoFinal() {
     const aprovado = pct >= 65;
     const xpGanho = aprovado ? 500 : Math.round(acertos * 10);
 
+    const patches = questoes.map((q, i) => {
+      if (!q.id) return Promise.resolve();
+      return fetch("/api/simulado-final", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          questaoId: q.id,
+          capitulo: q.capitulo,
+          acertou: respostas[i] === q.correta,
+        }),
+      });
+    });
+    await Promise.all(patches);    
+    
     await supabase.from("progresso_topicos").insert({
       user_id: userId,
       capitulo: 0,
