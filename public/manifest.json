@@ -30,29 +30,20 @@
       "purpose": "any maskable"
     }
   ],
-  "screenshots": [
-    {
-      "src": "/screenshots/dashboard.png",
-      "sizes": "390x844",
-      "type": "image/png",
-      "form_factor": "narrow",
-      "label": "Dashboard da trilha CTFL"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Continuar estudando",
       "short_name": "Estudar",
       "description": "Continuar de onde parei",
       "url": "/capitulo/1",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/favicon-96x96.png", "sizes": "96x96" }]
     },
     {
       "name": "Meu perfil",
       "short_name": "Perfil",
       "description": "Ver meu progresso",
       "url": "/perfil",
-      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+      "icons": [{ "src": "/icons/favicon-96x96.png", "sizes": "96x96" }]
     }
   ]
 }

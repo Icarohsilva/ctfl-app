@@ -96,8 +96,8 @@ self.addEventListener("push", (event) => {
   const data = event.data.json();
   const options = {
     body: data.body || "Hora de estudar! 📖",
-    icon: "/icons/icon-192.png",
-    badge: "/icons/icon-96.png",
+    icon: "/icons/web-app-manifest-192x192.png",
+    badge: "/icons/favicon-96x96.png",
     vibrate: [100, 50, 100],
     data: { url: data.url || "/dashboard" },
     actions: [

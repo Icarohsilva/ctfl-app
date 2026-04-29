@@ -30,10 +30,9 @@ No test runner is configured. Path alias `@/*` → `./src/*`.
 
 ## Architecture
 
-### Two LLM paths — they are not interchangeable
+### LLM provider
 
-1. **Production routes use Groq (`llama-3.3-70b-versatile`)** — see `src/app/api/simulado/route.ts`, `src/app/api/simulado-final/route.ts`, `src/app/api/push/notificar/route.ts`. Fast and cheap; what users actually hit.
-2. **`src/lib/ia-conteudo.ts` and `src/lib/ia-simulado.ts`** call the Anthropic API directly with a stale model ID (`claude-sonnet-4-20250514`). These are **not wired into the live API routes** — `/api/conteudo/route.ts` returns canned content from `src/data/conteudo-topicos.ts` instead. Treat the `lib/ia-*.ts` files as legacy/reference unless you're explicitly bringing them online; if you do, update the model ID.
+**Production routes use Groq (`llama-3.3-70b-versatile`)** via `groq-sdk` — see `src/app/api/simulado/route.ts`, `src/app/api/simulado-final/route.ts`, `src/app/api/push/notificar/route.ts`. `/api/conteudo/route.ts` doesn't call any LLM — it returns canned content from `src/data/conteudo-topicos.ts`. There is no Anthropic or Google AI integration in the live code path; `ANTHROPIC_API_KEY` and `GOOGLE_AI_API_KEY` env vars (if still in `.env.local`) are unused.
 
 ### Data flow — simulados
 
@@ -62,15 +61,17 @@ Two Supabase clients exist:
 - `src/data/mapa-capitulos.ts` — 6 capítulos × tópicos com metadados (xp, peso, semana).
 - `src/data/conteudo-topicos.ts` — narrativas + cards canned por tópico (servido por `/api/conteudo`).
 - `src/data/capitulo1.ts` — conteúdo expandido do cap. 1.
-- O **`mapaTopicos` está duplicado** entre `src/lib/ia-conteudo.ts` e `src/app/api/simulado/route.ts` (com pequenas diferenças). Se editar conceitos, atualize ambos para evitar drift.
+- `src/app/api/simulado/route.ts` carrega seu próprio `mapaTopicos` inline (cópia mais enxuta de `mapa-capitulos`). Se editar conceitos/títulos, atualize os dois para evitar drift.
 
 ## Routing map (pt-BR slugs)
 
-`/` (landing) · `/login` · `/cadastro` · `/confirmar-email` · `/esqueci-senha` · `/redefinir-senha` · `/dashboard` · `/inicio/ctfl` · `/aprender` · `/capitulo/[1-6]` · `/capitulo/[1-6]/topico/[id]` · `/simulado-final` · `/perfil` · `/cancelar-notificacoes` · `/offline`.
+`/` (landing) · `/login` · `/cadastro` · `/confirmar-email` · `/esqueci-senha` · `/redefinir-senha` · `/dashboard` · `/inicio/ctfl` · `/aprender` · `/capitulo/[capitulo]` · `/capitulo/[capitulo]/topico/[id]` · `/simulado-final` · `/perfil` · `/cancelar-notificacoes` · `/offline`.
+
+`[capitulo]` é o número do capítulo (1–6); a rota valida via `mapaCaptulos[N]` e chama `notFound()` para inválidos.
 
 ## Required env vars (`.env.local`)
 
-`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `ANTHROPIC_API_KEY` (only if using `lib/ia-*.ts`), `GOOGLE_AI_API_KEY` (declared, not currently called in routes), `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, `RESEND_API_KEY`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL`.
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, `RESEND_API_KEY`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL`.
 
 ## Working language
 
