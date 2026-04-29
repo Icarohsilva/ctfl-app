@@ -9,6 +9,23 @@ type FormData = {
   nivel: string;
 };
 
+function validarSenha(senha: string): string {
+  if (senha.length < 8) return "A senha precisa ter ao menos 8 caracteres.";
+  if (!/[A-Z]/.test(senha)) return "Adicione ao menos uma letra maiúscula.";
+  if (!/[0-9]/.test(senha)) return "Adicione ao menos um número.";
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(senha)) return "Adicione ao menos um caractere especial (!@#$%...).";
+  return "";
+}
+
+function forca(senha: string): { nivel: number; texto: string; cor: string } {
+  if (senha.length === 0) return { nivel: 0, texto: "", cor: "#1e1e2e" };
+  if (senha.length < 6) return { nivel: 1, texto: "Muito fraca", cor: "#c06060" };
+  if (!/[A-Z]/.test(senha) || !/[0-9]/.test(senha)) return { nivel: 2, texto: "Fraca — adicione maiúsculas e números", cor: "#c06060" };
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(senha)) return { nivel: 3, texto: "Média — adicione um caractere especial", cor: "#c9a84c" };
+  if (senha.length < 10) return { nivel: 4, texto: "Boa", cor: "#a0c060" };
+  return { nivel: 5, texto: "Forte ✓", cor: "#4e9e4e" };
+}
+
 export default function Cadastro() {
   const [passo, setPasso] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -22,18 +39,21 @@ export default function Cadastro() {
   });
 
   const atualizar = (campo: keyof FormData, valor: string) => {
-    setForm((prev) => ({ ...prev, [campo]: valor }));
+    setForm(prev => ({ ...prev, [campo]: valor }));
     setErro("");
   };
+
+  const senhaForca = forca(form.senha);
 
   const avancar = () => {
     if (passo === 1) {
       if (!form.nome.trim()) return setErro("Digite seu nome.");
       if (!form.email.includes("@")) return setErro("Digite um e-mail válido.");
-      if (form.senha.length < 6) return setErro("A senha precisa ter ao menos 6 caracteres.");
+      const erroSenha = validarSenha(form.senha);
+      if (erroSenha) return setErro(erroSenha);
     }
     setErro("");
-    setPasso((p) => p + 1);
+    setPasso(p => p + 1);
   };
 
   const finalizar = async () => {
@@ -50,16 +70,27 @@ export default function Cadastro() {
           data: {
             nome: form.nome,
             nivel: form.nivel,
-          }
-        }
+          },
+        },
       });
 
       if (authError) {
-        if (authError.message.includes("already registered") || authError.message.includes("User already registered")) {
+        if (
+          authError.message.includes("already registered") ||
+          authError.message.includes("User already registered") ||
+          authError.message.includes("email already") ||
+          authError.status === 422
+        ) {
           setErro("Este e-mail já está cadastrado. Tente fazer login.");
         } else {
-          setErro(authError.message);
+          setErro("Erro ao criar conta. Verifique os dados e tente novamente.");
         }
+        return;
+      }
+
+      // Supabase retorna user sem identities quando email já existe
+      if (data.user && data.user.identities && data.user.identities.length === 0) {
+        setErro("Este e-mail já está cadastrado. Tente fazer login.");
         return;
       }
 
@@ -116,7 +147,7 @@ export default function Cadastro() {
     }}>
       {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "2rem" }}>
-        <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
+        <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px" }} />
         <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.2rem", color: "#e8d5a3" }}>
           TestPath
         </span>
@@ -141,9 +172,9 @@ export default function Cadastro() {
             <p style={{ color: "#7a7a8a", marginBottom: "0.75rem", lineHeight: 1.6, fontSize: "14px" }}>
               Agora vamos configurar sua primeira certificação.
             </p>
-            <p style={{ background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "8px", padding: "12px", color: "#c9a84c", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
-              📧 Verifique seu e-mail para confirmar a conta.
-            </p>
+            <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "8px", padding: "12px", color: "#c9a84c", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
+              📧 Verifique seu e-mail para confirmar a conta antes de continuar.
+            </div>
             <a href="/inicio/ctfl" style={{
               background: "#c9a84c",
               color: "#0a0a0f",
@@ -185,24 +216,58 @@ export default function Cadastro() {
                 <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>
                   Grátis para sempre. Sem cartão de crédito.
                 </p>
+
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <div>
                     <label style={labelStyle}>Seu nome</label>
-                    <input style={inputStyle} type="text" placeholder="Ex: João Silva" value={form.nome}
-                      onChange={(e) => atualizar("nome", e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
+                    <input style={inputStyle} type="text" placeholder="Ex: João Silva"
+                      value={form.nome} onChange={e => atualizar("nome", e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && avancar()} />
                   </div>
+
                   <div>
                     <label style={labelStyle}>E-mail</label>
-                    <input style={inputStyle} type="email" placeholder="seu@email.com" value={form.email}
-                      onChange={(e) => atualizar("email", e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
+                    <input style={inputStyle} type="email" placeholder="seu@email.com"
+                      value={form.email} onChange={e => atualizar("email", e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && avancar()} />
                   </div>
+
                   <div>
                     <label style={labelStyle}>Senha</label>
-                    <input style={inputStyle} type="password" placeholder="Mínimo 6 caracteres" value={form.senha}
-                      onChange={(e) => atualizar("senha", e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
+                    <input style={inputStyle} type="password" placeholder="Mínimo 8 caracteres"
+                      value={form.senha} onChange={e => atualizar("senha", e.target.value)}
+                      onKeyDown={e => e.key === "Enter" && avancar()} />
+
+                    {/* Indicador de força */}
+                    {form.senha.length > 0 && (
+                      <div style={{ marginTop: "8px" }}>
+                        <div style={{ display: "flex", gap: "4px", marginBottom: "4px" }}>
+                          {[1, 2, 3, 4, 5].map(n => (
+                            <div key={n} style={{
+                              flex: 1, height: "3px", borderRadius: "99px",
+                              background: senhaForca.nivel >= n ? senhaForca.cor : "#1e1e2e",
+                              transition: "background 0.3s",
+                            }} />
+                          ))}
+                        </div>
+                        <div style={{ fontSize: "11px", color: senhaForca.cor }}>
+                          {senhaForca.texto}
+                        </div>
+                        {/* Dicas */}
+                        <div style={{ marginTop: "6px", display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                          {[
+                            { ok: form.senha.length >= 8, txt: "8+ caracteres" },
+                            { ok: /[A-Z]/.test(form.senha), txt: "Maiúscula" },
+                            { ok: /[0-9]/.test(form.senha), txt: "Número" },
+                            { ok: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(form.senha), txt: "Especial" },
+                          ].map((d, i) => (
+                            <span key={i} style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "99px", background: d.ok ? "#1e3e1e" : "#1e1e2e", color: d.ok ? "#4e9e4e" : "#5a5a6a", border: `1px solid ${d.ok ? "#2e5e2e" : "#2e2e3e"}` }}>
+                              {d.ok ? "✓" : "·"} {d.txt}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>
@@ -218,7 +283,7 @@ export default function Cadastro() {
                   Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {niveis.map((n) => (
+                  {niveis.map(n => (
                     <button key={n.valor} onClick={() => atualizar("nivel", n.valor)}
                       style={{
                         background: form.nivel === n.valor ? "#1a1a0e" : "#0a0a0f",
@@ -243,15 +308,25 @@ export default function Cadastro() {
 
             {/* Erro */}
             {erro && (
-              <div style={{ background: "#2a0a0a", border: "1px solid #aa3333", borderRadius: "8px", padding: "10px 14px", color: "#ff7777", fontSize: "13px", marginTop: "1rem" }}>
+              <div style={{
+                background: "#2a0a0a", border: "1px solid #aa3333",
+                borderRadius: "8px", padding: "10px 14px",
+                color: "#ff7777", fontSize: "13px", marginTop: "1rem",
+                lineHeight: 1.5,
+              }}>
                 {erro}
+                {erro.includes("já está cadastrado") && (
+                  <div style={{ marginTop: "6px" }}>
+                    <a href="/login" style={{ color: "#c9a84c", fontSize: "13px" }}>Fazer login →</a>
+                  </div>
+                )}
               </div>
             )}
 
             {/* Botões */}
             <div style={{ display: "flex", gap: "10px", marginTop: "1.75rem" }}>
               {passo > 1 && (
-                <button onClick={() => setPasso((p) => p - 1)}
+                <button onClick={() => setPasso(p => p - 1)}
                   style={{ flex: 1, background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "12px", color: "#a0998e", fontSize: "15px", cursor: "pointer" }}>
                   ← Voltar
                 </button>
