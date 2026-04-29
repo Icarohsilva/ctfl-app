@@ -45,6 +45,12 @@ export default function Cadastro() {
       const { data, error: authError } = await supabase.auth.signUp({
         email: form.email,
         password: form.senha,
+        options: {
+          data: {
+            nome: form.nome,
+            nivel: form.nivel,
+          }
+        }
       });
     
       if (authError) {
@@ -53,38 +59,17 @@ export default function Cadastro() {
         } else {
           setErro(authError.message);
         }
-        setLoading(false);
         return;
       }
     
       if (!data.user) {
         setErro("Erro ao criar usuário. Tente novamente.");
-        setLoading(false);
         return;
-      }
-    
-      // Verifica se perfil já existe antes de inserir
-      const { data: perfilExistente } = await supabase
-        .from("profiles")
-        .select("id")
-        .eq("id", data.user.id)
-        .single();
-    
-      if (!perfilExistente) {
-        const { error: profileError } = await supabase.from("profiles").insert({
-          id: data.user.id,
-          nome: form.nome,
-          nivel: form.nivel,
-          pontos: 0,
-        });
-        if (profileError) throw new Error(profileError.message);
       }
     
       setPasso(3);
     } catch (e: unknown) {
-      if (e instanceof Error) {
-        setErro(e.message);
-      }
+      if (e instanceof Error) setErro(e.message);
     } finally {
       setLoading(false);
     }
