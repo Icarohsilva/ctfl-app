@@ -60,7 +60,7 @@ export default function Login() {
     >
       {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "2rem" }}>
-        <span style={{ fontSize: "1.5rem" }}>🧪</span>
+        <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
         <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.2rem", color: "#e8d5a3" }}>
           TestPath
         </span>

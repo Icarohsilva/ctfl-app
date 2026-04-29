@@ -74,7 +74,7 @@ export default function Home() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-          <span style={{ fontSize: "1.5rem" }}>🧪</span>
+          <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
           <span
             style={{
               fontFamily: "'Georgia', serif",

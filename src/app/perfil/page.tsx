@@ -311,7 +311,7 @@ export default function PerfilPage() {
       {/* NAV */}
       <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 2rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.95)", backdropFilter: "blur(12px)", zIndex: 100 }}>
         <a href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
-          <span style={{ fontSize: "1.3rem" }}>🧪</span>
+          <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
           <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", color: "#e8d5a3" }}>TestPath</span>
         </a>
         <a href="/dashboard" style={{ color: "#5a5a6a", fontSize: "13px", textDecoration: "none" }}>← Dashboard</a>

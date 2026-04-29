@@ -65,7 +65,7 @@ export default function PWAInstaller() {
           to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
       `}</style>
-      <span style={{ fontSize: "1.8rem", flexShrink: 0 }}>🧪</span>
+      <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "32px", height: "32px", objectFit: "contain", flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
         <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "2px" }}>
           Instalar TestPath
