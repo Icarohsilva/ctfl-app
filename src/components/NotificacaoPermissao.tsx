@@ -63,31 +63,38 @@ export default function NotificacaoPermissao() {
   const registrarSubscription = async () => {
     console.log("userId ao registrar:", userId);
     if (!userId) return;
-
+  
     const sw = await navigator.serviceWorker.ready;
-
-    // Busca a chave VAPID via API — mais confiável que process.env no cliente
-    const envData = await fetch("/api/debug-env").then(r => r.json());
-    const vapidPublicKey = envData.vapid_public_full;
-
-    if (!vapidPublicKey) {
-      throw new Error("Chave VAPID não encontrada");
+  
+    // Usa a variável de ambiente diretamente
+    const vapidKey = process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!;
+  
+    function urlBase64ToUint8Array(base64String: string) {
+      const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+      const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+      const rawData = atob(base64);
+      const outputArray = new Uint8Array(rawData.length);
+      for (let i = 0; i < rawData.length; ++i) {
+        outputArray[i] = rawData.charCodeAt(i);
+      }
+      return outputArray;
     }
-
+  
     const subscription = await sw.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: vapidPublicKey,
+      applicationServerKey: urlBase64ToUint8Array(vapidKey),
     });
-
-    // Salva no banco
+  
     const res = await fetch("/api/push/subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subscription, userId }),
     });
-
-    if (!res.ok) throw new Error("Erro ao salvar subscription");
-    console.log("✅ Push subscription salva com sucesso!");
+  
+    const data = await res.json();
+    console.log("Resultado subscription:", data);
+    if (!res.ok) throw new Error(data.error);
+    console.log("✅ Push subscription salva!");
   };
 
   if (!mostrar) return null;
