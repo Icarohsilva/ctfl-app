@@ -14,7 +14,7 @@ export default function EsqueciSenha() {
     setErro("");
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/redefinir-senha`,
+      redirectTo: "https://testpath.online/redefinir-senha",
     });
 
     if (error) {
