@@ -23,10 +23,11 @@ export default function NotificacaoPermissao() {
     // Só mostra depois de 30 segundos na primeira visita
     const jaViu = localStorage.getItem("notif_prompt_visto");
     if (!jaViu) {
+      // Mostra após 3 segundos no primeiro acesso
       setTimeout(() => {
         setMostrar(true);
         localStorage.setItem("notif_prompt_visto", "1");
-      }, 30000);
+      }, 3000);
     }
   };
 
