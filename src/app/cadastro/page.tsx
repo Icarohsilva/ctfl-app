@@ -40,38 +40,50 @@ export default function Cadastro() {
     if (!form.nivel) return setErro("Selecione seu nível.");
     setLoading(true);
     setErro("");
-
+  
     try {
-      // 1. Cria o usuário no Supabase Auth
       const { data, error: authError } = await supabase.auth.signUp({
         email: form.email,
         password: form.senha,
       });
-
-      if (authError) throw new Error(authError.message);
-      if (!data.user) throw new Error("Erro ao criar usuário.");
-
-      // 2. Salva o perfil (sem objetivo — será definido no onboarding da cert)
-      const { error: profileError } = await supabase.from("profiles").insert({
-        id: data.user.id,
-        nome: form.nome,
-        nivel: form.nivel,
-        pontos: 0,
-      });
-
-      if (profileError) throw new Error(profileError.message);
-
-      // 3. Vai para onboarding da certificação CTFL
-      setPasso(3); // tela de sucesso
+    
+      if (authError) {
+        if (authError.message.includes("already registered") || authError.message.includes("User already registered")) {
+          setErro("Este e-mail já está cadastrado. Tente fazer login.");
+        } else {
+          setErro(authError.message);
+        }
+        setLoading(false);
+        return;
+      }
+    
+      if (!data.user) {
+        setErro("Erro ao criar usuário. Tente novamente.");
+        setLoading(false);
+        return;
+      }
+    
+      // Verifica se perfil já existe antes de inserir
+      const { data: perfilExistente } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("id", data.user.id)
+        .single();
+    
+      if (!perfilExistente) {
+        const { error: profileError } = await supabase.from("profiles").insert({
+          id: data.user.id,
+          nome: form.nome,
+          nivel: form.nivel,
+          pontos: 0,
+        });
+        if (profileError) throw new Error(profileError.message);
+      }
+    
+      setPasso(3);
     } catch (e: unknown) {
       if (e instanceof Error) {
-        if (e.message.includes("already registered")) {
-          setErro("Este e-mail já está cadastrado. Tente fazer login.");
-        } else if (e.message.includes("Password")) {
-          setErro("A senha precisa ter ao menos 6 caracteres.");
-        } else {
-          setErro(e.message);
-        }
+        setErro(e.message);
       }
     } finally {
       setLoading(false);
