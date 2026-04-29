@@ -6,7 +6,6 @@ type Perfil = {
   nome: string;
   email: string;
   nivel: string;
-  objetivo: string;
   pontos: number;
   streak: number;
   maior_streak: number;
@@ -19,9 +18,6 @@ type Perfil = {
   linkedin: string | null;
 };
 
-// -------------------------------------------------------
-// VALIDAÇÕES
-// -------------------------------------------------------
 function validarCPF(cpf: string): boolean {
   const nums = cpf.replace(/\D/g, "");
   if (nums.length !== 11 || /^(\d)\1+$/.test(nums)) return false;
@@ -94,11 +90,9 @@ export default function PerfilPage() {
   const [erroTel, setErroTel] = useState("");
   const [erroData, setErroData] = useState("");
 
-  // Configurações
+  // Configurações — apenas nível
   const [nivel, setNivel] = useState("");
-  const [objetivo, setObjetivo] = useState("");
   const [nivelOriginal, setNivelOriginal] = useState("");
-  const [objetivoOriginal, setObjetivoOriginal] = useState("");
   const [confirmandoAlteracao, setConfirmandoAlteracao] = useState(false);
 
   // Senha
@@ -129,9 +123,7 @@ export default function PerfilPage() {
       setDataNascimento(data.data_nascimento || "");
       setCpf(data.cpf || "");
       setNivel(data.nivel || "iniciante");
-      setObjetivo(data.objetivo || "8semanas");
       setNivelOriginal(data.nivel || "iniciante");
-      setObjetivoOriginal(data.objetivo || "8semanas");
       setNovoEmail(user.email || "");
     }
     setLoading(false);
@@ -142,34 +134,19 @@ export default function PerfilPage() {
     setTimeout(() => setMsg(null), 5000);
   };
 
-  // -------------------------------------------------------
-  // SALVAR PERFIL com validações
-  // -------------------------------------------------------
   const salvarPerfil = async () => {
     let temErro = false;
-
-    if (cpf && !validarCPF(cpf)) {
-      setErroCPF("CPF inválido. Verifique os dígitos.");
-      temErro = true;
-    } else setErroCPF("");
-
-    if (telefone && !validarTelefone(telefone)) {
-      setErroTel("Telefone inválido. Use o formato (00) 00000-0000.");
-      temErro = true;
-    } else setErroTel("");
-
+    if (cpf && !validarCPF(cpf)) { setErroCPF("CPF inválido."); temErro = true; } else setErroCPF("");
+    if (telefone && !validarTelefone(telefone)) { setErroTel("Telefone inválido."); temErro = true; } else setErroTel("");
     const dataVal = validarDataNascimento(dataNascimento);
-    if (!dataVal.valida) {
-      setErroData(dataVal.erro);
-      temErro = true;
-    } else setErroData("");
-
-    if (temErro) return;
-    if (!userId) return;
+    if (!dataVal.valida) { setErroData(dataVal.erro); temErro = true; } else setErroData("");
+    if (temErro || !userId) return;
 
     setSalvando(true);
     const { error } = await supabase.from("profiles").update({
-      nome, bio, telefone: telefone || null, linkedin: linkedin || null,
+      nome, bio,
+      telefone: telefone || null,
+      linkedin: linkedin || null,
       data_nascimento: dataNascimento || null,
       cpf: cpf || null,
     }).eq("id", userId);
@@ -179,14 +156,8 @@ export default function PerfilPage() {
     setSalvando(false);
   };
 
-  // -------------------------------------------------------
-  // SALVAR CONFIGURAÇÕES — confirma se vai perder progresso
-  // -------------------------------------------------------
   const tentarSalvarConfiguracoes = () => {
-    const mudouNivel = nivel !== nivelOriginal;
-    const mudouObjetivo = objetivo !== objetivoOriginal;
-
-    if (mudouNivel || mudouObjetivo) {
+    if (nivel !== nivelOriginal) {
       setConfirmandoAlteracao(true);
     } else {
       salvarConfiguracoes(false);
@@ -198,30 +169,23 @@ export default function PerfilPage() {
     setSalvando(true);
     setConfirmandoAlteracao(false);
 
-    const updates: Record<string, unknown> = { nivel, objetivo };
+    const updates: Record<string, unknown> = { nivel };
     if (resetarProgresso) {
-      updates.semana_atual = 1;
-      updates.pontos = 0;
-      updates.streak = 0;
-      // Apaga progresso de tópicos
       await supabase.from("progresso_topicos").delete().eq("user_id", userId);
       await supabase.from("historico_conceitos").delete().eq("user_id", userId);
       await supabase.from("fila_revisao").delete().eq("user_id", userId);
+      await supabase.from("usuario_certificacoes").update({ semana_atual: 1, pontos: 0, streak: 0 }).eq("user_id", userId);
     }
 
     const { error } = await supabase.from("profiles").update(updates).eq("id", userId);
     if (error) mostrarMsg("erro", "Erro ao salvar configurações.");
     else {
       setNivelOriginal(nivel);
-      setObjetivoOriginal(objetivo);
-      mostrarMsg("sucesso", resetarProgresso ? "Configurações salvas. Progresso reiniciado." : "Configurações salvas!");
+      mostrarMsg("sucesso", resetarProgresso ? "Nível alterado e progresso reiniciado." : "Nível atualizado!");
     }
     setSalvando(false);
   };
 
-  // -------------------------------------------------------
-  // ALTERAR SENHA — verifica senha atual antes
-  // -------------------------------------------------------
   const alterarSenha = async () => {
     if (!senhaAtual) return mostrarMsg("erro", "Digite sua senha atual.");
     if (novaSenha.length < 6) return mostrarMsg("erro", "A nova senha precisa ter ao menos 6 caracteres.");
@@ -231,7 +195,6 @@ export default function PerfilPage() {
     setSalvando(true);
     setVerificandoSenha(true);
 
-    // Verifica a senha atual fazendo re-login
     const { error: loginError } = await supabase.auth.signInWithPassword({
       email: perfil?.email || "",
       password: senhaAtual,
@@ -245,7 +208,7 @@ export default function PerfilPage() {
     }
 
     const { error } = await supabase.auth.updateUser({ password: novaSenha });
-    if (error) mostrarMsg("erro", "Erro ao alterar senha. Tente novamente.");
+    if (error) mostrarMsg("erro", "Erro ao alterar senha.");
     else {
       mostrarMsg("sucesso", "Senha alterada com sucesso!");
       setSenhaAtual(""); setNovaSenha(""); setConfirmarSenha("");
@@ -254,40 +217,28 @@ export default function PerfilPage() {
     setVerificandoSenha(false);
   };
 
-  // -------------------------------------------------------
-  // ALTERAR EMAIL — verifica senha antes
-  // -------------------------------------------------------
   const alterarEmail = async () => {
     if (!novoEmail.includes("@")) return mostrarMsg("erro", "Digite um e-mail válido.");
     if (novoEmail === perfil?.email) return mostrarMsg("erro", "O novo e-mail deve ser diferente do atual.");
-    if (!senhaParaEmail) return mostrarMsg("erro", "Digite sua senha para confirmar a alteração.");
+    if (!senhaParaEmail) return mostrarMsg("erro", "Digite sua senha para confirmar.");
 
     setAlterandoEmail(true);
-
-    // Verifica senha
     const { error: loginError } = await supabase.auth.signInWithPassword({
       email: perfil?.email || "",
       password: senhaParaEmail,
     });
 
-    if (loginError) {
-      mostrarMsg("erro", "Senha incorreta.");
-      setAlterandoEmail(false);
-      return;
-    }
+    if (loginError) { mostrarMsg("erro", "Senha incorreta."); setAlterandoEmail(false); return; }
 
-    const { error } = await supabase.auth.updateUser({ email: novoEmail },{ emailRedirectTo: "https://testpath.online/confirmar-email" });
-    if (error) mostrarMsg("erro", "Erro ao alterar e-mail. Tente novamente.");
-    else {
-      mostrarMsg("sucesso", "Confirmação enviada para o novo e-mail. Verifique sua caixa de entrada.");
-      setSenhaParaEmail("");
-    }
+    const { error } = await supabase.auth.updateUser(
+      { email: novoEmail },
+      { emailRedirectTo: "https://testpath.online/confirmar-email" }
+    );
+    if (error) mostrarMsg("erro", "Erro ao alterar e-mail.");
+    else { mostrarMsg("sucesso", "Confirmação enviada para o novo e-mail!"); setSenhaParaEmail(""); }
     setAlterandoEmail(false);
   };
 
-  // -------------------------------------------------------
-  // UPLOAD DE FOTO
-  // -------------------------------------------------------
   const uploadFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !userId) return;
@@ -297,10 +248,8 @@ export default function PerfilPage() {
     const ext = file.name.split(".").pop();
     const path = `${userId}/avatar.${ext}`;
 
-    const { error: uploadError } = await supabase.storage
-      .from("avatars").upload(path, file, { upsert: true });
-
-    if (uploadError) { mostrarMsg("erro", "Erro ao fazer upload da foto."); setUploadando(false); return; }
+    const { error: uploadError } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+    if (uploadError) { mostrarMsg("erro", "Erro ao fazer upload."); setUploadando(false); return; }
 
     const { data: { publicUrl } } = supabase.storage.from("avatars").getPublicUrl(path);
     await supabase.from("profiles").update({ foto_url: publicUrl }).eq("id", userId);
@@ -336,10 +285,10 @@ export default function PerfilPage() {
           <div style={{ background: "#0f0f18", border: "1px solid #3e2e2e", borderRadius: "16px", padding: "2rem", maxWidth: "420px", width: "100%" }}>
             <div style={{ fontSize: "2rem", marginBottom: "1rem", textAlign: "center" }}>⚠️</div>
             <h3 style={{ fontSize: "1.1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.75rem", textAlign: "center" }}>
-              Alterar configurações de estudo
+              Alterar nível de conhecimento
             </h3>
             <p style={{ color: "#7a7a8a", fontSize: "13px", lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "center" }}>
-              Você está alterando seu nível ou prazo de estudo. Deseja <strong style={{ color: "#c06060" }}>reiniciar o progresso</strong> para a nova trilha ou <strong style={{ color: "#c9a84c" }}>manter o progresso atual</strong>?
+              Deseja <strong style={{ color: "#c06060" }}>reiniciar o progresso</strong> para adaptar a trilha ao novo nível, ou <strong style={{ color: "#c9a84c" }}>manter o progresso atual</strong>?
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <button onClick={() => salvarConfiguracoes(true)}
@@ -488,51 +437,35 @@ export default function PerfilPage() {
           <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
             <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Configurações de estudo</h2>
 
-            {(nivel !== nivelOriginal || objetivo !== objetivoOriginal) && (
+            <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "#a09060", lineHeight: 1.5 }}>
+              🎓 O ritmo e data meta de cada certificação são configurados diretamente no <a href="/dashboard" style={{ color: "#c9a84c", textDecoration: "none" }}>dashboard da trilha</a>.
+            </div>
+
+            {nivel !== nivelOriginal && (
               <div style={{ background: "#1a1000", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#a09060" }}>
-                ⚠️ Você tem alterações não salvas. Ao salvar, será perguntado se deseja reiniciar o progresso.
+                ⚠️ Você tem alterações não salvas.
               </div>
             )}
 
-            {/* Nível */}
             <div>
-              <label style={{ ...labelStyle, fontSize: "13px", color: "#a0998e", marginBottom: "10px" }}>Nível de conhecimento</label>
+              <label style={{ ...labelStyle, fontSize: "13px", color: "#a0998e", marginBottom: "8px" }}>Nível de conhecimento em QA</label>
+              <p style={{ fontSize: "12px", color: "#5a5a6a", marginBottom: "12px", lineHeight: 1.5 }}>
+                Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
+              </p>
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {[
-                  { valor: "iniciante", emoji: "🌱", titulo: "Iniciante", desc: "Nunca estudei CTFL — trilha completa do zero, linguagem simples" },
-                  { valor: "basico", emoji: "📖", titulo: "Básico", desc: "Conheço alguns conceitos — foco nas técnicas e aplicação prática" },
-                  { valor: "intermediario", emoji: "🎯", titulo: "Avançado", desc: "Já estudei mas não fiz a prova — questões difíceis e simulados intensivos" },
+                  { valor: "iniciante", emoji: "🌱", titulo: "Iniciante", desc: "Estou começando em QA agora — quero aprender do zero com linguagem simples" },
+                  { valor: "basico", emoji: "📖", titulo: "Praticante", desc: "Já trabalho com QA — conheço os conceitos básicos e quero me certificar" },
+                  { valor: "intermediario", emoji: "🎯", titulo: "Especialista", desc: "Tenho experiência sólida — quero questões desafiadoras e foco nas nuances" },
                 ].map(n => (
                   <button key={n.valor} onClick={() => setNivel(n.valor)}
                     style={{ background: nivel === n.valor ? "#1a1a0e" : "#0a0a0f", border: `1px solid ${nivel === n.valor ? "#c9a84c" : "#2e2e3e"}`, borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
                     <span style={{ fontSize: "1.3rem" }}>{n.emoji}</span>
                     <div>
                       <div style={{ color: "#e8d5a3", fontSize: "13px", fontWeight: "bold" }}>{n.titulo}</div>
-                      <div style={{ color: "#7a7a8a", fontSize: "12px" }}>{n.desc}</div>
+                      <div style={{ color: "#7a7a8a", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
                     </div>
                     {nivel === n.valor && <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Objetivo */}
-            <div>
-              <label style={{ ...labelStyle, fontSize: "13px", color: "#a0998e", marginBottom: "10px" }}>Objetivo de prazo</label>
-              <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-                {[
-                  { valor: "8semanas", emoji: "📅", titulo: "8 semanas", desc: "~1h/dia, seg–sex. Ritmo equilibrado, ideal para quem trabalha." },
-                  { valor: "4semanas", emoji: "⚡", titulo: "4 semanas", desc: "~2h/dia. Intensivo, para quem tem a prova marcada em breve." },
-                  { valor: "livre", emoji: "🌊", titulo: "No meu ritmo", desc: "Sem prazo definido. Avança quando quiser, sem pressão de cronograma." },
-                ].map(o => (
-                  <button key={o.valor} onClick={() => setObjetivo(o.valor)}
-                    style={{ background: objetivo === o.valor ? "#1a1a0e" : "#0a0a0f", border: `1px solid ${objetivo === o.valor ? "#c9a84c" : "#2e2e3e"}`, borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
-                    <span style={{ fontSize: "1.3rem" }}>{o.emoji}</span>
-                    <div>
-                      <div style={{ color: "#e8d5a3", fontSize: "13px", fontWeight: "bold" }}>{o.titulo}</div>
-                      <div style={{ color: "#7a7a8a", fontSize: "12px" }}>{o.desc}</div>
-                    </div>
-                    {objetivo === o.valor && <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>}
                   </button>
                 ))}
               </div>
@@ -553,7 +486,7 @@ export default function PerfilPage() {
             <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
               <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar e-mail</h2>
               <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#a09060" }}>
-                💡 E-mail atual: <strong style={{ color: "#c9a84c" }}>{perfil?.email}</strong>. Um link de confirmação será enviado ao novo endereço.
+                💡 E-mail atual: <strong style={{ color: "#c9a84c" }}>{perfil?.email}</strong>
               </div>
               <div>
                 <label style={labelStyle}>Novo e-mail</label>
@@ -572,7 +505,6 @@ export default function PerfilPage() {
             {/* Alterar senha */}
             <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
               <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar senha</h2>
-
               <div>
                 <label style={labelStyle}>Senha atual</label>
                 <input style={inputStyle} type="password" value={senhaAtual} onChange={e => setSenhaAtual(e.target.value)} placeholder="Digite sua senha atual" />
@@ -596,10 +528,9 @@ export default function PerfilPage() {
                 <input style={confirmarSenha && novaSenha !== confirmarSenha ? inputErro : inputStyle} type="password" value={confirmarSenha} onChange={e => setConfirmarSenha(e.target.value)} placeholder="Repita a nova senha" />
                 {confirmarSenha && novaSenha !== confirmarSenha && <div style={erroStyle}>As senhas não coincidem</div>}
               </div>
-
               <button onClick={alterarSenha} disabled={salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha}
                 style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "12px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: "pointer", opacity: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? 0.4 : 1 }}>
-                {salvando && verificandoSenha ? "Verificando senha..." : salvando ? "Alterando..." : "Alterar senha"}
+                {salvando && verificandoSenha ? "Verificando..." : salvando ? "Alterando..." : "Alterar senha"}
               </button>
             </div>
 

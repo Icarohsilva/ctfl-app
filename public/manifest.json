@@ -1,0 +1,58 @@
+{
+  "name": "TestPath — Certificação CTFL",
+  "short_name": "TestPath",
+  "description": "Sua trilha para a certificação CTFL da ISTQB. Aprenda, pratique e conquiste.",
+  "start_url": "/dashboard",
+  "display": "standalone",
+  "background_color": "#0a0a0f",
+  "theme_color": "#c9a84c",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "pt-BR",
+  "categories": ["education", "productivity"],
+  "icons": [
+    {
+      "src": "/icons/favicon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/web-app-manifest-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icons/web-app-manifest-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/screenshots/dashboard.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Dashboard da trilha CTFL"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Continuar estudando",
+      "short_name": "Estudar",
+      "description": "Continuar de onde parei",
+      "url": "/capitulo/1",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    },
+    {
+      "name": "Meu perfil",
+      "short_name": "Perfil",
+      "description": "Ver meu progresso",
+      "url": "/perfil",
+      "icons": [{ "src": "/icons/icon-96.png", "sizes": "96x96" }]
+    }
+  ]
+}

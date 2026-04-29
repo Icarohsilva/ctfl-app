@@ -68,7 +68,7 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
               Capítulo {capitulo.numero}
             </span>
             <span style={{ fontSize: "12px", background: "#1e1e2e", color: "#5a5a7a", padding: "3px 10px", borderRadius: "99px" }}>
-              Semana {capitulo.semana} · {capitulo.peso} do exame
+              {capitulo.peso} do exame
             </span>
           </div>
           <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", margin: "0 0 0.5rem" }}>

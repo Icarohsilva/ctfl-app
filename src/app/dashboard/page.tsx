@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
+import CardMetaCTFL from "@/components/CardMetaCTFL";
 
 type Perfil = {
   nome: string;
@@ -13,6 +14,7 @@ type CertUsuario = {
   certificacao_id: string;
   status: string;
   data_meta: string | null;
+  data_inicio: string;
   ritmo: string;
   semana_atual: number;
   pontos: number;
@@ -62,17 +64,19 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [abaSelecionada, setAbaSelecionada] = useState<"trilha" | "capitulos">("trilha");
   const [fraseHoje] = useState(() => frasesMotivadoras[Math.floor(Math.random() * frasesMotivadoras.length)]);
-
+  const [userId, setUserId] = useState<string | null>(null);
+  
   useEffect(() => { carregarDados(); }, []);
 
   const carregarDados = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user }} = await supabase.auth.getUser();
     if (!user) { window.location.href = "/login"; return; }
 
     // Carrega perfil global
     const { data: perfilData } = await supabase
       .from("profiles").select("nome, nivel, pontos, foto_url").eq("id", user.id).single();
     if (perfilData) setPerfil(perfilData);
+    setUserId(user.id);
 
     // Carrega dados da certificação CTFL
     const { data: certData } = await supabase
@@ -233,7 +237,7 @@ export default function Dashboard() {
           </div>
 
           <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
-            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>SEMANA</div>
+            <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>{semanaAtual}/8</div>
             <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{semanaAtual}/8</div>
             <div style={{ fontSize: "11px", color: "#5a5a6a" }}>{ritmoLabel[cert?.ritmo || "moderado"]}</div>
           </div>
@@ -254,6 +258,15 @@ export default function Dashboard() {
           </div>
           <span style={{ color: "#c9a84c", fontSize: "1.4rem" }}>›</span>
         </div>
+
+        {cert && userId && (
+          <CardMetaCTFL
+            cert={cert}
+            userId={userId}
+            progressoGeral={progressoGeral}
+            onAtualizar={carregarDados}
+          />
+        )}
 
         {/* ABAS */}
         <div style={{ display: "flex", gap: "4px", marginBottom: "1.25rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "10px", padding: "4px" }}>
@@ -286,10 +299,9 @@ export default function Dashboard() {
                   </div>
                   <div style={{ flex: 1 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px" }}>
-                      <span style={{ fontSize: "14px", fontWeight: "bold", color: isAtiva ? "#e8d5a3" : concluida ? "#6a8a6a" : "#5a5a6a" }}>
-                        Semana {s.num} — {s.titulo}
+                      <span style={{ fontSize: "14px", fontWeight: "bold", color: isAtiva ? "#e8d5a3" : concluida ? "#6a8a6a" : "#5a5a6a" }}> {s.titulo}
                       </span>
-                      {isAtiva && <span style={{ fontSize: "10px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "1px 6px", borderRadius: "99px" }}>Atual</span>}
+                      {isAtiva && <span style={{ fontSize: "10px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "1px 6px", borderRadius: "99px" }}>▶ Em andamento</span>}
                       {concluida && <span style={{ fontSize: "10px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "1px 6px", borderRadius: "99px" }}>✓</span>}
                     </div>
                     {s.cap > 0 && !isBloqueada && (
@@ -300,7 +312,7 @@ export default function Dashboard() {
                         <span style={{ fontSize: "11px", color: "#3a3a4a" }}>{pctSemana}%</span>
                       </div>
                     )}
-                    {isBloqueada && <div style={{ fontSize: "11px", color: "#3a3a4a" }}>🔒 Complete a semana anterior primeiro</div>}
+                    {isBloqueada && <div style={{ fontSize: "11px", color: "#3a3a4a" }}>🔒 Complete o capítulo anterior primeiro</div>}
                   </div>
                   {!isBloqueada && <span style={{ color: "#3a3a5a", fontSize: "1.1rem" }}>›</span>}
                 </div>
