@@ -4,7 +4,7 @@ import { createClient } from "@supabase/supabase-js";
 export async function POST(req: NextRequest) {
   try {
     const { subscription, userId } = await req.json();
-    console.log("Recebido:", { userId, temSubscription: !!subscription });
+    console.log("Recebido subscription para:", userId);
 
     if (!subscription || !userId) {
       return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
@@ -12,15 +12,23 @@ export async function POST(req: NextRequest) {
 
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.SUPABASE_SERVICE_ROLE_KEY! // usa service role para bypass RLS
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
+    const endpoint = subscription.endpoint;
+
+    // Salva subscription por dispositivo (user_id + endpoint únicos)
     const { data, error } = await supabase
       .from("push_subscriptions")
-      .upsert({ user_id: userId, subscription, ativo: true })
+      .upsert({
+        user_id: userId,
+        subscription,
+        endpoint,
+        ativo: true,
+      }, { onConflict: "user_id,endpoint" })
       .select();
 
-    console.log("Resultado insert:", { data, error });
+    console.log("Subscription salva:", { data, error });
 
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
@@ -34,7 +42,22 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ ok: true });
   } catch (e) {
-    console.error("Erro:", e);
+    console.error("Erro subscription:", e);
     return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
+}
+
+export async function DELETE(req: NextRequest) {
+  const { userId } = await req.json();
+  if (!userId) return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+
+  await supabase.from("push_subscriptions").update({ ativo: false }).eq("user_id", userId);
+  await supabase.from("preferencias_notificacao").update({ push_ativo: false }).eq("user_id", userId);
+
+  return NextResponse.json({ ok: true });
 }

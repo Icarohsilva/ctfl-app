@@ -30,7 +30,7 @@ export async function POST(req: NextRequest) {
 
   console.log("Notificar rodando para data:", hoje);
 
-  // 1. Busca usuários que NÃO estudaram hoje
+  // Busca usuários que NÃO estudaram hoje
   const { data: usuarios, error: errUsuarios } = await supabase
     .from("usuario_certificacoes")
     .select("user_id, certificacao_id, streak")
@@ -48,14 +48,14 @@ export async function POST(req: NextRequest) {
 
   for (const u of usuarios) {
     try {
-      // 2. Busca perfil
+      // Busca perfil
       const { data: perfil } = await supabase
         .from("profiles")
         .select("nome")
         .eq("id", u.user_id)
         .single();
 
-      // 3. Busca preferências
+      // Busca preferências
       const { data: pref } = await supabase
         .from("preferencias_notificacao")
         .select("push_ativo, email_ativo, token_cancelamento")
@@ -74,16 +74,17 @@ export async function POST(req: NextRequest) {
         ? `Não quebra o streak de ${streak} dias! 🔥 Só 15 min hoje já conta.`
         : `Que tal estudar hoje? Cada tópico te deixa mais perto da certificação. 🎯`;
 
-      // 4. PUSH NOTIFICATION
+      // PUSH — envia para TODOS os dispositivos do usuário
       if (pref.push_ativo) {
-        const { data: sub } = await supabase
+        const { data: subs } = await supabase
           .from("push_subscriptions")
-          .select("subscription")
+          .select("subscription, endpoint")
           .eq("user_id", u.user_id)
-          .eq("ativo", true)
-          .single();
+          .eq("ativo", true);
 
-        if (sub?.subscription) {
+        console.log(`${nome} tem ${subs?.length || 0} dispositivo(s) registrado(s)`);
+
+        for (const sub of subs || []) {
           try {
             await webpush.sendNotification(
               sub.subscription,
@@ -94,29 +95,29 @@ export async function POST(req: NextRequest) {
               })
             );
             pushEnviados++;
-            console.log("Push enviado para:", nome);
-          } catch (pushError) {
-            console.error("Erro push para", u.user_id, pushError);
-            // Subscription expirada — desativa
-            await supabase
-              .from("push_subscriptions")
-              .update({ ativo: false })
-              .eq("user_id", u.user_id);
+            console.log("Push enviado para dispositivo:", sub.endpoint?.slice(0, 50) + "...");
+          } catch (pushError: unknown) {
+            const err = pushError as { statusCode?: number; message?: string };
+            console.error("Erro push dispositivo:", err.statusCode, err.message);
+            // Subscription expirada — desativa esse dispositivo
+            if (err.statusCode === 410 || err.statusCode === 404) {
+              await supabase
+                .from("push_subscriptions")
+                .update({ ativo: false })
+                .eq("user_id", u.user_id)
+                .eq("endpoint", sub.endpoint);
+            }
           }
-        } else {
-          console.log("Sem subscription push para:", u.user_id);
         }
       }
 
-      // 5. EMAIL
+      // EMAIL
       if (pref.email_ativo) {
         const { data: authUser } = await supabase.auth.admin.getUserById(u.user_id);
         const email = authUser?.user?.email;
 
         if (email) {
-          await enviarEmailLembrete(
-            email, nome, mensagem, streak, pref.token_cancelamento
-          );
+          await enviarEmailLembrete(email, nome, mensagem, streak, pref.token_cancelamento);
           emailsEnviados++;
           console.log("Email enviado para:", email);
         }
