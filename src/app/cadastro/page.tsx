@@ -7,7 +7,6 @@ type FormData = {
   email: string;
   senha: string;
   nivel: string;
-  objetivo: string;
 };
 
 export default function Cadastro() {
@@ -20,7 +19,6 @@ export default function Cadastro() {
     email: "",
     senha: "",
     nivel: "",
-    objetivo: "",
   });
 
   const atualizar = (campo: keyof FormData, valor: string) => {
@@ -34,15 +32,12 @@ export default function Cadastro() {
       if (!form.email.includes("@")) return setErro("Digite um e-mail válido.");
       if (form.senha.length < 6) return setErro("A senha precisa ter ao menos 6 caracteres.");
     }
-    if (passo === 2) {
-      if (!form.nivel) return setErro("Selecione seu nível.");
-    }
     setErro("");
     setPasso((p) => p + 1);
   };
 
   const finalizar = async () => {
-    if (!form.objetivo) return setErro("Selecione seu objetivo.");
+    if (!form.nivel) return setErro("Selecione seu nível.");
     setLoading(true);
     setErro("");
 
@@ -56,20 +51,18 @@ export default function Cadastro() {
       if (authError) throw new Error(authError.message);
       if (!data.user) throw new Error("Erro ao criar usuário.");
 
-      // 2. Salva o perfil na tabela profiles
+      // 2. Salva o perfil (sem objetivo — será definido no onboarding da cert)
       const { error: profileError } = await supabase.from("profiles").insert({
         id: data.user.id,
         nome: form.nome,
         nivel: form.nivel,
-        objetivo: form.objetivo,
-        semana_atual: 1,
         pontos: 0,
       });
 
       if (profileError) throw new Error(profileError.message);
 
-      // 3. Sucesso
-      setPasso(4);
+      // 3. Vai para onboarding da certificação CTFL
+      setPasso(3); // tela de sucesso
     } catch (e: unknown) {
       if (e instanceof Error) {
         if (e.message.includes("already registered")) {
@@ -86,15 +79,9 @@ export default function Cadastro() {
   };
 
   const niveis = [
-    { valor: "iniciante", emoji: "🌱", titulo: "Iniciante", desc: "Nunca estudei CTFL" },
-    { valor: "basico", emoji: "📖", titulo: "Básico", desc: "Conheço alguns conceitos" },
-    { valor: "intermediario", emoji: "🎯", titulo: "Intermediário", desc: "Já estudei mas não fiz a prova" },
-  ];
-
-  const objetivos = [
-    { valor: "8semanas", emoji: "📅", titulo: "8 semanas", desc: "Ritmo equilibrado, ~1h/dia" },
-    { valor: "4semanas", emoji: "⚡", titulo: "4 semanas", desc: "Intensivo, ~2h/dia" },
-    { valor: "livre", emoji: "🌊", titulo: "No meu ritmo", desc: "Sem prazo definido" },
+    { valor: "iniciante", emoji: "🌱", titulo: "Iniciante", desc: "Estou começando em QA agora — quero aprender do zero" },
+    { valor: "basico", emoji: "📖", titulo: "Praticante", desc: "Já trabalho com QA — conheço os conceitos básicos" },
+    { valor: "intermediario", emoji: "🎯", titulo: "Especialista", desc: "Tenho experiência sólida em QA — quero me certificar" },
   ];
 
   const inputStyle: React.CSSProperties = {
@@ -119,18 +106,17 @@ export default function Cadastro() {
   };
 
   return (
-    <main
-      style={{
-        fontFamily: "sans-serif",
-        background: "#0a0a0f",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "2rem",
-      }}
-    >
+    <main style={{
+      fontFamily: "sans-serif",
+      background: "#0a0a0f",
+      minHeight: "100vh",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "2rem",
+    }}>
+      {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "2rem" }}>
         <span style={{ fontSize: "1.5rem" }}>🧪</span>
         <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.2rem", color: "#e8d5a3" }}>
@@ -138,117 +124,133 @@ export default function Cadastro() {
         </span>
       </a>
 
-      <div
-        style={{
-          background: "#0f0f18",
-          border: "1px solid #1e1e2e",
-          borderRadius: "16px",
-          padding: "2.5rem",
-          width: "100%",
-          maxWidth: "460px",
-        }}
-      >
-        {passo === 4 ? (
+      <div style={{
+        background: "#0f0f18",
+        border: "1px solid #1e1e2e",
+        borderRadius: "16px",
+        padding: "2.5rem",
+        width: "100%",
+        maxWidth: "460px",
+      }}>
+
+        {/* TELA DE SUCESSO */}
+        {passo === 3 ? (
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎉</div>
             <h2 style={{ fontSize: "1.5rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.75rem", fontWeight: "normal" }}>
               Conta criada, {form.nome.split(" ")[0]}!
             </h2>
-            <p style={{ color: "#7a7a8a", marginBottom: "0.75rem", lineHeight: 1.6 }}>
-              Sua trilha CTFL está pronta.
+            <p style={{ color: "#7a7a8a", marginBottom: "0.75rem", lineHeight: 1.6, fontSize: "14px" }}>
+              Agora vamos configurar sua primeira certificação.
             </p>
             <p style={{ background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "8px", padding: "12px", color: "#c9a84c", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
-              📧 Verifique seu e-mail para confirmar a conta antes de entrar.
+              📧 Verifique seu e-mail para confirmar a conta.
             </p>
-            <a href="/dashboard" style={{ background: "#c9a84c", color: "#0a0a0f", padding: "14px 32px", borderRadius: "8px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "inline-block" }}>
-              Ir para minha trilha →
+            <a href="/inicio/ctfl" style={{
+              background: "#c9a84c",
+              color: "#0a0a0f",
+              padding: "14px 32px",
+              borderRadius: "8px",
+              fontWeight: "bold",
+              fontSize: "15px",
+              textDecoration: "none",
+              display: "inline-block",
+            }}>
+              Configurar minha trilha CTFL →
             </a>
           </div>
         ) : (
           <>
+            {/* Barra de progresso */}
             <div style={{ marginBottom: "2rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontSize: "13px", color: "#7a7a8a" }}>Passo {passo} de 3</span>
-                <span style={{ fontSize: "13px", color: "#c9a84c" }}>{Math.round((passo / 3) * 100)}%</span>
+                <span style={{ fontSize: "13px", color: "#7a7a8a" }}>Passo {passo} de 2</span>
+                <span style={{ fontSize: "13px", color: "#c9a84c" }}>{Math.round((passo / 2) * 100)}%</span>
               </div>
               <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px" }}>
-                <div style={{ background: "#c9a84c", width: `${(passo / 3) * 100}%`, height: "4px", borderRadius: "99px", transition: "width 0.4s ease" }} />
+                <div style={{
+                  background: "#c9a84c",
+                  width: `${(passo / 2) * 100}%`,
+                  height: "4px",
+                  borderRadius: "99px",
+                  transition: "width 0.4s ease",
+                }} />
               </div>
             </div>
 
+            {/* PASSO 1 — Dados da conta */}
             {passo === 1 && (
               <div>
                 <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
                   Crie sua conta
                 </h2>
-                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>Grátis para sempre. Sem cartão de crédito.</p>
+                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>
+                  Grátis para sempre. Sem cartão de crédito.
+                </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
                   <div>
                     <label style={labelStyle}>Seu nome</label>
-                    <input style={inputStyle} type="text" placeholder="Ex: João Silva" value={form.nome} onChange={(e) => atualizar("nome", e.target.value)} />
+                    <input style={inputStyle} type="text" placeholder="Ex: João Silva" value={form.nome}
+                      onChange={(e) => atualizar("nome", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
                   </div>
                   <div>
                     <label style={labelStyle}>E-mail</label>
-                    <input style={inputStyle} type="email" placeholder="seu@email.com" value={form.email} onChange={(e) => atualizar("email", e.target.value)} />
+                    <input style={inputStyle} type="email" placeholder="seu@email.com" value={form.email}
+                      onChange={(e) => atualizar("email", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
                   </div>
                   <div>
                     <label style={labelStyle}>Senha</label>
-                    <input style={inputStyle} type="password" placeholder="Mínimo 6 caracteres" value={form.senha} onChange={(e) => atualizar("senha", e.target.value)} />
+                    <input style={inputStyle} type="password" placeholder="Mínimo 6 caracteres" value={form.senha}
+                      onChange={(e) => atualizar("senha", e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && avancar()} />
                   </div>
                 </div>
               </div>
             )}
 
+            {/* PASSO 2 — Nível */}
             {passo === 2 && (
               <div>
                 <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
-                  Qual seu nível atual?
+                  Qual é o seu nível em QA?
                 </h2>
-                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>Usamos isso para personalizar sua trilha.</p>
+                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+                  Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
+                </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {niveis.map((n) => (
                     <button key={n.valor} onClick={() => atualizar("nivel", n.valor)}
-                      style={{ background: form.nivel === n.valor ? "#1a1a0e" : "#0a0a0f", border: `1px solid ${form.nivel === n.valor ? "#c9a84c" : "#2e2e3e"}`, borderRadius: "10px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
+                      style={{
+                        background: form.nivel === n.valor ? "#1a1a0e" : "#0a0a0f",
+                        border: `1px solid ${form.nivel === n.valor ? "#c9a84c" : "#2e2e3e"}`,
+                        borderRadius: "10px", padding: "14px 16px",
+                        display: "flex", alignItems: "center", gap: "12px",
+                        cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s",
+                      }}>
                       <span style={{ fontSize: "1.5rem" }}>{n.emoji}</span>
                       <div>
                         <div style={{ color: "#e8d5a3", fontSize: "14px", fontWeight: "bold" }}>{n.titulo}</div>
-                        <div style={{ color: "#7a7a8a", fontSize: "12px" }}>{n.desc}</div>
+                        <div style={{ color: "#7a7a8a", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
                       </div>
-                      {form.nivel === n.valor && <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>}
+                      {form.nivel === n.valor && (
+                        <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>
+                      )}
                     </button>
                   ))}
                 </div>
               </div>
             )}
 
-            {passo === 3 && (
-              <div>
-                <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
-                  Qual seu objetivo de prazo?
-                </h2>
-                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>Você pode mudar isso depois nas configurações.</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                  {objetivos.map((o) => (
-                    <button key={o.valor} onClick={() => atualizar("objetivo", o.valor)}
-                      style={{ background: form.objetivo === o.valor ? "#1a1a0e" : "#0a0a0f", border: `1px solid ${form.objetivo === o.valor ? "#c9a84c" : "#2e2e3e"}`, borderRadius: "10px", padding: "14px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
-                      <span style={{ fontSize: "1.5rem" }}>{o.emoji}</span>
-                      <div>
-                        <div style={{ color: "#e8d5a3", fontSize: "14px", fontWeight: "bold" }}>{o.titulo}</div>
-                        <div style={{ color: "#7a7a8a", fontSize: "12px" }}>{o.desc}</div>
-                      </div>
-                      {form.objetivo === o.valor && <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
-
+            {/* Erro */}
             {erro && (
               <div style={{ background: "#2a0a0a", border: "1px solid #aa3333", borderRadius: "8px", padding: "10px 14px", color: "#ff7777", fontSize: "13px", marginTop: "1rem" }}>
                 {erro}
               </div>
             )}
 
+            {/* Botões */}
             <div style={{ display: "flex", gap: "10px", marginTop: "1.75rem" }}>
               {passo > 1 && (
                 <button onClick={() => setPasso((p) => p - 1)}
@@ -256,9 +258,17 @@ export default function Cadastro() {
                   ← Voltar
                 </button>
               )}
-              <button onClick={passo === 3 ? finalizar : avancar} disabled={loading}
-                style={{ flex: 2, background: "#c9a84c", border: "none", borderRadius: "8px", padding: "12px", color: "#0a0a0f", fontSize: "15px", fontWeight: "bold", cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1, transition: "opacity 0.2s" }}>
-                {loading ? "Criando conta..." : passo === 3 ? "Criar minha conta →" : "Continuar →"}
+              <button
+                onClick={passo === 2 ? finalizar : avancar}
+                disabled={loading || (passo === 2 && !form.nivel)}
+                style={{
+                  flex: 2, background: "#c9a84c", border: "none", borderRadius: "8px",
+                  padding: "12px", color: "#0a0a0f", fontSize: "15px", fontWeight: "bold",
+                  cursor: (loading || (passo === 2 && !form.nivel)) ? "not-allowed" : "pointer",
+                  opacity: (loading || (passo === 2 && !form.nivel)) ? 0.5 : 1,
+                  transition: "opacity 0.2s",
+                }}>
+                {loading ? "Criando conta..." : passo === 2 ? "Criar minha conta →" : "Continuar →"}
               </button>
             </div>
 

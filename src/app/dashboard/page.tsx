@@ -5,13 +5,20 @@ import { supabase } from "@/lib/supabase";
 type Perfil = {
   nome: string;
   nivel: string;
-  objetivo: string;
+  pontos: number; // mantido para compatibilidade
+  foto_url: string | null;
+};
+
+type CertUsuario = {
+  certificacao_id: string;
+  status: string;
+  data_meta: string | null;
+  ritmo: string;
   semana_atual: number;
   pontos: number;
   streak: number;
-  ultimo_estudo: string | null;
   maior_streak: number;
-  foto_url: string | null;
+  ultimo_estudo: string | null;
 };
 
 type ProgressoCapitulo = {
@@ -42,8 +49,15 @@ const frasesMotivadoras = [
   "Cada tópico concluído é um defeito a menos no seu conhecimento. 🐛",
 ];
 
+const ritmoLabel: Record<string, string> = {
+  leve: "Leve ~30min/dia",
+  moderado: "Moderado ~1h/dia",
+  intensivo: "Intensivo ~2h/dia",
+};
+
 export default function Dashboard() {
   const [perfil, setPerfil] = useState<Perfil | null>(null);
+  const [cert, setCert] = useState<CertUsuario | null>(null);
   const [progresso, setProgresso] = useState<ProgressoCapitulo[]>([]);
   const [loading, setLoading] = useState(true);
   const [abaSelecionada, setAbaSelecionada] = useState<"trilha" | "capitulos">("trilha");
@@ -55,21 +69,45 @@ export default function Dashboard() {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/login"; return; }
 
-    const { data: perfilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
+    // Carrega perfil global
+    const { data: perfilData } = await supabase
+      .from("profiles").select("nome, nivel, pontos, foto_url").eq("id", user.id).single();
+    if (perfilData) setPerfil(perfilData);
 
-    if (perfilData) {
-      const hoje = new Date().toISOString().split("T")[0];
-      const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
-      let novoStreak = perfilData.streak || 0;
-      if (perfilData.ultimo_estudo !== hoje && perfilData.ultimo_estudo !== ontem && novoStreak > 0) {
-        novoStreak = 0;
-        await supabase.from("profiles").update({ streak: 0 }).eq("id", user.id);
-      }
-      setPerfil({ ...perfilData, streak: novoStreak });
+    // Carrega dados da certificação CTFL
+    const { data: certData } = await supabase
+      .from("usuario_certificacoes")
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("certificacao_id", "ctfl")
+      .single();
+
+    if (!certData) {
+      // Nunca fez onboarding — redireciona
+      window.location.href = "/inicio/ctfl";
+      return;
     }
 
+    // Verifica streak da certificação
+    const hoje = new Date().toISOString().split("T")[0];
+    const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+    let novoStreak = certData.streak || 0;
+    if (certData.ultimo_estudo !== hoje && certData.ultimo_estudo !== ontem && novoStreak > 0) {
+      novoStreak = 0;
+      await supabase.from("usuario_certificacoes")
+        .update({ streak: 0 })
+        .eq("user_id", user.id)
+        .eq("certificacao_id", "ctfl");
+    }
+    setCert({ ...certData, streak: novoStreak });
+
+    // Progresso dos tópicos
     const { data: progressoData } = await supabase
-      .from("progresso_topicos").select("capitulo, topico_id").eq("user_id", user.id).eq("concluido", true);
+      .from("progresso_topicos")
+      .select("capitulo, topico_id")
+      .eq("user_id", user.id)
+      .eq("certificacao_id", "ctfl")
+      .eq("concluido", true);
 
     if (progressoData) {
       const agrupado: Record<number, Set<string>> = {};
@@ -77,10 +115,9 @@ export default function Dashboard() {
         if (!agrupado[capitulo]) agrupado[capitulo] = new Set();
         agrupado[capitulo].add(topico_id);
       });
-      const resultado = Object.entries(totalTopicosPorCap).map(([cap, total]) => ({
+      setProgresso(Object.entries(totalTopicosPorCap).map(([cap, total]) => ({
         capitulo: Number(cap), total_topicos: total, concluidos: agrupado[Number(cap)]?.size || 0,
-      }));
-      setProgresso(resultado);
+      })));
     }
     setLoading(false);
   };
@@ -96,14 +133,19 @@ export default function Dashboard() {
   const totalTopicos = Object.values(totalTopicosPorCap).reduce((a, b) => a + b, 0);
   const totalConcluidos = progresso.reduce((acc, p) => acc + p.concluidos, 0);
   const progressoGeral = Math.round((totalConcluidos / totalTopicos) * 100);
-  const semanaAtual = perfil?.semana_atual || 1;
-  const xpTotal = perfil?.pontos || 0;
-  const streak = perfil?.streak || 0;
-  const maiorStreak = perfil?.maior_streak || 0;
+  const semanaAtual = cert?.semana_atual || 1;
+  const xpTotal = cert?.pontos || 0;
+  const streak = cert?.streak || 0;
+  const maiorStreak = cert?.maior_streak || 0;
   const nivel = xpTotal < 100 ? "Aprendiz" : xpTotal < 300 ? "Praticante" : xpTotal < 600 ? "Analista" : "Especialista";
   const nivelIcon = xpTotal < 100 ? "🌱" : xpTotal < 300 ? "📖" : xpTotal < 600 ? "🎯" : "🏆";
   const xpProximoNivel = xpTotal < 100 ? 100 : xpTotal < 300 ? 300 : xpTotal < 600 ? 600 : 1000;
   const xpPct = Math.min(100, Math.round((xpTotal / xpProximoNivel) * 100));
+
+  // Dias restantes para a meta
+  const diasRestantes = cert?.data_meta
+    ? Math.max(0, Math.ceil((new Date(cert.data_meta).getTime() - Date.now()) / 86400000))
+    : null;
 
   return (
     <main style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0ede8", fontFamily: "sans-serif" }}>
@@ -112,6 +154,7 @@ export default function Dashboard() {
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <span style={{ fontSize: "1.3rem" }}>🧪</span>
           <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", color: "#e8d5a3" }}>TestPath</span>
+          <span style={{ fontSize: "11px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 8px", borderRadius: "99px" }}>CTFL</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "5px", background: streak > 0 ? "#1a1000" : "#141414", border: `1px solid ${streak > 0 ? "#c9a84c44" : "#2a2a2a"}`, borderRadius: "99px", padding: "5px 12px" }}>
@@ -123,11 +166,9 @@ export default function Dashboard() {
             <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "13px" }}>{xpTotal} XP</span>
           </div>
           <a href="/perfil" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px" }}>
-            {perfil?.foto_url ? (
-              <img src={perfil.foto_url} alt="avatar" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
-            ) : (
-              <span style={{ fontSize: "14px" }}>👤</span>
-            )}
+            {perfil?.foto_url
+              ? <img src={perfil.foto_url} alt="avatar" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
+              : <span style={{ fontSize: "14px" }}>👤</span>}
             <span style={{ color: "#a0998e", fontSize: "12px" }}>{perfil?.nome?.split(" ")[0]}</span>
           </a>
           <button onClick={sair} style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px", color: "#5a5a6a", fontSize: "12px", cursor: "pointer" }}>Sair</button>
@@ -144,9 +185,26 @@ export default function Dashboard() {
           <p style={{ color: "#5a5a6a", fontSize: "13px", margin: 0, fontStyle: "italic" }}>{fraseHoje}</p>
         </div>
 
+        {/* BANNER META — só aparece se tiver data definida */}
+        {cert?.data_meta && diasRestantes !== null && (
+          <div style={{ background: diasRestantes < 14 ? "#1a0e0e" : "#0f0f18", border: `1px solid ${diasRestantes < 14 ? "#5e2e2e" : "#1e1e2e"}`, borderRadius: "14px", padding: "1rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1rem" }}>
+            <span style={{ fontSize: "1.5rem" }}>{diasRestantes < 14 ? "⚠️" : "🎯"}</span>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: "13px", fontWeight: "bold", color: diasRestantes < 14 ? "#c06060" : "#e8d5a3", marginBottom: "2px" }}>
+                {diasRestantes === 0 ? "Sua prova é hoje!" : `${diasRestantes} dias até o exame`}
+              </div>
+              <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
+                Meta: {new Date(cert.data_meta).toLocaleDateString("pt-BR")} · {ritmoLabel[cert.ritmo] || cert.ritmo}
+              </div>
+            </div>
+            <div style={{ fontSize: "1.5rem", fontWeight: "bold", color: diasRestantes < 14 ? "#c06060" : "#c9a84c" }}>
+              {progressoGeral}%
+            </div>
+          </div>
+        )}
+
         {/* STATS */}
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", gap: "10px", marginBottom: "1.5rem" }}>
-          {/* Progresso */}
           <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
             <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>PROGRESSO</div>
             <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "8px" }}>{progressoGeral}%</div>
@@ -156,7 +214,6 @@ export default function Dashboard() {
             <div style={{ fontSize: "11px", color: "#3a3a4a", marginTop: "6px" }}>{totalConcluidos}/{totalTopicos} tópicos</div>
           </div>
 
-          {/* Streak */}
           <div style={{ background: streak > 0 ? "#1a1000" : "#0f0f18", border: `1px solid ${streak > 0 ? "#c9a84c33" : "#1e1e2e"}`, borderRadius: "14px", padding: "1.25rem" }}>
             <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>SEQUÊNCIA</div>
             <div style={{ fontSize: "2rem", fontWeight: "bold", color: streak > 0 ? "#c9a84c" : "#3a3a3a", marginBottom: "4px" }}>🔥 {streak}</div>
@@ -166,7 +223,6 @@ export default function Dashboard() {
             {maiorStreak > 0 && <div style={{ fontSize: "11px", color: "#3a3a3a", marginTop: "4px" }}>Recorde: {maiorStreak} dias</div>}
           </div>
 
-          {/* Nível */}
           <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
             <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>NÍVEL</div>
             <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "6px" }}>{nivelIcon} {nivel}</div>
@@ -176,13 +232,10 @@ export default function Dashboard() {
             <div style={{ fontSize: "11px", color: "#3a3a4a" }}>{xpTotal}/{xpProximoNivel} XP</div>
           </div>
 
-          {/* Semana */}
           <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1.25rem" }}>
             <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "6px", letterSpacing: "0.04em" }}>SEMANA</div>
             <div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{semanaAtual}/8</div>
-            <div style={{ fontSize: "11px", color: "#5a5a6a" }}>
-              {perfil?.objetivo === "4semanas" ? "Intensivo ~2h/dia" : "Equilibrado ~1h/dia"}
-            </div>
+            <div style={{ fontSize: "11px", color: "#5a5a6a" }}>{ritmoLabel[cert?.ritmo || "moderado"]}</div>
           </div>
         </div>
 
@@ -190,8 +243,7 @@ export default function Dashboard() {
         <div onClick={() => window.location.href = "/capitulo/1"}
           style={{ background: "#0f0f18", border: "1px solid #c9a84c44", borderRadius: "14px", padding: "1.25rem 1.5rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1rem", cursor: "pointer", transition: "border-color 0.2s" }}
           onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"}
-        >
+          onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"}>
           <div style={{ width: "48px", height: "48px", borderRadius: "12px", background: "#1a1a0e", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.5rem", flexShrink: 0 }}>▶️</div>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "3px", letterSpacing: "0.04em" }}>CONTINUAR</div>
@@ -228,8 +280,7 @@ export default function Dashboard() {
                   onClick={() => !isBloqueada && (window.location.href = s.rota)}
                   style={{ background: isAtiva ? "#1a1a0e" : "#0f0f18", border: `1px solid ${isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"}`, borderRadius: "12px", padding: "1.1rem 1.25rem", display: "flex", alignItems: "center", gap: "1rem", opacity: isBloqueada ? 0.4 : 1, cursor: isBloqueada ? "not-allowed" : "pointer", transition: "all 0.15s" }}
                   onMouseEnter={e => { if (!isBloqueada) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
-                  onMouseLeave={e => { if (!isBloqueada) (e.currentTarget as HTMLElement).style.borderColor = isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"; }}
-                >
+                  onMouseLeave={e => { if (!isBloqueada) (e.currentTarget as HTMLElement).style.borderColor = isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"; }}>
                   <div style={{ width: "38px", height: "38px", borderRadius: "50%", background: concluida ? "#1e3e1e" : isAtiva ? "#c9a84c22" : "#1a1a2a", border: `2px solid ${concluida ? "#4e7e4e" : isAtiva ? "#c9a84c" : "#2e2e4e"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1rem" }}>
                     {concluida ? "✓" : isAtiva ? "▶" : s.num === 8 ? "🏆" : s.num}
                   </div>
@@ -239,7 +290,7 @@ export default function Dashboard() {
                         Semana {s.num} — {s.titulo}
                       </span>
                       {isAtiva && <span style={{ fontSize: "10px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "1px 6px", borderRadius: "99px" }}>Atual</span>}
-                      {concluida && <span style={{ fontSize: "10px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "1px 6px", borderRadius: "99px" }}>✓ Concluída</span>}
+                      {concluida && <span style={{ fontSize: "10px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "1px 6px", borderRadius: "99px" }}>✓</span>}
                     </div>
                     {s.cap > 0 && !isBloqueada && (
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
@@ -273,15 +324,14 @@ export default function Dashboard() {
               const concluidos = p?.concluidos || 0;
               const total = totalTopicosPorCap[c.num] || 0;
               const pct = total > 0 ? Math.round((concluidos / total) * 100) : 0;
-              const desbloqueado = c.num === 1;
+              const desbloqueado = c.num === 1 || (progresso.find(x => x.capitulo === c.num - 1)?.concluidos === totalTopicosPorCap[c.num - 1]);
 
               return (
                 <div key={c.num}
                   onClick={() => desbloqueado && (window.location.href = c.rota)}
                   style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "12px", padding: "1.25rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
                   onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
-                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1e1e2e"; }}
-                >
+                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1e1e2e"; }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
                     <span style={{ fontSize: "12px", color: "#5a5a6a" }}>Cap. {c.num}</span>
                     <span style={{ fontSize: "11px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
@@ -305,9 +355,7 @@ export default function Dashboard() {
           <span style={{ fontSize: "1.8rem" }}>📋</span>
           <div style={{ flex: 1 }}>
             <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "3px" }}>Agendar o exame CTFL</div>
-            <div style={{ fontSize: "12px", color: "#5a5a6a", lineHeight: 1.5 }}>
-              Aplicado pela BSTQB no Brasil. ~R$ 800. Recomendamos após concluir a Semana 7.
-            </div>
+            <div style={{ fontSize: "12px", color: "#5a5a6a", lineHeight: 1.5 }}>Aplicado pela BSTQB no Brasil. ~R$ 800. Recomendamos após concluir a Semana 7.</div>
           </div>
           <a href="https://bstqb.qa/credito-exame" target="_blank" rel="noopener noreferrer"
             style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "8px 14px", color: "#a0998e", fontSize: "12px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
