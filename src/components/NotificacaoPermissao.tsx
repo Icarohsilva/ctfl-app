@@ -61,6 +61,7 @@ export default function NotificacaoPermissao() {
   };
 
   const registrarSubscription = async () => {
+    console.log("userId ao registrar:", userId);
     if (!userId) return;
 
     const sw = await navigator.serviceWorker.ready;
