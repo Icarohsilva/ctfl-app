@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import CardMetaCTFL from "@/components/CardMetaCTFL";
+import NotificacaoPermissao from "../../components/NotificacaoPermissao";
 
 type Perfil = {
   nome: string;
@@ -131,6 +132,7 @@ export default function Dashboard() {
   if (loading) return (
     <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif" }}>Carregando sua trilha...</div>
+      <NotificacaoPermissao />
     </main>
   );
 
