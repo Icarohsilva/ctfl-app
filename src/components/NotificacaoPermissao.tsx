@@ -12,18 +12,27 @@ export default function NotificacaoPermissao() {
   }, []);
 
   const verificar = async () => {
+    // Verifica suporte
     if (!("Notification" in window) || !("serviceWorker" in navigator)) return;
-    if (Notification.permission === "granted") { setEstado("ativo"); return; }
-    if (Notification.permission === "denied") { setEstado("negado"); return; }
 
+    // Verifica permissão atual
+    if (Notification.permission === "granted") {
+      setEstado("ativo");
+      return;
+    }
+    if (Notification.permission === "denied") {
+      setEstado("negado");
+      return;
+    }
+
+    // Busca usuário logado
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) return;
     setUserId(user.id);
 
-    // Só mostra depois de 30 segundos na primeira visita
+    // Mostra após 3 segundos na primeira visita
     const jaViu = localStorage.getItem("notif_prompt_visto");
     if (!jaViu) {
-      // Mostra após 3 segundos no primeiro acesso
       setTimeout(() => {
         setMostrar(true);
         localStorage.setItem("notif_prompt_visto", "1");
@@ -33,11 +42,17 @@ export default function NotificacaoPermissao() {
 
   const solicitarPermissao = async () => {
     setEstado("solicitando");
+
     const permissao = await Notification.requestPermission();
 
     if (permissao === "granted") {
-      await registrarSubscription();
-      setEstado("ativo");
+      try {
+        await registrarSubscription();
+        setEstado("ativo");
+      } catch (e) {
+        console.error("Erro ao registrar subscription:", e);
+        setEstado("ativo"); // Permissão foi dada mesmo se subscription falhar
+      }
       setMostrar(false);
     } else {
       setEstado("negado");
@@ -47,28 +62,49 @@ export default function NotificacaoPermissao() {
 
   const registrarSubscription = async () => {
     if (!userId) return;
+
     const sw = await navigator.serviceWorker.ready;
+
+    // Busca a chave VAPID via API — mais confiável que process.env no cliente
+    const envData = await fetch("/api/debug-env").then(r => r.json());
+    const vapidPublicKey = envData.vapid_public_full;
+
+    if (!vapidPublicKey) {
+      throw new Error("Chave VAPID não encontrada");
+    }
+
     const subscription = await sw.pushManager.subscribe({
       userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY!) as unknown as BufferSource,
+      applicationServerKey: vapidPublicKey,
     });
 
-    await fetch("/api/push/subscription", {
+    // Salva no banco
+    const res = await fetch("/api/push/subscription", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ subscription, userId }),
     });
+
+    if (!res.ok) throw new Error("Erro ao salvar subscription");
+    console.log("✅ Push subscription salva com sucesso!");
   };
 
   if (!mostrar) return null;
 
   return (
     <div style={{
-      position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)",
-      background: "#0f0f18", border: "1px solid #c9a84c44",
-      borderRadius: "16px", padding: "1.5rem",
+      position: "fixed",
+      bottom: "1.5rem",
+      left: "50%",
+      transform: "translateX(-50%)",
+      background: "#0f0f18",
+      border: "1px solid #c9a84c44",
+      borderRadius: "16px",
+      padding: "1.5rem",
       boxShadow: "0 8px 40px rgba(0,0,0,0.7)",
-      zIndex: 998, maxWidth: "420px", width: "calc(100% - 2rem)",
+      zIndex: 998,
+      maxWidth: "420px",
+      width: "calc(100% - 2rem)",
       animation: "slideUp 0.4s ease",
     }}>
       <style>{`
@@ -79,7 +115,12 @@ export default function NotificacaoPermissao() {
       `}</style>
 
       <div style={{ display: "flex", gap: "14px", alignItems: "flex-start", marginBottom: "1.25rem" }}>
-        <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#1a1a0e", border: "1px solid #c9a84c33", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>
+        <div style={{
+          width: "44px", height: "44px", borderRadius: "12px",
+          background: "#1a1a0e", border: "1px solid #c9a84c33",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          fontSize: "1.4rem", flexShrink: 0,
+        }}>
           🔔
         </div>
         <div>
@@ -107,12 +148,24 @@ export default function NotificacaoPermissao() {
       </div>
 
       <div style={{ display: "flex", gap: "8px" }}>
-        <button onClick={() => setMostrar(false)}
-          style={{ flex: 1, background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "10px", color: "#5a5a6a", fontSize: "13px", cursor: "pointer" }}>
+        <button
+          onClick={() => setMostrar(false)}
+          style={{
+            flex: 1, background: "transparent", border: "1px solid #2e2e3e",
+            borderRadius: "8px", padding: "10px", color: "#5a5a6a",
+            fontSize: "13px", cursor: "pointer",
+          }}>
           Agora não
         </button>
-        <button onClick={solicitarPermissao} disabled={estado === "solicitando"}
-          style={{ flex: 2, background: "#c9a84c", border: "none", borderRadius: "8px", padding: "10px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: "pointer" }}>
+        <button
+          onClick={solicitarPermissao}
+          disabled={estado === "solicitando"}
+          style={{
+            flex: 2, background: "#c9a84c", border: "none",
+            borderRadius: "8px", padding: "10px", color: "#0a0a0f",
+            fontSize: "14px", fontWeight: "bold", cursor: estado === "solicitando" ? "not-allowed" : "pointer",
+            opacity: estado === "solicitando" ? 0.7 : 1,
+          }}>
           {estado === "solicitando" ? "Ativando..." : "Ativar lembretes 🔔"}
         </button>
       </div>
@@ -122,17 +175,4 @@ export default function NotificacaoPermissao() {
       </p>
     </div>
   );
-}
-
-function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding)
-    .replace(/-/g, "+")
-    .replace(/_/g, "/");
-  const rawData = atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
-  for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
-  }
-  return outputArray;
 }
