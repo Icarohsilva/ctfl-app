@@ -40,19 +40,20 @@ export default function Cadastro() {
     if (!form.nivel) return setErro("Selecione seu nível.");
     setLoading(true);
     setErro("");
-  
+
     try {
       const { data, error: authError } = await supabase.auth.signUp({
         email: form.email,
         password: form.senha,
         options: {
+          emailRedirectTo: "https://www.testpath.online/confirmar-email",
           data: {
             nome: form.nome,
             nivel: form.nivel,
           }
         }
       });
-    
+
       if (authError) {
         if (authError.message.includes("already registered") || authError.message.includes("User already registered")) {
           setErro("Este e-mail já está cadastrado. Tente fazer login.");
@@ -61,12 +62,12 @@ export default function Cadastro() {
         }
         return;
       }
-    
+
       if (!data.user) {
         setErro("Erro ao criar usuário. Tente novamente.");
         return;
       }
-    
+
       setPasso(3);
     } catch (e: unknown) {
       if (e instanceof Error) setErro(e.message);
