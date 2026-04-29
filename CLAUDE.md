@@ -1,130 +1,77 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 @AGENTS.md
 
+## What this is
 
-```markdown
-# Researcher Expert
+**TestPath** (`ctfl-app`) — Next.js 16 PWA in pt-BR for QA certification prep, starting with **CTFL v4.0 (ISTQB)**. Live at `testpath.online`. Trilhas, simulados gerados por IA, fila de revisão adaptativa, push + e-mail personalizados.
 
-This repo's Claude is a **research expert**. Act as a rigorous researcher: gather evidence from primary sources, cross-check claims, cite URLs, distinguish fact from inference, and surface uncertainty explicitly.
+## Commands
 
-## Role
-- Deep research, literature review, source triangulation, synthesis.
-- Prefer primary sources (papers, docs, official data) over secondary summaries.
-- Always cite sources inline with URLs when making factual claims.
-- Flag conflicting evidence and confidence levels.
-- Structure findings: claim → evidence → source → confidence.
-
-## Tools
-- Use WebSearch + WebFetch aggressively for up-to-date information.
-- Use Agent (Explore) for multi-source parallel research.
-
-## Permissions
-All permissions are bypassed in `.claude/settings.local.json` — operate autonomously without confirmation prompts.
-
----
-
-# LLM Wiki
-
-This repo has an LLM Wiki layered on top of it, following [Andrej Karpathy's pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f). The human curates `raw/` and asks questions. The agent owns everything in `wiki/` and never touches `raw/`.
-
-## Trigger phrases
-
-The agent watches for natural-language triggers and maps them onto the three workflows defined below. There is no strict command syntax — any of the following (and obvious variants) count as an **ingest** request: "ingest this", "ingest raw/<file>", "add this to the wiki", "update the wiki from <file>", "read the new file in raw/". **Query** triggers: "query <question>", "what does the wiki say about <x>", "ask the wiki <x>". **Lint** triggers: "lint the wiki", "sweep the wiki", "check for orphans".
-
-How the system works in one paragraph: this repo has an LLM Wiki layered on top of it. The human drops source material (PDFs, articles, transcripts, screenshots) into `raw/` — that's the only human-curated directory. The agent then reads the source, writes a summary page into `wiki/sources/`, touches 10–15 related concept and entity pages with `[[backlinks]]`, updates `wiki/index.md`, and appends to `wiki/log.md`. Over time this compounds into a navigable second brain with a live graph view in Obsidian. The agent never edits `raw/` and the human never edits `wiki/` by hand.
-
-How to ingest: (1) drop a file into `raw/`, (2) tell the agent "ingest this" (or "ingest raw/<filename>" if multiple files are pending), (3) the agent runs the ingest workflow defined below. That's it.
-
-## Directory layout
-
+```bash
+npm run dev      # next dev (Turbopack)
+npm run build    # next build
+npm run start    # next start
+npm run lint     # eslint (flat config, eslint-config-next)
+node scripts/gerar-og.mjs       # regenerate public/og-image.svg
+node scripts/converter-og.mjs   # convert SVG → og-image.png (uses sharp)
 ```
 
-raw/            # immutable human-curated sources (PDFs, articles, transcripts, images). Agent NEVER writes here.
-  attachments/  # images pasted from Obsidian
-wiki/           # agent-maintained knowledge graph. Human NEVER hand-edits here.
-  index.md      # categorized catalog of every page
-  log.md        # append-only chronological record
-  concepts/     # ideas, techniques, frameworks
-  entities/     # people, orgs, projects, products
-  sources/      # one page per ingested raw/ document
-  questions/    # open threads, contradictions, unresolved asks
-.obsidian/      # vault config (checked in — graph, hotkeys, templates all preset)
+No test runner is configured. Path alias `@/*` → `./src/*`.
 
-```
+## Stack notes
 
-## Page schema (YAML frontmatter)
+- **Next 16.2.4 + React 19.2.4** — App Router only. AGENTS.md mandates reading `node_modules/next/dist/docs/` before writing Next.js code (APIs differ from training data).
+- **Tailwind v4** via `@tailwindcss/postcss`. Most pages also use heavy inline styles (dark theme: `#0a0a0f` bg, `#c9a84c` gold accent) — match that pattern when editing existing pages.
+- **TypeScript strict**.
+- The `<head>` in `src/app/layout.tsx` ships **critical CSS for the responsive nav** inline via `dangerouslySetInnerHTML`. Don't move those nav classes (`.nav-link`, `.nav-mobile`, `.nav-desktop`, `.nav-mobile-only`) into globals.css without testing — they were inlined to fix a responsive flash regression.
 
-Every page in `wiki/` starts with frontmatter. Required fields:
+## Architecture
 
-```yaml
----
-type: concept | entity | source | question
-title: "Human-readable title"
-aliases: []              # alternate names for quick-switcher
-date_created: YYYY-MM-DD
-date_updated: YYYY-MM-DD
-source_count: 0          # how many sources cite this page
-tags: []                 # lowercase, kebab-case
-status: stub | draft | stable
----
-```
+### Two LLM paths — they are not interchangeable
 
-Source pages also carry: `source_file` (path under `raw/`), `source_url`, `author`, `date_published`, `date_ingested`.
+1. **Production routes use Groq (`llama-3.3-70b-versatile`)** — see `src/app/api/simulado/route.ts`, `src/app/api/simulado-final/route.ts`, `src/app/api/push/notificar/route.ts`. Fast and cheap; what users actually hit.
+2. **`src/lib/ia-conteudo.ts` and `src/lib/ia-simulado.ts`** call the Anthropic API directly with a stale model ID (`claude-sonnet-4-20250514`). These are **not wired into the live API routes** — `/api/conteudo/route.ts` returns canned content from `src/data/conteudo-topicos.ts` instead. Treat the `lib/ia-*.ts` files as legacy/reference unless you're explicitly bringing them online; if you do, update the model ID.
 
-## Naming rules
+### Data flow — simulados
 
-- **kebab-case, no spaces.** `transformer-attention.md`, not `Transformer Attention.md`.
-- **Singular nouns.** `concept`, not `concepts`. `person`, not `people`.
-- **No dates in filenames** unless the thing is inherently dated (an event, a release). Dates live in frontmatter.
-- **Links use `[[wikilink]]` form, not Markdown links.** Obsidian is configured with `useMarkdownLinks: false`.
-- **One concept per page.** If a page sprawls, split it and backlink.
+- `src/app/api/simulado` POST: looks up questions in the Supabase `banco_questoes` table by `topico_id` + `dificuldade`, ordered by `vezes_usada` ASC. If short, generates with Groq and inserts. Distribution per `nivel`: iniciante 2/1/1/0, basico 1/2/1/0, intermediario 1/1/1/1 (facil/medio/dificil/muito_dificil).
+- `modo === "revisao"`: pulls from `fila_revisao` joined with `banco_questoes`, only `resolvida=false`, ordered by `tentativas` DESC.
+- PATCH manages `fila_revisao`: on acerto, marks resolvida + kicks off background generation of a replacement; on erro, upserts/increments tentativas.
+- Three Supabase **RPCs** are called and tolerated to fail silently (`try { … } catch {}`): `incrementar_uso_questoes`, `incrementar_acerto_questao`, `incrementar_erro_questao`.
 
-## Workflow 1 — Ingest
+### Supabase tables (canonical names — pt-BR)
 
-Triggered by phrases like "ingest this", "ingest raw/`<file>`", "add this to the wiki".
+`usuario_certificacoes`, `profiles`, `preferencias_notificacao`, `push_subscriptions`, `banco_questoes`, `fila_revisao`. Auth uses `supabase.auth` (email + password, with confirmation flow under `/confirmar-email`, `/esqueci-senha`, `/redefinir-senha`).
 
-1. **Identify the target.** If the user said "ingest this" and exactly one new file sits in `raw/`, use it. If multiple, ask which. Never guess.
-2. **Read the source in full.** PDFs, transcripts, articles — read completely, don't skim. For long sources, take notes as you go.
-3. **Create `wiki/sources/<kebab-title>.md`** from the `.obsidian/templates/ingest-source.md` template. Fill in TL;DR, key claims (each with evidence), entities, concepts, open questions, and raw quotes worth preserving.
-4. **Touch 10–15 related wiki pages.** For every entity and concept the source introduces or discusses:
-   - If a page exists, add a line under its "Key sources" section with `[[wiki/sources/<new-source>]]` and weave new claims into the body where relevant. Bump `date_updated` and `source_count` in frontmatter.
-   - If no page exists and the thing is central to the source, create a stub from `.obsidian/templates/concept-page.md` (or an entity equivalent).
-   - Add `[[backlinks]]` both ways — the source page should link to each concept/entity, and each concept/entity should link back.
-5. **Update `wiki/index.md`.** Add the new source and any new concept/entity pages under the right category with a one-line hook.
-6. **Append to `wiki/log.md`.** Format: `## [YYYY-MM-DD] ingest | Title` followed by source link, touched pages, and a one-line notes summary.
-7. **Report.** Tell the user what was created, what was updated, and any contradictions or open questions the source raised against the existing wiki.
+Two Supabase clients exist:
+- `src/lib/supabase.ts` — anon key, client-side imports via `@/lib/supabase`.
+- API routes that need privileged access (push subscription writes, auth.admin.getUserById in notifier) instantiate inline with `SUPABASE_SERVICE_ROLE_KEY`. Use that pattern for any admin work; don't expose the service role to the browser.
 
-## Workflow 2 — Query
+### PWA + push notifications
 
-Triggered by "query `<question>`", "what does the wiki say about `<x>`", "ask the wiki `<x>`".
+- Service worker at `public/sw.js` (registered by `src/components/PWAInstaller.tsx`). Network-first for documents, cache-first for assets, `/offline` fallback. APIs and Supabase/Groq/Google domains are bypassed.
+- `manifest.json` and icons live under `public/`.
+- Push uses **web-push + VAPID**. Subscriptions land in `push_subscriptions` keyed on `(user_id, endpoint)`.
+- `/api/push/notificar` is a **cron-only endpoint**. It checks `x-cron-token` header against `CRON_SECRET`. It iterates users who didn't study today, computes a context (`prova_hoje`, `ausencia_3dias`, `streak_risco`, etc.), generates push + email copy with Groq, sends push via web-push, sends email via **Resend** (HTML template embedded in the route). 410/404 responses from web-push deactivate the subscription. Silence rules: 4 dias sem estudar → 7 dias de silêncio total → depois lembrete semanal.
 
-1. **Search the wiki.** Use Grep across `wiki/` — match tags, titles, and body. Cast a wide net; the point is to find relevant neighbors, not just exact matches.
-2. **Synthesize with citations.** Answer the question, citing every claim with `[[wikilinks]]` to the pages it came from. Distinguish confident findings from inferred ones and flag any contradictions.
-3. **Promote valuable answers.** If the answer is non-trivial and likely to be re-asked, file it as a new page in `wiki/questions/` (or a stable page in `wiki/concepts/` if it crystallized into a durable idea). Backlink the sources. Add to `index.md`.
-4. **Never invent citations.** If the wiki doesn't cover something, say so — don't paper over gaps with external knowledge without marking it clearly as `[external]`.
+### Conteúdo CTFL
 
-## Workflow 3 — Lint
+- `src/data/mapa-capitulos.ts` — 6 capítulos × tópicos com metadados (xp, peso, semana).
+- `src/data/conteudo-topicos.ts` — narrativas + cards canned por tópico (servido por `/api/conteudo`).
+- `src/data/capitulo1.ts` — conteúdo expandido do cap. 1.
+- O **`mapaTopicos` está duplicado** entre `src/lib/ia-conteudo.ts` e `src/app/api/simulado/route.ts` (com pequenas diferenças). Se editar conceitos, atualize ambos para evitar drift.
 
-Triggered by "lint the wiki", "sweep the wiki", "check for orphans".
+## Routing map (pt-BR slugs)
 
-Sweep for:
+`/` (landing) · `/login` · `/cadastro` · `/confirmar-email` · `/esqueci-senha` · `/redefinir-senha` · `/dashboard` · `/inicio/ctfl` · `/aprender` · `/capitulo/[1-6]` · `/capitulo/[1-6]/topico/[id]` · `/simulado-final` · `/perfil` · `/cancelar-notificacoes` · `/offline`.
 
-- **Orphan pages** — pages with zero inbound `[[backlinks]]`. Either link them up or delete.
-- **Broken links** — `[[wikilinks]]` pointing to pages that don't exist. Create stubs or fix typos.
-- **Contradictions** — two pages making incompatible claims. Flag in a new `wiki/questions/` page.
-- **Stale claims** — pages whose `date_updated` is old and whose cited sources have been superseded.
-- **Missing backlinks** — source page mentions entity X but entity X's page doesn't cite the source.
-- **Frontmatter drift** — missing required fields, wrong `type`, mismatched `source_count`.
-- **Index/log drift** — pages that exist on disk but aren't in `index.md`, or ingests that never made it to `log.md`.
+## Required env vars (`.env.local`)
 
-Report findings as a prioritized list. Don't auto-fix destructively — propose changes, then act after the user confirms substantive ones (trivial fixes like adding a missing backlink are fine to do directly).
+`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`, `SUPABASE_SERVICE_ROLE_KEY`, `GROQ_API_KEY`, `ANTHROPIC_API_KEY` (only if using `lib/ia-*.ts`), `GOOGLE_AI_API_KEY` (declared, not currently called in routes), `NEXT_PUBLIC_VAPID_PUBLIC_KEY`, `VAPID_PRIVATE_KEY`, `VAPID_EMAIL`, `RESEND_API_KEY`, `CRON_SECRET`, `NEXT_PUBLIC_SITE_URL`.
 
-## Invariants
+## Working language
 
-- **Agent never edits `raw/`.** Not even to fix typos. If a source is wrong, the correction goes in the wiki with a `[[backlink]]`.
-- **Human never hand-edits `wiki/`.** If the human wants to change wiki content, they ask the agent.
-- **Every claim cites a source.** `[[wiki/sources/<page>]]` or `[external]` with a URL.
-- **Every new page gets indexed and logged.** No exceptions.
-
-```
-
-```
+UI strings, comments, table/column names, slugs, and AI prompts are all in **Portuguese (pt-BR)**. Match that when adding new content/routes/columns.
