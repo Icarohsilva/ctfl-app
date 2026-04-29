@@ -1,47 +1,40 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
-
 export async function POST(req: NextRequest) {
-  const { subscription, userId, horario } = await req.json();
-  if (!subscription || !userId) return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+  try {
+    const { subscription, userId } = await req.json();
+    console.log("Recebido:", { userId, temSubscription: !!subscription });
 
-  // Salva subscription
-  await supabase.from("push_subscriptions").upsert({
-    user_id: userId,
-    subscription,
-    ativo: true,
-  });
+    if (!subscription || !userId) {
+      return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
+    }
 
-  // Cria preferências se não existir
-  const { data: existing } = await supabase
-    .from("preferencias_notificacao")
-    .select("id")
-    .eq("user_id", userId)
-    .single();
+    const supabase = createClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.SUPABASE_SERVICE_ROLE_KEY! // usa service role para bypass RLS
+    );
 
-  if (!existing) {
-    await supabase.from("preferencias_notificacao").insert({
+    const { data, error } = await supabase
+      .from("push_subscriptions")
+      .upsert({ user_id: userId, subscription, ativo: true })
+      .select();
+
+    console.log("Resultado insert:", { data, error });
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    // Cria preferências se não existir
+    await supabase.from("preferencias_notificacao").upsert({
       user_id: userId,
       push_ativo: true,
       email_ativo: true,
-      horario_preferido: horario || "20:00",
-    });
+      horario_preferido: "20:00",
+    }, { onConflict: "user_id", ignoreDuplicates: true });
+
+    return NextResponse.json({ ok: true });
+  } catch (e) {
+    console.error("Erro:", e);
+    return NextResponse.json({ error: "Erro interno" }, { status: 500 });
   }
-
-  return NextResponse.json({ ok: true });
-}
-
-export async function DELETE(req: NextRequest) {
-  const { userId } = await req.json();
-  if (!userId) return NextResponse.json({ error: "Dados inválidos" }, { status: 400 });
-
-  await supabase.from("push_subscriptions").update({ ativo: false }).eq("user_id", userId);
-  await supabase.from("preferencias_notificacao").update({ push_ativo: false }).eq("user_id", userId);
-
-  return NextResponse.json({ ok: true });
 }
