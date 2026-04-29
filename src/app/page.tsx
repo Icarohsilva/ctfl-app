@@ -42,48 +42,29 @@ export default function Home() {
     <main style={{ fontFamily: "sans-serif", background: "#0a0a0f", color: "#f0ede8", minHeight: "100vh", overflowX: "hidden" }}>
 
       {/* NAV */}
-      <nav style={{ 
-        display: "flex", 
-        justifyContent: "space-between", 
-        alignItems: "center", 
-        padding: "1rem 2rem", 
-        borderBottom: "1px solid #1e1e2e", 
-        position: "sticky", 
-        top: 0, 
-        background: "rgba(10,10,15,0.96)", 
-        backdropFilter: "blur(12px)", 
-        zIndex: 100 
-      }}>
-        {/* Logo e Nome */}
+      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 2rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.96)", backdropFilter: "blur(12px)", zIndex: 100 }}>
+        
+        {/* Logo */}
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "26px", height: "26px" }} />
           <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.15rem", color: "#e8d5a3" }}>TestPath</span>
         </div>
-      
-        {/* Botões de Ação */}
-        <div className="nav-mobile" style={{ 
-          display: "flex",     // Garante que o gap funcione
-          alignItems: "center", 
-          gap: "16px"          // Aumentado para melhor visualização
-        }}>
-          <a href="/login" style={{ 
-            color: "#a0998e", 
-            textDecoration: "none", 
-            fontSize: "13px",
-            transition: "color 0.2s" 
-          }}>
-            Entrar
+        
+        {/* Links desktop */}
+        <div className="nav-links">
+          <a href="#certificacoes" className="nav-link">Certificações</a>
+          <a href="#recursos" className="nav-link">Recursos</a>
+          <a href="#como-funciona" className="nav-link">Como funciona</a>
+          <a href="/login" className="nav-link">Entrar</a>
+          <a href="/cadastro" style={{ background: "#c9a84c", color: "#0a0a0f", padding: "8px 18px", borderRadius: "8px", fontWeight: "bold", fontSize: "14px", textDecoration: "none" }}>
+            Começar grátis
           </a>
-          <a href="/cadastro" style={{ 
-            background: "#c9a84c", 
-            color: "#0a0a0f", 
-            padding: "8px 16px", 
-            borderRadius: "8px", 
-            fontWeight: "bold", 
-            fontSize: "13px", 
-            textDecoration: "none",
-            transition: "opacity 0.2s"
-          }}>
+        </div>
+        
+        {/* Botões mobile */}
+        <div className="nav-mobile">
+          <a href="/login" style={{ color: "#a0998e", textDecoration: "none", fontSize: "13px" }}>Entrar</a>
+          <a href="/cadastro" style={{ background: "#c9a84c", color: "#0a0a0f", padding: "7px 14px", borderRadius: "8px", fontWeight: "bold", fontSize: "13px", textDecoration: "none" }}>
             Começar grátis
           </a>
         </div>

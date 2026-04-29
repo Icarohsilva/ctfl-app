@@ -54,6 +54,11 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "TestPath",
   },
+};
+
+import type { Viewport } from "next";
+
+export const viewport: Viewport = {
   themeColor: "#c9a84c",
 };
 
@@ -70,7 +75,18 @@ export default function RootLayout({
       <head>
         {/* CSS crítico do nav — garante que o responsive funcione antes do globals.css */}
         <style dangerouslySetInnerHTML={{ __html: `
-          .nav-links { display: flex; gap: 1.5rem; align-items: center; }
+          .nav-link {
+            color: #7a7a8a;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 6px 12px;
+            border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+          }
+          .nav-link:hover {
+            background: #c9a84c22;
+            color: #c9a84c;
+          }
           .nav-mobile { display: none; }
           .nav-desktop { display: flex; gap: 10px; align-items: center; }
           .nav-mobile-only { display: none; }
