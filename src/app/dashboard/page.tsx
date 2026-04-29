@@ -11,6 +11,7 @@ type Perfil = {
   streak: number;
   ultimo_estudo: string | null;
   maior_streak: number;
+  foto_url: string | null;
 };
 
 type ProgressoCapitulo = {
@@ -121,6 +122,14 @@ export default function Dashboard() {
             <span>⭐</span>
             <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "13px" }}>{xpTotal} XP</span>
           </div>
+          <a href="/perfil" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px" }}>
+            {perfil?.foto_url ? (
+              <img src={perfil.foto_url} alt="avatar" style={{ width: "24px", height: "24px", borderRadius: "50%", objectFit: "cover" }} />
+            ) : (
+              <span style={{ fontSize: "14px" }}>👤</span>
+            )}
+            <span style={{ color: "#a0998e", fontSize: "12px" }}>{perfil?.nome?.split(" ")[0]}</span>
+          </a>
           <button onClick={sair} style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px", color: "#5a5a6a", fontSize: "12px", cursor: "pointer" }}>Sair</button>
         </div>
       </nav>
