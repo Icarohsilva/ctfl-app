@@ -9,13 +9,13 @@ export async function GET(
   { params }: { params: Promise<{ n: string }> }
 ) {
   const { n } = await params;
-  const numCap = parseInt(n);
+  const numCap = parseInt(n, 10);
   const cap = mapaCaptulos[numCap];
   if (!cap) return new Response("Not found", { status: 404 });
 
   const { searchParams } = request.nextUrl;
   const xp = searchParams.get("xp") || "0";
-  const streak = parseInt(searchParams.get("streak") || "0");
+  const streak = parseInt(searchParams.get("streak") || "0", 10);
   const totalCaps = Object.keys(mapaCaptulos).length;
   const progressoPct = Math.round((numCap / totalCaps) * 100);
 
@@ -77,6 +77,13 @@ export async function GET(
         </div>
       </div>
     ),
-    { width: 1200, height: 630 }
+    {
+      width: 1200,
+      height: 630,
+      emoji: "twemoji",
+      headers: {
+        "Cache-Control": "public, max-age=3600, stale-while-revalidate=86400",
+      },
+    }
   );
 }
