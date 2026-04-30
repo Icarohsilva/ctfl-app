@@ -78,6 +78,9 @@ export default function TopicoGenerico({
   const [acertos, setAcertos] = useState(0);
   const [msgCarregando, setMsgCarregando] = useState("Preparando conteúdo...");
   const [temRevisao, setTemRevisao] = useState(0);
+  const [xpAtual, setXpAtual] = useState(0);
+  const [capituloCompleto, setCapituloCompleto] = useState(false);
+  const [certStreak, setCertStreak] = useState(0);
 
   useEffect(() => { inicializar(); }, [id]);
 
@@ -88,6 +91,14 @@ export default function TopicoGenerico({
 
     const { data: perfilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
     if (perfilData) setPerfil(perfilData);
+
+    const { data: ucData } = await supabase
+      .from("usuario_certificacoes")
+      .select("pontos")
+      .eq("user_id", user.id)
+      .eq("certificacao_id", "ctfl")
+      .single();
+    if (ucData) setXpAtual(ucData.pontos || 0);
 
     setMsgCarregando("Carregando conteúdo...");
     if (conteudoFixo) {
@@ -171,11 +182,26 @@ export default function TopicoGenerico({
   const salvarResultado = async (todasRespostas: number[]) => {
     if (!userId || questoes.length === 0) return;
     const stats = calcularEstatisticas(questoes, todasRespostas);
+    const foiAprovado = stats.pct >= 65;
+
+    // Preserva concluído anterior se o usuário já tinha aprovado
+    const { data: existente } = await supabase
+      .from("progresso_topicos")
+      .select("concluido")
+      .eq("user_id", userId)
+      .eq("topico_id", id)
+      .maybeSingle();
 
     await supabase.from("progresso_topicos").upsert({
-      user_id: userId, capitulo: numeroCapitulo, topico_id: id,
-      acertos: stats.acertos, total: stats.total, xp_ganho: stats.xpGanho,
-      concluido: true, atualizado_em: new Date().toISOString(),
+      user_id: userId,
+      capitulo: numeroCapitulo,
+      topico_id: id,
+      certificacao_id: "ctfl",
+      acertos: stats.acertos,
+      total: stats.total,
+      xp_ganho: stats.xpGanho,
+      concluido: foiAprovado || existente?.concluido === true,
+      atualizado_em: new Date().toISOString(),
     });
 
     const registros = stats.resultado.map(r => ({
@@ -186,16 +212,53 @@ export default function TopicoGenerico({
       await supabase.from("historico_conceitos").insert(registros);
     }
 
-    const { data: pa } = await supabase.from("profiles").select("pontos, streak, maior_streak").eq("id", userId).single();
-    if (pa) {
+    const { data: uc } = await supabase
+      .from("usuario_certificacoes")
+      .select("pontos, streak, maior_streak, ultimo_estudo, semana_atual")
+      .eq("user_id", userId)
+      .eq("certificacao_id", "ctfl")
+      .single();
+
+    if (uc) {
       const hoje = new Date().toISOString().split("T")[0];
-      const novoStreak = (pa.streak || 0) + 1;
-      await supabase.from("profiles").update({
-        pontos: (pa.pontos || 0) + stats.xpGanho,
+      const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+      let novoStreak = uc.streak || 0;
+      if (uc.ultimo_estudo !== hoje) {
+        novoStreak = uc.ultimo_estudo === ontem ? novoStreak + 1 : 1;
+      }
+
+      const novoPontos = (uc.pontos || 0) + stats.xpGanho;
+      const updates: Record<string, unknown> = {
+        pontos: novoPontos,
         streak: novoStreak,
-        maior_streak: Math.max(novoStreak, pa.maior_streak || 0),
+        maior_streak: Math.max(novoStreak, uc.maior_streak || 0),
         ultimo_estudo: hoje,
-      }).eq("id", userId);
+      };
+
+      if (foiAprovado) {
+        const totalDoCapitulo = capitulo?.topicos.length || 0;
+        const { count } = await supabase
+          .from("progresso_topicos")
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("certificacao_id", "ctfl")
+          .eq("capitulo", numeroCapitulo)
+          .eq("concluido", true);
+
+        if ((count || 0) >= totalDoCapitulo && (uc.semana_atual || 1) <= numeroCapitulo) {
+          updates.semana_atual = numeroCapitulo + 1;
+          setCertStreak(novoStreak);
+          setCapituloCompleto(true);
+        }
+      }
+
+      await supabase
+        .from("usuario_certificacoes")
+        .update(updates)
+        .eq("user_id", userId)
+        .eq("certificacao_id", "ctfl");
+
+      setXpAtual(novoPontos);
     }
   };
 
@@ -217,7 +280,7 @@ export default function TopicoGenerico({
         <a href={`/capitulo/${numeroCapitulo}`} style={{ color: "#6b7280", fontSize: "13px", textDecoration: "none" }}>
           ← Cap. {numeroCapitulo}
         </a>
-        {perfil && <span style={{ fontSize: "12px", color: "#6b7280" }}>{perfil.nome?.split(" ")[0]} · ⭐ {perfil.pontos} XP</span>}
+        {perfil && <span style={{ fontSize: "12px", color: "#6b7280" }}>{perfil.nome?.split(" ")[0]} · ⭐ {xpAtual} XP</span>}
       </div>
       <div style={{ background: "#1f2937", borderRadius: "99px", height: "5px", marginBottom: "1rem" }}>
         <div style={{ background: `linear-gradient(90deg, ${cor}, #9ca3af)`, width: `${progressoPct}%`, height: "5px", borderRadius: "99px", transition: "width 0.5s ease" }} />
