@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import { mapaCaptulos } from "@/data/mapa-capitulos";
 
 type Props = {
@@ -6,13 +7,23 @@ type Props = {
   searchParams: Promise<{ xp?: string; streak?: string }>;
 };
 
-export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+async function resolveConquistaData(
+  params: Promise<{ n: string }>,
+  searchParams: Promise<{ xp?: string; streak?: string }>
+) {
   const { n } = await params;
   const { xp = "0", streak = "0" } = await searchParams;
+  const numCap = parseInt(n, 10);
+  const cap = mapaCaptulos[numCap];
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://testpath.online";
-  const cap = mapaCaptulos[parseInt(n, 10)];
-  const titulo = cap ? `Concluí o Cap. ${n} — ${cap.titulo}` : `Capítulo ${n} concluído`;
   const ogImage = `${siteUrl}/api/og/capitulo/${n}?xp=${xp}&streak=${streak}`;
+  return { n, xp, streak, numCap, cap, ogImage };
+}
+
+export async function generateMetadata({ params, searchParams }: Props): Promise<Metadata> {
+  const { n, xp, numCap, cap, ogImage } = await resolveConquistaData(params, searchParams);
+  if (!Number.isInteger(numCap) || !cap) notFound();
+  const titulo = `Concluí o Cap. ${n} — ${cap.titulo}`;
 
   return {
     title: `${titulo} | TestPath`,
@@ -33,11 +44,8 @@ export async function generateMetadata({ params, searchParams }: Props): Promise
 }
 
 export default async function ConquistaPage({ params, searchParams }: Props) {
-  const { n } = await params;
-  const { xp = "0", streak = "0" } = await searchParams;
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://testpath.online";
-  const cap = mapaCaptulos[parseInt(n, 10)];
-  const ogImage = `${siteUrl}/api/og/capitulo/${n}?xp=${xp}&streak=${streak}`;
+  const { n, xp, numCap, cap, ogImage } = await resolveConquistaData(params, searchParams);
+  if (!Number.isInteger(numCap) || !cap) notFound();
 
   return (
     <main
@@ -59,12 +67,10 @@ export default async function ConquistaPage({ params, searchParams }: Props) {
       <h1 style={{ fontFamily: "Georgia, serif", fontWeight: "normal", fontSize: "2rem", color: "#e5e7eb", margin: 0 }}>
         Capítulo {n} concluído!
       </h1>
-      {cap && (
-        <p style={{ color: "#9ca3af", margin: 0, fontSize: "16px" }}>{cap.titulo}</p>
-      )}
+      <p style={{ color: "#9ca3af", margin: 0, fontSize: "16px" }}>{cap.titulo}</p>
       <img
         src={ogImage}
-        alt="Card de conquista"
+        alt={`Card de conquista: Capítulo ${n} — ${cap.titulo}, ${xp} XP`}
         style={{ width: "100%", maxWidth: "560px", borderRadius: "12px", border: "1px solid #1f2937" }}
       />
       <a

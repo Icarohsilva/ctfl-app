@@ -509,8 +509,59 @@ export default function TopicoGenerico({
   const idxAtual = capitulo.topicos.findIndex(t => t.id === id);
   const proximoTopico = capitulo.topicos[idxAtual + 1];
 
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://testpath.online";
+
   return (
-    <main style={s.main}><div style={s.inner}>
+    <main style={s.main}>
+      {capituloCompleto && (
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.88)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 9999, padding: "1rem" }}>
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "2rem", maxWidth: "600px", width: "100%", textAlign: "center" }}>
+            <h2 style={{ color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", fontSize: "1.5rem", marginBottom: "0.5rem" }}>
+              🏆 Capítulo {numeroCapitulo} concluído!
+            </h2>
+            <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.5rem" }}>
+              Compartilhe sua conquista no LinkedIn
+            </p>
+            <img
+              src={`/api/og/capitulo/${numeroCapitulo}?xp=${xpAtual}&streak=${certStreak}`}
+              alt={`Card de conquista do Capítulo ${numeroCapitulo}`}
+              style={{ width: "100%", borderRadius: "8px", border: "1px solid #1f2937", marginBottom: "1.5rem" }}
+            />
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button
+                onClick={() => {
+                  const url = `${siteUrl}/conquista/capitulo/${numeroCapitulo}?xp=${xpAtual}&streak=${certStreak}`;
+                  window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank");
+                }}
+                style={{ background: "#0077b5", border: "none", borderRadius: "10px", padding: "13px 28px", color: "#fff", fontSize: "15px", fontWeight: "bold", cursor: "pointer" }}
+              >
+                Compartilhar no LinkedIn
+              </button>
+              <button
+                onClick={async () => {
+                  const res = await fetch(`/api/og/capitulo/${numeroCapitulo}?xp=${xpAtual}&streak=${certStreak}`);
+                  const blob = await res.blob();
+                  const link = document.createElement("a");
+                  link.href = URL.createObjectURL(blob);
+                  link.download = `testpath-capitulo-${numeroCapitulo}.png`;
+                  link.click();
+                  URL.revokeObjectURL(link.href);
+                }}
+                style={{ background: "transparent", border: "1px solid #374151", borderRadius: "10px", padding: "11px 28px", color: "#9ca3af", fontSize: "14px", cursor: "pointer" }}
+              >
+                Baixar imagem
+              </button>
+              <button
+                onClick={() => setCapituloCompleto(false)}
+                style={{ background: "transparent", border: "none", padding: "8px", color: "#6b7280", fontSize: "14px", cursor: "pointer" }}
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    <div style={s.inner}>
       <div style={{ textAlign: "center", padding: "2rem 0" }}>
         <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>{aprovado ? "🏆" : "💪"}</div>
         <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", marginBottom: "0.5rem" }}>
@@ -548,6 +599,7 @@ export default function TopicoGenerico({
           </button>
         )}
       </div>
-    </div></main>
+    </div>
+    </main>
   );
 }
