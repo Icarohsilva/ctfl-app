@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import CardMetaCTFL from "@/components/CardMetaCTFL";
 import NotificacaoPermissao from "../../components/NotificacaoPermissao";
+import AdBanner from "@/components/AdBanner";
 
 type Perfil = {
   nome: string;
@@ -319,6 +320,8 @@ export default function Dashboard() {
         {cert && userId && (
           <CardMetaCTFL cert={cert} userId={userId} progressoGeral={progressoGeral} onAtualizar={carregarDados} />
         )}
+
+        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HORIZONTAL || ""} format="horizontal" style={{ marginBottom: "1.25rem" }} />
 
         {/* ABAS */}
         <div style={{ display: "flex", gap: "4px", marginBottom: "1rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "10px", padding: "4px" }}>

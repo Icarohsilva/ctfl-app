@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/lib/supabase";
+import AdBanner from "@/components/AdBanner";
 
 type Perfil = {
   nome: string;
@@ -552,6 +553,7 @@ export default function PerfilPage() {
             </div>
           </div>
         )}
+        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECTANGLE || ""} format="rectangle" style={{ marginTop: "2rem" }} />
       </div>
     </main>
   );

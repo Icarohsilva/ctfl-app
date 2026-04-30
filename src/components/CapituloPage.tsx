@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import mapaCaptulos, { type CapituloMeta } from "@/data/mapa-capitulos";
+import AdBanner from "@/components/AdBanner";
 
 export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: number }) {
   const capitulo: CapituloMeta = mapaCaptulos[numeroCapitulo];
@@ -181,6 +182,7 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
             )}
           </div>
         )}
+      <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HORIZONTAL || ""} format="horizontal" style={{ marginTop: "2rem" }} />
       </div>
     </main>
   );

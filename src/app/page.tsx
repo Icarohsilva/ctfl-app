@@ -1,4 +1,5 @@
 import CertsSelector from "@/components/CertsSelector";
+import AdBanner from "@/components/AdBanner";
 
 const features = [
   { icon: "🤖", titulo: "Simulados com IA", desc: "Questões únicas a cada sessão, geradas com base no syllabus oficial de cada certificação. Feedback detalhado em cada resposta." },
@@ -108,6 +109,8 @@ export default function Home() {
 
         <p style={{ fontSize: "12px", color: "#6b7280" }}>Gratuito · Sem instalar · Funciona no celular e notebook</p>
       </section>
+
+      <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HORIZONTAL || ""} format="horizontal" style={{ maxWidth: "960px", margin: "0 auto", padding: "0 2rem" }} />
 
       {/* TRILHA DE CERTIFICAÇÕES */}
       <section id="certificacoes" className="section-pad" style={{ maxWidth: "960px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1f2937" }}>

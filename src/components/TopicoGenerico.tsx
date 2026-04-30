@@ -3,6 +3,7 @@ import { useState, useEffect, use } from "react";
 import { supabase } from "@/lib/supabase";
 import mapaCaptulos from "@/data/mapa-capitulos";
 import conteudoTopicos from "@/data/conteudo-topicos";
+import AdBanner from "@/components/AdBanner";
 
 type Etapa = "carregando" | "narrativa" | "cards" | "video" | "simulado" | "conclusao";
 
@@ -423,6 +424,8 @@ export default function TopicoGenerico({
             </div>
           </div>
         )}
+
+        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECTANGLE || ""} format="rectangle" style={{ marginBottom: "1rem" }} />
 
         <button style={s.btn} onClick={iniciarSimulado}>Ir pro simulado! 🎯</button>
         <button style={s.btnSec} onClick={iniciarSimulado}>Pular vídeo</button>
