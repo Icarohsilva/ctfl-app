@@ -28,7 +28,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "A base de tudo que um bom QA precisa saber",
     semana: 1,
     peso: "27%",
-    cor: "#c9a84c",
+    cor: "#d4af37",
     topicos: [
       { id: "por-que-testar", numero: 1, titulo: "Por que testar?", subtitulo: "Entenda o propósito real do teste de software", xp: 40 },
       { id: "7-principios", numero: 2, titulo: "Os 7 Princípios do Teste", subtitulo: "A sabedoria de décadas de QA em 7 lições", xp: 50 },
@@ -42,7 +42,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "Como o teste se encaixa em cada modelo de desenvolvimento",
     semana: 2,
     peso: "17%",
-    cor: "#7c9e6e",
+    cor: "#10b981",
     topicos: [
       { id: "modelos-desenvolvimento", numero: 1, titulo: "Modelos de Desenvolvimento", subtitulo: "Cascata, V-Model, Ágil, DevOps e shift-left", xp: 45 },
       { id: "niveis-teste", numero: 2, titulo: "Níveis de Teste", subtitulo: "Da unidade ao aceite — os 4 níveis da pirâmide", xp: 40 },
@@ -56,7 +56,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "Encontrar defeitos sem executar uma linha de código",
     semana: 3,
     peso: "10%",
-    cor: "#6e8fa8",
+    cor: "#3b82f6",
     topicos: [
       { id: "fundamentos-estatico", numero: 1, titulo: "Fundamentos do Teste Estático", subtitulo: "Teste estático vs. dinâmico e seus benefícios", xp: 35 },
       { id: "processo-revisao", numero: 2, titulo: "Processo de Revisão", subtitulo: "Informal, walkthrough, técnica e inspeção formal", xp: 45 },
@@ -69,7 +69,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "As técnicas que todo QA certificado precisa dominar",
     semana: 4,
     peso: "25%",
-    cor: "#c9a84c",
+    cor: "#d4af37",
     topicos: [
       { id: "particao-equivalencia", numero: 1, titulo: "Partição de Equivalência", subtitulo: "Testando tudo sem testar tudo — classes de dados", xp: 50 },
       { id: "analise-valor-limite", numero: 2, titulo: "Análise de Valor Limite", subtitulo: "Onde os bugs moram: nas fronteiras dos intervalos", xp: 50 },
@@ -85,7 +85,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "Planejar, monitorar e controlar a atividade de teste",
     semana: 6,
     peso: "17%",
-    cor: "#9e7c6e",
+    cor: "#8b5cf6",
     topicos: [
       { id: "planejamento-teste", numero: 1, titulo: "Planejamento do Teste", subtitulo: "Plano de teste, abordagem e critérios de entrada/saída", xp: 45 },
       { id: "monitoramento-controle", numero: 2, titulo: "Monitoramento e Controle", subtitulo: "Métricas, relatórios de progresso e conclusão", xp: 40 },
@@ -99,7 +99,7 @@ export const mapaCaptulos: Record<number, CapituloMeta> = {
     descricao: "O arsenal do QA moderno e como usar com inteligência",
     semana: 7,
     peso: "5%",
-    cor: "#6e7c9e",
+    cor: "#06b6d4",
     topicos: [
       { id: "ferramentas-suporte", numero: 1, titulo: "Ferramentas de Suporte ao Teste", subtitulo: "Categorias de ferramentas e quando usar cada uma", xp: 35 },
       { id: "automacao-teste", numero: 2, titulo: "Automação de Teste", subtitulo: "Benefícios, riscos e ROI da automação", xp: 40 },

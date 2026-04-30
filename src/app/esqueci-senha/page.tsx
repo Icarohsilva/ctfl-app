@@ -27,21 +27,22 @@ export default function EsqueciSenha() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    background: "#0f0f18",
-    border: "1px solid #2e2e3e",
+    background: "#0b0f1a",
+    border: "1px solid #374151",
     borderRadius: "8px",
     padding: "12px 14px",
-    color: "#f0ede8",
+    color: "#e5e7eb",
     fontSize: "15px",
     fontFamily: "sans-serif",
     outline: "none",
     boxSizing: "border-box",
+    transition: "border-color 0.15s, box-shadow 0.15s",
   };
 
   return (
     <main style={{
       fontFamily: "sans-serif",
-      background: "#0a0a0f",
+      background: "#0b0f1a",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
@@ -49,54 +50,60 @@ export default function EsqueciSenha() {
       justifyContent: "center",
       padding: "2rem",
     }}>
-      {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "2rem" }}>
         <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px", objectFit: "contain" }} />
-        <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.2rem", color: "#e8d5a3" }}>TestPath</span>
+        <span style={{
+          fontFamily: "Georgia, serif",
+          fontWeight: "bold",
+          fontSize: "1.2rem",
+          background: "linear-gradient(135deg, #d4af37, #f5d76e)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}>TestPath</span>
       </a>
 
       <div style={{
-        background: "#0f0f18",
-        border: "1px solid #1e1e2e",
+        background: "#111827",
+        border: "1px solid #1f2937",
         borderRadius: "16px",
         padding: "2.5rem",
         width: "100%",
         maxWidth: "420px",
       }}>
         {enviado ? (
-          /* Tela de sucesso */
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>📧</div>
-            <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.75rem" }}>
+            <h2 style={{ fontSize: "1.4rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.75rem" }}>
               E-mail enviado!
             </h2>
-            <p style={{ color: "#7a7a8a", fontSize: "14px", lineHeight: 1.6, marginBottom: "1.5rem" }}>
-              Verifique sua caixa de entrada em <strong style={{ color: "#c9a84c" }}>{email}</strong> e clique no link para redefinir sua senha.
+            <p style={{ color: "#9ca3af", fontSize: "14px", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              Verifique sua caixa de entrada em <strong style={{ color: "#3b82f6" }}>{email}</strong> e clique no link para redefinir sua senha.
             </p>
-            <p style={{ color: "#5a5a6a", fontSize: "12px", marginBottom: "1.5rem" }}>
+            <p style={{ color: "#6b7280", fontSize: "12px", marginBottom: "1.5rem" }}>
               Não recebeu? Verifique a pasta de spam ou tente novamente.
             </p>
             <button
               onClick={() => setEnviado(false)}
-              style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "10px 20px", color: "#a0998e", fontSize: "14px", cursor: "pointer", marginRight: "10px" }}
+              style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "10px 20px", color: "#9ca3af", fontSize: "14px", cursor: "pointer", marginRight: "10px", transition: "border-color 0.15s, color 0.15s" }}
             >
               Reenviar
             </button>
-            <a href="/login" style={{ color: "#c9a84c", fontSize: "14px", textDecoration: "none" }}>
+            <a href="/login" style={{ color: "#3b82f6", fontSize: "14px", textDecoration: "none" }}>
               Voltar ao login
             </a>
           </div>
         ) : (
           <>
-            <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
+            <h2 style={{ fontSize: "1.4rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
               Esqueceu sua senha?
             </h2>
-            <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.75rem", lineHeight: 1.6 }}>
+            <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.75rem", lineHeight: 1.6 }}>
               Digite seu e-mail e enviaremos um link para você criar uma nova senha.
             </p>
 
             <div>
-              <label style={{ fontSize: "13px", color: "#7a7a8a", marginBottom: "6px", display: "block" }}>E-mail</label>
+              <label style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "6px", display: "block" }}>E-mail</label>
               <input
                 style={inputStyle}
                 type="email"
@@ -108,7 +115,7 @@ export default function EsqueciSenha() {
             </div>
 
             {erro && (
-              <div style={{ background: "#2a0a0a", border: "1px solid #aa3333", borderRadius: "8px", padding: "10px 14px", color: "#ff7777", fontSize: "13px", marginTop: "1rem" }}>
+              <div style={{ background: "rgba(239,68,68,0.12)", border: "1px solid #ef4444", borderRadius: "8px", padding: "10px 14px", color: "#fca5a5", fontSize: "13px", marginTop: "1rem" }}>
                 {erro}
               </div>
             )}
@@ -118,24 +125,26 @@ export default function EsqueciSenha() {
               disabled={loading}
               style={{
                 width: "100%",
-                background: "#c9a84c",
-                border: "none",
+                background: "#3b82f6",
+                border: "1px solid #3b82f6",
                 borderRadius: "8px",
                 padding: "13px",
-                color: "#0a0a0f",
+                color: "#ffffff",
                 fontSize: "15px",
-                fontWeight: "bold",
+                fontWeight: "600",
                 cursor: loading ? "not-allowed" : "pointer",
-                opacity: loading ? 0.7 : 1,
+                opacity: loading ? 0.6 : 1,
                 marginTop: "1.25rem",
+                boxShadow: loading ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)",
+                transition: "background 0.15s, box-shadow 0.15s",
               }}
             >
               {loading ? "Enviando..." : "Enviar link de redefinição →"}
             </button>
 
-            <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "13px", color: "#5a5a6a" }}>
+            <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "13px", color: "#9ca3af" }}>
               Lembrou a senha?{" "}
-              <a href="/login" style={{ color: "#c9a84c", textDecoration: "none" }}>Entrar</a>
+              <a href="/login" style={{ color: "#3b82f6", textDecoration: "none" }}>Entrar</a>
             </p>
           </>
         )}

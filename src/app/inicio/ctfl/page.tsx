@@ -13,8 +13,8 @@ export default function CTFLInicio() {
   }, [loading, precisaOnboarding]);
 
   if (loading) return (
-    <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif" }}>Carregando...</div>
+    <main style={{ background: "#0b0f1a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#3b82f6", fontFamily: "Georgia, serif" }}>Carregando...</div>
     </main>
   );
 

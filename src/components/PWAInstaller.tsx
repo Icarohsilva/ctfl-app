@@ -8,7 +8,6 @@ export default function PWAInstaller() {
   const [promptEvento, setPromptEvento] = useState<any>(null);
 
   useEffect(() => {
-    // Registra o service worker
     if ("serviceWorker" in navigator) {
       navigator.serviceWorker
         .register("/sw.js")
@@ -16,13 +15,11 @@ export default function PWAInstaller() {
         .catch((err) => console.log("SW erro:", err));
     }
 
-    // Verifica se já está instalado
     if (window.matchMedia("(display-mode: standalone)").matches) {
       setInstalado(true);
       return;
     }
 
-    // Captura o evento de instalação
     const handler = (e: Event) => {
       e.preventDefault();
       setPromptEvento(e);
@@ -48,13 +45,12 @@ export default function PWAInstaller() {
     }
   };
 
-  // Não mostra nada se já instalado ou não pode instalar
   if (instalado || !podeInstalar) return null;
 
   return (
     <div style={{
       position: "fixed", bottom: "1.5rem", left: "50%", transform: "translateX(-50%)",
-      background: "#0f0f18", border: "1px solid #c9a84c44", borderRadius: "14px",
+      background: "#111827", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "14px",
       padding: "1rem 1.5rem", display: "flex", alignItems: "center", gap: "1rem",
       boxShadow: "0 8px 32px rgba(0,0,0,0.6)", zIndex: 999, maxWidth: "400px", width: "calc(100% - 2rem)",
       animation: "slideUp 0.4s ease",
@@ -67,20 +63,20 @@ export default function PWAInstaller() {
       `}</style>
       <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "32px", height: "32px", objectFit: "contain", flexShrink: 0 }} />
       <div style={{ flex: 1 }}>
-        <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "2px" }}>
+        <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "2px" }}>
           Instalar TestPath
         </div>
-        <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
+        <div style={{ fontSize: "12px", color: "#6b7280" }}>
           Adicione à tela inicial para acesso rápido
         </div>
       </div>
       <div style={{ display: "flex", gap: "8px", flexShrink: 0 }}>
         <button onClick={() => setPodeInstalar(false)}
-          style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "6px 12px", color: "#5a5a6a", fontSize: "12px", cursor: "pointer" }}>
+          style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "6px 12px", color: "#6b7280", fontSize: "12px", cursor: "pointer" }}>
           Agora não
         </button>
         <button onClick={instalar}
-          style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "6px 14px", color: "#0a0a0f", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
+          style={{ background: "#3b82f6", border: "none", borderRadius: "8px", padding: "6px 14px", color: "#ffffff", fontSize: "12px", fontWeight: "bold", cursor: "pointer" }}>
           Instalar
         </button>
       </div>

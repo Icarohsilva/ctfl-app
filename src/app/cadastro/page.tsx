@@ -18,12 +18,12 @@ function validarSenha(senha: string): string {
 }
 
 function forca(senha: string): { nivel: number; texto: string; cor: string } {
-  if (senha.length === 0) return { nivel: 0, texto: "", cor: "#1e1e2e" };
-  if (senha.length < 6) return { nivel: 1, texto: "Muito fraca", cor: "#c06060" };
-  if (!/[A-Z]/.test(senha) || !/[0-9]/.test(senha)) return { nivel: 2, texto: "Fraca — adicione maiúsculas e números", cor: "#c06060" };
-  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(senha)) return { nivel: 3, texto: "Média — adicione um caractere especial", cor: "#c9a84c" };
-  if (senha.length < 10) return { nivel: 4, texto: "Boa", cor: "#a0c060" };
-  return { nivel: 5, texto: "Forte ✓", cor: "#4e9e4e" };
+  if (senha.length === 0) return { nivel: 0, texto: "", cor: "#1f2937" };
+  if (senha.length < 6) return { nivel: 1, texto: "Muito fraca", cor: "#ef4444" };
+  if (!/[A-Z]/.test(senha) || !/[0-9]/.test(senha)) return { nivel: 2, texto: "Fraca — adicione maiúsculas e números", cor: "#ef4444" };
+  if (!/[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(senha)) return { nivel: 3, texto: "Média — adicione um caractere especial", cor: "#f59e0b" };
+  if (senha.length < 10) return { nivel: 4, texto: "Boa", cor: "#84cc16" };
+  return { nivel: 5, texto: "Forte ✓", cor: "#22c55e" };
 }
 
 export default function Cadastro() {
@@ -88,7 +88,6 @@ export default function Cadastro() {
         return;
       }
 
-      // Supabase retorna user sem identities quando email já existe
       if (data.user && data.user.identities && data.user.identities.length === 0) {
         setErro("Este e-mail já está cadastrado. Tente fazer login.");
         return;
@@ -115,20 +114,21 @@ export default function Cadastro() {
 
   const inputStyle: React.CSSProperties = {
     width: "100%",
-    background: "#0f0f18",
-    border: "1px solid #2e2e3e",
+    background: "#0b0f1a",
+    border: "1px solid #374151",
     borderRadius: "8px",
     padding: "12px 14px",
-    color: "#f0ede8",
+    color: "#e5e7eb",
     fontSize: "15px",
     fontFamily: "sans-serif",
     outline: "none",
     boxSizing: "border-box",
+    transition: "border-color 0.15s, box-shadow 0.15s",
   };
 
   const labelStyle: React.CSSProperties = {
     fontSize: "13px",
-    color: "#7a7a8a",
+    color: "#9ca3af",
     marginBottom: "6px",
     display: "block",
     fontFamily: "sans-serif",
@@ -137,7 +137,7 @@ export default function Cadastro() {
   return (
     <main style={{
       fontFamily: "sans-serif",
-      background: "#0a0a0f",
+      background: "#0b0f1a",
       minHeight: "100vh",
       display: "flex",
       flexDirection: "column",
@@ -148,14 +148,22 @@ export default function Cadastro() {
       {/* Logo */}
       <a href="/" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none", marginBottom: "2rem" }}>
         <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "28px", height: "28px" }} />
-        <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.2rem", color: "#e8d5a3" }}>
+        <span style={{
+          fontFamily: "Georgia, serif",
+          fontWeight: "bold",
+          fontSize: "1.2rem",
+          background: "linear-gradient(135deg, #d4af37, #f5d76e)",
+          WebkitBackgroundClip: "text",
+          WebkitTextFillColor: "transparent",
+          backgroundClip: "text",
+        }}>
           TestPath
         </span>
       </a>
 
       <div style={{
-        background: "#0f0f18",
-        border: "1px solid #1e1e2e",
+        background: "#111827",
+        border: "1px solid #1f2937",
         borderRadius: "16px",
         padding: "2.5rem",
         width: "100%",
@@ -166,24 +174,25 @@ export default function Cadastro() {
         {passo === 3 ? (
           <div style={{ textAlign: "center" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎉</div>
-            <h2 style={{ fontSize: "1.5rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.75rem", fontWeight: "normal" }}>
+            <h2 style={{ fontSize: "1.5rem", color: "#e5e7eb", fontFamily: "Georgia, serif", marginBottom: "0.75rem", fontWeight: "normal" }}>
               Conta criada, {form.nome.split(" ")[0]}!
             </h2>
-            <p style={{ color: "#7a7a8a", marginBottom: "0.75rem", lineHeight: 1.6, fontSize: "14px" }}>
+            <p style={{ color: "#9ca3af", marginBottom: "0.75rem", lineHeight: 1.6, fontSize: "14px" }}>
               Agora vamos configurar sua primeira certificação.
             </p>
-            <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "8px", padding: "12px", color: "#c9a84c", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
+            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "8px", padding: "12px", color: "#93c5fd", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
               📧 Verifique seu e-mail para confirmar a conta antes de continuar.
             </div>
             <a href="/inicio/ctfl" style={{
-              background: "#c9a84c",
-              color: "#0a0a0f",
+              background: "#3b82f6",
+              color: "#ffffff",
               padding: "14px 32px",
               borderRadius: "8px",
-              fontWeight: "bold",
+              fontWeight: "600",
               fontSize: "15px",
               textDecoration: "none",
               display: "inline-block",
+              boxShadow: "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.18)",
             }}>
               Configurar minha trilha CTFL →
             </a>
@@ -193,12 +202,12 @@ export default function Cadastro() {
             {/* Barra de progresso */}
             <div style={{ marginBottom: "2rem" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "8px" }}>
-                <span style={{ fontSize: "13px", color: "#7a7a8a" }}>Passo {passo} de 2</span>
-                <span style={{ fontSize: "13px", color: "#c9a84c" }}>{Math.round((passo / 2) * 100)}%</span>
+                <span style={{ fontSize: "13px", color: "#9ca3af" }}>Passo {passo} de 2</span>
+                <span style={{ fontSize: "13px", color: "#3b82f6" }}>{Math.round((passo / 2) * 100)}%</span>
               </div>
-              <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px" }}>
+              <div style={{ background: "#1f2937", borderRadius: "99px", height: "4px" }}>
                 <div style={{
-                  background: "#c9a84c",
+                  background: "linear-gradient(90deg, #3b82f6, #60a5fa)",
                   width: `${(passo / 2) * 100}%`,
                   height: "4px",
                   borderRadius: "99px",
@@ -210,10 +219,10 @@ export default function Cadastro() {
             {/* PASSO 1 — Dados da conta */}
             {passo === 1 && (
               <div>
-                <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
+                <h2 style={{ fontSize: "1.4rem", color: "#e5e7eb", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
                   Crie sua conta
                 </h2>
-                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>
+                <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.5rem" }}>
                   Grátis para sempre. Sem cartão de crédito.
                 </p>
 
@@ -245,7 +254,7 @@ export default function Cadastro() {
                           {[1, 2, 3, 4, 5].map(n => (
                             <div key={n} style={{
                               flex: 1, height: "3px", borderRadius: "99px",
-                              background: senhaForca.nivel >= n ? senhaForca.cor : "#1e1e2e",
+                              background: senhaForca.nivel >= n ? senhaForca.cor : "#1f2937",
                               transition: "background 0.3s",
                             }} />
                           ))}
@@ -261,7 +270,7 @@ export default function Cadastro() {
                             { ok: /[0-9]/.test(form.senha), txt: "Número" },
                             { ok: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(form.senha), txt: "Especial" },
                           ].map((d, i) => (
-                            <span key={i} style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "99px", background: d.ok ? "#1e3e1e" : "#1e1e2e", color: d.ok ? "#4e9e4e" : "#5a5a6a", border: `1px solid ${d.ok ? "#2e5e2e" : "#2e2e3e"}` }}>
+                            <span key={i} style={{ fontSize: "10px", padding: "2px 7px", borderRadius: "99px", background: d.ok ? "rgba(34,197,94,0.12)" : "#1f2937", color: d.ok ? "#22c55e" : "#6b7280", border: `1px solid ${d.ok ? "rgba(34,197,94,0.4)" : "#374151"}` }}>
                               {d.ok ? "✓" : "·"} {d.txt}
                             </span>
                           ))}
@@ -276,29 +285,29 @@ export default function Cadastro() {
             {/* PASSO 2 — Nível */}
             {passo === 2 && (
               <div>
-                <h2 style={{ fontSize: "1.4rem", color: "#e8d5a3", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
+                <h2 style={{ fontSize: "1.4rem", color: "#e5e7eb", fontFamily: "Georgia, serif", marginBottom: "0.5rem", fontWeight: "normal" }}>
                   Qual é o seu nível em QA?
                 </h2>
-                <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem", lineHeight: 1.6 }}>
+                <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.5rem", lineHeight: 1.6 }}>
                   Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {niveis.map(n => (
                     <button key={n.valor} onClick={() => atualizar("nivel", n.valor)}
                       style={{
-                        background: form.nivel === n.valor ? "#1a1a0e" : "#0a0a0f",
-                        border: `1px solid ${form.nivel === n.valor ? "#c9a84c" : "#2e2e3e"}`,
+                        background: form.nivel === n.valor ? "rgba(59,130,246,0.08)" : "#0b0f1a",
+                        border: `1px solid ${form.nivel === n.valor ? "#3b82f6" : "#374151"}`,
                         borderRadius: "10px", padding: "14px 16px",
                         display: "flex", alignItems: "center", gap: "12px",
                         cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s",
                       }}>
                       <span style={{ fontSize: "1.5rem" }}>{n.emoji}</span>
                       <div>
-                        <div style={{ color: "#e8d5a3", fontSize: "14px", fontWeight: "bold" }}>{n.titulo}</div>
-                        <div style={{ color: "#7a7a8a", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
+                        <div style={{ color: "#e5e7eb", fontSize: "14px", fontWeight: "bold" }}>{n.titulo}</div>
+                        <div style={{ color: "#9ca3af", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
                       </div>
                       {form.nivel === n.valor && (
-                        <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>
+                        <span style={{ marginLeft: "auto", color: "#3b82f6" }}>✓</span>
                       )}
                     </button>
                   ))}
@@ -309,15 +318,15 @@ export default function Cadastro() {
             {/* Erro */}
             {erro && (
               <div style={{
-                background: "#2a0a0a", border: "1px solid #aa3333",
+                background: "rgba(239,68,68,0.12)", border: "1px solid #ef4444",
                 borderRadius: "8px", padding: "10px 14px",
-                color: "#ff7777", fontSize: "13px", marginTop: "1rem",
+                color: "#fca5a5", fontSize: "13px", marginTop: "1rem",
                 lineHeight: 1.5,
               }}>
                 {erro}
                 {erro.includes("já está cadastrado") && (
                   <div style={{ marginTop: "6px" }}>
-                    <a href="/login" style={{ color: "#c9a84c", fontSize: "13px" }}>Fazer login →</a>
+                    <a href="/login" style={{ color: "#3b82f6", fontSize: "13px" }}>Fazer login →</a>
                   </div>
                 )}
               </div>
@@ -327,7 +336,7 @@ export default function Cadastro() {
             <div style={{ display: "flex", gap: "10px", marginTop: "1.75rem" }}>
               {passo > 1 && (
                 <button onClick={() => setPasso(p => p - 1)}
-                  style={{ flex: 1, background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "12px", color: "#a0998e", fontSize: "15px", cursor: "pointer" }}>
+                  style={{ flex: 1, background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "12px", color: "#9ca3af", fontSize: "15px", cursor: "pointer", transition: "border-color 0.15s, color 0.15s" }}>
                   ← Voltar
                 </button>
               )}
@@ -335,20 +344,21 @@ export default function Cadastro() {
                 onClick={passo === 2 ? finalizar : avancar}
                 disabled={loading || (passo === 2 && !form.nivel)}
                 style={{
-                  flex: 2, background: "#c9a84c", border: "none", borderRadius: "8px",
-                  padding: "12px", color: "#0a0a0f", fontSize: "15px", fontWeight: "bold",
+                  flex: 2, background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px",
+                  padding: "12px", color: "#ffffff", fontSize: "15px", fontWeight: "600",
                   cursor: (loading || (passo === 2 && !form.nivel)) ? "not-allowed" : "pointer",
                   opacity: (loading || (passo === 2 && !form.nivel)) ? 0.5 : 1,
-                  transition: "opacity 0.2s",
+                  transition: "background 0.15s, box-shadow 0.15s",
+                  boxShadow: (loading || (passo === 2 && !form.nivel)) ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)",
                 }}>
                 {loading ? "Criando conta..." : passo === 2 ? "Criar minha conta →" : "Continuar →"}
               </button>
             </div>
 
             {passo === 1 && (
-              <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "13px", color: "#5a5a6a" }}>
+              <p style={{ textAlign: "center", marginTop: "1.25rem", fontSize: "13px", color: "#9ca3af" }}>
                 Já tem conta?{" "}
-                <a href="/login" style={{ color: "#c9a84c", textDecoration: "none" }}>Entrar</a>
+                <a href="/login" style={{ color: "#3b82f6", textDecoration: "none" }}>Entrar</a>
               </p>
             )}
           </>

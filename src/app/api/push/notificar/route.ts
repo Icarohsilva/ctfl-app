@@ -309,7 +309,7 @@ async function enviarEmail(
   const cancelUrl = `${siteUrl}/cancelar-notificacoes?token=${tokenCancelamento}`;
 
   const isUrgente = ["prova_hoje", "prova_amanha", "ultimo_aviso"].includes(tipo);
-  const corDestaque = isUrgente ? "#c06060" : "#c9a84c";
+  const corDestaque = isUrgente ? "#ef4444" : "#3b82f6";
   const icone = tipo === "prova_hoje" ? "🏆" :
     tipo === "prova_amanha" ? "📋" :
     tipo === "ultimo_aviso" ? "🚨" :
@@ -320,48 +320,48 @@ async function enviarEmail(
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"></head>
-<body style="margin:0;padding:0;background:#0a0a0f;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
-  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0a0a0f;padding:40px 20px;">
+<body style="margin:0;padding:0;background:#0b0f1a;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#0b0f1a;padding:40px 20px;">
     <tr><td align="center">
       <table width="560" cellpadding="0" cellspacing="0" style="max-width:560px;width:100%;">
 
         <!-- Logo -->
         <tr><td align="center" style="padding-bottom:28px;">
           <table cellpadding="0" cellspacing="0"><tr>
-            <td style="background:#1a1a0e;border:1px solid #c9a84c44;border-radius:12px;padding:10px 18px;">
-              <span style="font-size:18px;font-weight:700;color:#e8d5a3;font-family:Georgia,serif;">TestPath</span>
-              <span style="font-size:10px;color:#c9a84c;background:#0a0a0f;border:1px solid #c9a84c33;border-radius:99px;padding:2px 7px;margin-left:6px;">CTFL</span>
+            <td style="background:rgba(59,130,246,0.08);border:1px solid rgba(59,130,246,0.25);border-radius:12px;padding:10px 18px;">
+              <span style="font-size:18px;font-weight:700;color:#d4af37;font-family:Georgia,serif;">TestPath</span>
+              <span style="font-size:10px;color:#d4af37;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:99px;padding:2px 7px;margin-left:6px;">CTFL</span>
             </td>
           </tr></table>
         </td></tr>
 
         <!-- Card principal -->
-        <tr><td style="background:#0f0f18;border:1px solid ${isUrgente ? "#5e2e2e" : "#1e1e2e"};border-radius:16px;padding:36px 36px 28px;text-align:center;">
+        <tr><td style="background:#111827;border:1px solid ${isUrgente ? "rgba(239,68,68,0.4)" : "#1f2937"};border-radius:16px;padding:36px 36px 28px;text-align:center;">
           <div style="font-size:44px;margin-bottom:16px;">${icone}</div>
-          <h1 style="margin:0 0 10px;font-size:22px;font-weight:400;color:#e8d5a3;font-family:Georgia,serif;line-height:1.3;">
+          <h1 style="margin:0 0 10px;font-size:22px;font-weight:400;color:#e5e7eb;font-family:Georgia,serif;line-height:1.3;">
             ${mensagem.titulo}
           </h1>
-          <p style="margin:0 0 24px;font-size:15px;color:#a0998e;line-height:1.7;max-width:380px;margin-left:auto;margin-right:auto;">
+          <p style="margin:0 0 24px;font-size:15px;color:#9ca3af;line-height:1.7;max-width:380px;margin-left:auto;margin-right:auto;">
             ${mensagem.corpo}
           </p>
 
           ${streak > 0 && !isUrgente ? `
-          <div style="display:inline-block;background:#1a1000;border:1px solid #c9a84c44;border-radius:10px;padding:8px 16px;margin-bottom:24px;">
+          <div style="display:inline-block;background:rgba(212,175,55,0.1);border:1px solid rgba(212,175,55,0.3);border-radius:10px;padding:8px 16px;margin-bottom:24px;">
             <span style="font-size:16px;">🔥</span>
-            <span style="font-size:13px;color:#c9a84c;font-weight:600;margin-left:4px;">${streak} dias de streak</span>
+            <span style="font-size:13px;color:#d4af37;font-weight:600;margin-left:4px;">${streak} dias de streak</span>
           </div>` : ""}
 
           ${diasParaMeta !== null && diasParaMeta <= 7 ? `
-          <div style="display:inline-block;background:#1a0e0e;border:1px solid #5e2e2e;border-radius:10px;padding:8px 16px;margin-bottom:24px;">
+          <div style="display:inline-block;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:10px;padding:8px 16px;margin-bottom:24px;">
             <span style="font-size:16px;">⏰</span>
-            <span style="font-size:13px;color:#c06060;font-weight:600;margin-left:4px;">
+            <span style="font-size:13px;color:#ef4444;font-weight:600;margin-left:4px;">
               ${diasParaMeta === 0 ? "Prova HOJE!" : diasParaMeta === 1 ? "Prova AMANHÃ!" : `${diasParaMeta} dias para a prova`}
             </span>
           </div>` : ""}
 
           <table cellpadding="0" cellspacing="0" style="margin:0 auto;">
             <tr><td style="background:${corDestaque};border-radius:10px;padding:13px 28px;">
-              <a href="${siteUrl}/dashboard" style="color:#0a0a0f;font-size:14px;font-weight:700;text-decoration:none;display:block;">
+              <a href="${siteUrl}/dashboard" style="color:#ffffff;font-size:14px;font-weight:700;text-decoration:none;display:block;">
                 ${tipo === "prova_hoje" ? "Ir para revisão final →" : "Estudar agora →"}
               </a>
             </td></tr>
@@ -370,9 +370,9 @@ async function enviarEmail(
 
         ${tipo === "ultimo_aviso" ? `
         <tr><td style="padding:16px 0;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#1a0e0e;border:1px solid #3e1e1e;border-radius:12px;padding:16px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.3);border-radius:12px;padding:16px;">
             <tr><td align="center">
-              <p style="margin:0;font-size:13px;color:#7a4a4a;line-height:1.6;">
+              <p style="margin:0;font-size:13px;color:#9ca3af;line-height:1.6;">
                 Este é seu último lembrete por agora. Ficaremos em silêncio pelos próximos 7 dias —
                 mas seu progresso continua salvo e você pode voltar quando quiser. 💛
               </p>
@@ -380,9 +380,9 @@ async function enviarEmail(
           </table>
         </td></tr>` : `
         <tr><td style="padding:16px 0;">
-          <table width="100%" cellpadding="0" cellspacing="0" style="background:#0f0f18;border:1px solid #1e1e2e;border-radius:12px;padding:16px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="background:#111827;border:1px solid #1f2937;border-radius:12px;padding:16px;">
             <tr><td align="center">
-              <p style="margin:0;font-size:12px;color:#3a3a4a;font-style:italic;">
+              <p style="margin:0;font-size:12px;color:#4b5563;font-style:italic;">
                 "Consistência bate intensidade. Um passo por dia é o suficiente." 🎯
               </p>
             </td></tr>
@@ -391,11 +391,11 @@ async function enviarEmail(
 
         <!-- Footer -->
         <tr><td style="padding-top:8px;text-align:center;">
-          <p style="margin:0 0 6px;font-size:11px;color:#3a3a4a;">
+          <p style="margin:0 0 6px;font-size:11px;color:#4b5563;">
             Você recebe este e-mail porque se cadastrou no TestPath.
           </p>
-          <p style="margin:0;font-size:11px;color:#2a2a3a;">
-            <a href="${cancelUrl}" style="color:#3a3a4a;text-decoration:underline;">Cancelar lembretes por e-mail</a>
+          <p style="margin:0;font-size:11px;color:#374151;">
+            <a href="${cancelUrl}" style="color:#4b5563;text-decoration:underline;">Cancelar lembretes por e-mail</a>
           </p>
         </td></tr>
 

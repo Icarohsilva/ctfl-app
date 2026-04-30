@@ -60,7 +60,7 @@ export const metadata: Metadata = {
 import type { Viewport } from "next";
 
 export const viewport: Viewport = {
-  themeColor: "#c9a84c",
+  themeColor: "#0b0f1a",
 };
 
 export default function RootLayout({
@@ -77,7 +77,7 @@ export default function RootLayout({
         {/* CSS crítico do nav — garante que o responsive funcione antes do globals.css */}
         <style dangerouslySetInnerHTML={{ __html: `
           .nav-link {
-            color: #7a7a8a;
+            color: #9ca3af;
             text-decoration: none;
             font-size: 14px;
             padding: 6px 12px;
@@ -85,8 +85,8 @@ export default function RootLayout({
             transition: background 0.15s, color 0.15s;
           }
           .nav-link:hover {
-            background: #c9a84c22;
-            color: #c9a84c;
+            background: rgba(59,130,246,0.12);
+            color: #3b82f6;
           }
           .nav-mobile { display: none; }
           .nav-desktop { display: flex; gap: 10px; align-items: center; }

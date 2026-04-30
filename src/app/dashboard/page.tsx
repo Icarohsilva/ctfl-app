@@ -115,8 +115,8 @@ export default function Dashboard() {
   const sair = async () => { await supabase.auth.signOut(); window.location.href = "/"; };
 
   if (loading) return (
-    <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif" }}>Carregando sua trilha...</div>
+    <main style={{ background: "#0b0f1a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#3b82f6", fontFamily: "Georgia, serif" }}>Carregando sua trilha...</div>
     </main>
   );
 
@@ -135,8 +135,15 @@ export default function Dashboard() {
     ? Math.max(0, Math.ceil((new Date(cert.data_meta).getTime() - Date.now()) / 86400000))
     : null;
 
+  const logoGold: React.CSSProperties = {
+    background: "linear-gradient(135deg, #d4af37, #f5d76e)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  };
+
   return (
-    <main style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0ede8", fontFamily: "sans-serif" }}>
+    <main style={{ background: "#0b0f1a", minHeight: "100vh", color: "#e5e7eb", fontFamily: "sans-serif" }}>
 
       {/* CSS responsivo global */}
       <style>{`
@@ -153,69 +160,69 @@ export default function Dashboard() {
       `}</style>
 
       {/* NAV DESKTOP */}
-      <nav className="nav-desktop" style={{ justifyContent: "space-between", alignItems: "center", padding: "0.875rem 2rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.97)", backdropFilter: "blur(12px)", zIndex: 100 }}>
+      <nav className="nav-desktop" style={{ justifyContent: "space-between", alignItems: "center", padding: "0.875rem 2rem", borderBottom: "1px solid #1f2937", position: "sticky", top: 0, background: "rgba(11,15,26,0.92)", backdropFilter: "blur(12px)", zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "24px", height: "24px" }} />
-          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", color: "#e8d5a3" }}>TestPath</span>
-          <span style={{ fontSize: "11px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 8px", borderRadius: "99px" }}>CTFL</span>
+          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", ...logoGold }}>TestPath</span>
+          <span style={{ fontSize: "11px", background: "rgba(212,175,55,0.08)", color: "#d4af37", border: "1px solid rgba(212,175,55,0.3)", padding: "2px 8px", borderRadius: "99px" }}>CTFL</span>
         </div>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", background: streak > 0 ? "#1a1000" : "#141414", border: `1px solid ${streak > 0 ? "#c9a84c44" : "#2a2a2a"}`, borderRadius: "99px", padding: "5px 12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "4px", background: streak > 0 ? "rgba(212,175,55,0.08)" : "#111827", border: `1px solid ${streak > 0 ? "rgba(212,175,55,0.3)" : "#1f2937"}`, borderRadius: "99px", padding: "5px 12px" }}>
             <span>🔥</span>
-            <span style={{ color: streak > 0 ? "#c9a84c" : "#3a3a3a", fontWeight: "bold", fontSize: "13px" }}>{streak}</span>
+            <span style={{ color: streak > 0 ? "#d4af37" : "#4b5563", fontWeight: "bold", fontSize: "13px" }}>{streak}</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "99px", padding: "5px 12px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "4px", background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.3)", borderRadius: "99px", padding: "5px 12px" }}>
             <span>⭐</span>
-            <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "13px" }}>{xpTotal} XP</span>
+            <span style={{ color: "#d4af37", fontWeight: "bold", fontSize: "13px" }}>{xpTotal} XP</span>
           </div>
-          <a href="/perfil" style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 10px" }}>
+          <a href="/perfil" style={{ display: "flex", alignItems: "center", gap: "6px", textDecoration: "none", background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "5px 10px", transition: "border-color 0.15s" }}>
             {perfil?.foto_url
               ? <img src={perfil.foto_url} alt="avatar" style={{ width: "22px", height: "22px", borderRadius: "50%", objectFit: "cover" }} />
               : <span style={{ fontSize: "14px" }}>👤</span>}
-            <span style={{ color: "#a0998e", fontSize: "12px" }}>{perfil?.nome?.split(" ")[0]}</span>
+            <span style={{ color: "#9ca3af", fontSize: "12px" }}>{perfil?.nome?.split(" ")[0]}</span>
           </a>
-          <button onClick={sair} style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "5px 12px", color: "#5a5a6a", fontSize: "12px", cursor: "pointer" }}>Sair</button>
+          <button onClick={sair} style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "5px 12px", color: "#9ca3af", fontSize: "12px", cursor: "pointer", transition: "border-color 0.15s, color 0.15s" }}>Sair</button>
         </div>
       </nav>
 
       {/* NAV MOBILE */}
-      <nav className="nav-mobile" style={{ justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.97)", backdropFilter: "blur(12px)", zIndex: 100 }}>
+      <nav className="nav-mobile" style={{ justifyContent: "space-between", alignItems: "center", padding: "0.75rem 1rem", borderBottom: "1px solid #1f2937", position: "sticky", top: 0, background: "rgba(11,15,26,0.92)", backdropFilter: "blur(12px)", zIndex: 100 }}>
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "22px", height: "22px" }} />
-          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1rem", color: "#e8d5a3" }}>TestPath</span>
-          <span style={{ fontSize: "10px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "1px 6px", borderRadius: "99px" }}>CTFL</span>
+          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1rem", ...logoGold }}>TestPath</span>
+          <span style={{ fontSize: "10px", background: "rgba(212,175,55,0.08)", color: "#d4af37", border: "1px solid rgba(212,175,55,0.3)", padding: "1px 6px", borderRadius: "99px" }}>CTFL</span>
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
           {/* Streak e XP compactos */}
-          <div style={{ display: "flex", alignItems: "center", gap: "3px", background: streak > 0 ? "#1a1000" : "#141414", border: `1px solid ${streak > 0 ? "#c9a84c44" : "#2a2a2a"}`, borderRadius: "99px", padding: "4px 8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "3px", background: streak > 0 ? "rgba(212,175,55,0.08)" : "#111827", border: `1px solid ${streak > 0 ? "rgba(212,175,55,0.3)" : "#1f2937"}`, borderRadius: "99px", padding: "4px 8px" }}>
             <span style={{ fontSize: "12px" }}>🔥</span>
-            <span style={{ color: streak > 0 ? "#c9a84c" : "#3a3a3a", fontWeight: "bold", fontSize: "12px" }}>{streak}</span>
+            <span style={{ color: streak > 0 ? "#d4af37" : "#4b5563", fontWeight: "bold", fontSize: "12px" }}>{streak}</span>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: "3px", background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "99px", padding: "4px 8px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "3px", background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.3)", borderRadius: "99px", padding: "4px 8px" }}>
             <span style={{ fontSize: "12px" }}>⭐</span>
-            <span style={{ color: "#c9a84c", fontWeight: "bold", fontSize: "12px" }}>{xpTotal}</span>
+            <span style={{ color: "#d4af37", fontWeight: "bold", fontSize: "12px" }}>{xpTotal}</span>
           </div>
 
           {/* Menu hamburguer */}
           <button
             onClick={() => setMenuAberto(!menuAberto)}
-            style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "6px 10px", color: "#a0998e", fontSize: "16px", cursor: "pointer", lineHeight: 1 }}>
+            style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "6px 10px", color: "#9ca3af", fontSize: "16px", cursor: "pointer", lineHeight: 1 }}>
             {menuAberto ? "✕" : "☰"}
           </button>
         </div>
 
         {/* Dropdown mobile */}
         {menuAberto && (
-          <div style={{ position: "absolute", top: "100%", right: "1rem", background: "#0f0f18", border: "1px solid #2e2e3e", borderRadius: "12px", padding: "0.75rem", zIndex: 200, minWidth: "160px", boxShadow: "0 8px 32px rgba(0,0,0,0.6)" }}>
-            <a href="/perfil" onClick={() => setMenuAberto(false)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", borderRadius: "8px", textDecoration: "none", color: "#a0998e", fontSize: "14px" }}>
+          <div style={{ position: "absolute", top: "100%", right: "1rem", background: "#111827", border: "1px solid #374151", borderRadius: "12px", padding: "0.75rem", zIndex: 200, minWidth: "160px", boxShadow: "0 8px 32px rgba(0,0,0,0.6)" }}>
+            <a href="/perfil" onClick={() => setMenuAberto(false)} style={{ display: "flex", alignItems: "center", gap: "8px", padding: "8px 10px", borderRadius: "8px", textDecoration: "none", color: "#9ca3af", fontSize: "14px" }}>
               {perfil?.foto_url
                 ? <img src={perfil.foto_url} alt="avatar" style={{ width: "20px", height: "20px", borderRadius: "50%", objectFit: "cover" }} />
                 : <span>👤</span>}
               {perfil?.nome?.split(" ")[0]}
             </a>
-            <div style={{ borderTop: "1px solid #1e1e2e", margin: "4px 0" }} />
-            <button onClick={() => { setMenuAberto(false); sair(); }} style={{ display: "block", width: "100%", background: "transparent", border: "none", padding: "8px 10px", borderRadius: "8px", color: "#c06060", fontSize: "14px", cursor: "pointer", textAlign: "left" }}>
+            <div style={{ borderTop: "1px solid #1f2937", margin: "4px 0" }} />
+            <button onClick={() => { setMenuAberto(false); sair(); }} style={{ display: "block", width: "100%", background: "transparent", border: "none", padding: "8px 10px", borderRadius: "8px", color: "#ef4444", fontSize: "14px", cursor: "pointer", textAlign: "left" }}>
               Sair
             </button>
           </div>
@@ -231,25 +238,25 @@ export default function Dashboard() {
 
         {/* SAUDAÇÃO */}
         <div style={{ marginBottom: "1.25rem" }}>
-          <h1 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "4px" }}>
+          <h1 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", marginBottom: "4px" }}>
             Olá, {perfil?.nome?.split(" ")[0]}! {streak > 2 ? "🔥" : "👋"}
           </h1>
-          <p style={{ color: "#5a5a6a", fontSize: "13px", margin: 0, fontStyle: "italic" }}>{fraseHoje}</p>
+          <p style={{ color: "#9ca3af", fontSize: "13px", margin: 0, fontStyle: "italic" }}>{fraseHoje}</p>
         </div>
 
         {/* BANNER META */}
         {cert?.data_meta && diasRestantes !== null && (
-          <div className="banner-meta" style={{ background: diasRestantes < 14 ? "#1a0e0e" : "#0f0f18", border: `1px solid ${diasRestantes < 14 ? "#5e2e2e" : "#1e1e2e"}`, borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
+          <div className="banner-meta" style={{ background: diasRestantes < 14 ? "rgba(239,68,68,0.08)" : "#111827", border: `1px solid ${diasRestantes < 14 ? "rgba(239,68,68,0.4)" : "#1f2937"}`, borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.75rem" }}>
             <span style={{ fontSize: "1.3rem", flexShrink: 0 }}>{diasRestantes < 14 ? "⚠️" : "🎯"}</span>
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: "13px", fontWeight: "bold", color: diasRestantes < 14 ? "#c06060" : "#e8d5a3", marginBottom: "2px" }}>
+              <div style={{ fontSize: "13px", fontWeight: "bold", color: diasRestantes < 14 ? "#ef4444" : "#e5e7eb", marginBottom: "2px" }}>
                 {diasRestantes === 0 ? "Sua prova é hoje!" : `${diasRestantes} dias até o exame`}
               </div>
-              <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
+              <div style={{ fontSize: "12px", color: "#9ca3af" }}>
                 Meta: {new Date(cert.data_meta).toLocaleDateString("pt-BR")} · {ritmoLabel[cert.ritmo] || cert.ritmo}
               </div>
             </div>
-            <div style={{ fontSize: "1.3rem", fontWeight: "bold", color: diasRestantes < 14 ? "#c06060" : "#c9a84c", flexShrink: 0 }}>
+            <div style={{ fontSize: "1.3rem", fontWeight: "bold", color: diasRestantes < 14 ? "#ef4444" : "#3b82f6", flexShrink: 0 }}>
               {progressoGeral}%
             </div>
           </div>
@@ -257,56 +264,56 @@ export default function Dashboard() {
 
         {/* STATS */}
         <div className="stats-grid" style={{ display: "grid", gap: "10px", marginBottom: "1.25rem" }}>
-          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1rem" }}>
-            <div style={{ fontSize: "10px", color: "#5a5a6a", marginBottom: "4px", letterSpacing: "0.04em" }}>PROGRESSO</div>
-            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "6px" }}>{progressoGeral}%</div>
-            <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px" }}>
-              <div style={{ background: "linear-gradient(90deg,#c9a84c,#e8d5a3)", width: `${progressoGeral}%`, height: "4px", borderRadius: "99px", minWidth: progressoGeral > 0 ? "4px" : "0" }} />
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "14px", padding: "1rem" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "4px", letterSpacing: "0.04em" }}>PROGRESSO</div>
+            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: "#e5e7eb", marginBottom: "6px" }}>{progressoGeral}%</div>
+            <div style={{ background: "#1f2937", borderRadius: "99px", height: "4px" }}>
+              <div style={{ background: "linear-gradient(90deg,#3b82f6,#60a5fa)", width: `${progressoGeral}%`, height: "4px", borderRadius: "99px", minWidth: progressoGeral > 0 ? "4px" : "0" }} />
             </div>
-            <div style={{ fontSize: "10px", color: "#3a3a4a", marginTop: "4px" }}>{totalConcluidos}/{totalTopicos} tópicos</div>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginTop: "4px" }}>{totalConcluidos}/{totalTopicos} tópicos</div>
           </div>
 
-          <div style={{ background: streak > 0 ? "#1a1000" : "#0f0f18", border: `1px solid ${streak > 0 ? "#c9a84c33" : "#1e1e2e"}`, borderRadius: "14px", padding: "1rem" }}>
-            <div style={{ fontSize: "10px", color: "#5a5a6a", marginBottom: "4px", letterSpacing: "0.04em" }}>SEQUÊNCIA</div>
-            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: streak > 0 ? "#c9a84c" : "#3a3a3a", marginBottom: "4px" }}>🔥 {streak}</div>
-            <div style={{ fontSize: "10px", color: "#5a5a6a" }}>
+          <div style={{ background: streak > 0 ? "rgba(212,175,55,0.06)" : "#111827", border: `1px solid ${streak > 0 ? "rgba(212,175,55,0.25)" : "#1f2937"}`, borderRadius: "14px", padding: "1rem" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "4px", letterSpacing: "0.04em" }}>SEQUÊNCIA</div>
+            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: streak > 0 ? "#d4af37" : "#4b5563", marginBottom: "4px" }}>🔥 {streak}</div>
+            <div style={{ fontSize: "10px", color: "#6b7280" }}>
               {streak === 0 ? "Estuda hoje!" : `${streak} dia${streak > 1 ? "s" : ""} seguido${streak > 1 ? "s" : ""}`}
             </div>
-            {maiorStreak > 0 && <div style={{ fontSize: "10px", color: "#3a3a3a", marginTop: "2px" }}>Recorde: {maiorStreak}</div>}
+            {maiorStreak > 0 && <div style={{ fontSize: "10px", color: "#4b5563", marginTop: "2px" }}>Recorde: {maiorStreak}</div>}
           </div>
 
-          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1rem" }}>
-            <div style={{ fontSize: "10px", color: "#5a5a6a", marginBottom: "4px", letterSpacing: "0.04em" }}>NÍVEL</div>
-            <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>{nivelIcon} {nivel}</div>
-            <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px", marginBottom: "4px" }}>
-              <div style={{ background: "#7c9e6e", width: `${xpPct}%`, height: "4px", borderRadius: "99px" }} />
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "14px", padding: "1rem" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "4px", letterSpacing: "0.04em" }}>NÍVEL</div>
+            <div style={{ fontSize: "1.2rem", fontWeight: "bold", color: "#e5e7eb", marginBottom: "4px" }}>{nivelIcon} {nivel}</div>
+            <div style={{ background: "#1f2937", borderRadius: "99px", height: "4px", marginBottom: "4px" }}>
+              <div style={{ background: "#10b981", width: `${xpPct}%`, height: "4px", borderRadius: "99px" }} />
             </div>
-            <div style={{ fontSize: "10px", color: "#3a3a4a" }}>{xpTotal}/{xpProximoNivel} XP</div>
+            <div style={{ fontSize: "10px", color: "#6b7280" }}>{xpTotal}/{xpProximoNivel} XP</div>
           </div>
 
-          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1rem" }}>
-            <div style={{ fontSize: "10px", color: "#5a5a6a", marginBottom: "4px", letterSpacing: "0.04em" }}>CAPÍTULOS</div>
-            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: "#e8d5a3", marginBottom: "4px" }}>
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "14px", padding: "1rem" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "4px", letterSpacing: "0.04em" }}>CAPÍTULOS</div>
+            <div style={{ fontSize: "1.75rem", fontWeight: "bold", color: "#e5e7eb", marginBottom: "4px" }}>
               {progresso.filter(p => p.concluidos === p.total_topicos).length}/6
             </div>
-            <div style={{ fontSize: "10px", color: "#5a5a6a" }}>{ritmoLabel[cert?.ritmo || "moderado"]}</div>
+            <div style={{ fontSize: "10px", color: "#6b7280" }}>{ritmoLabel[cert?.ritmo || "moderado"]}</div>
           </div>
         </div>
 
         {/* CONTINUAR */}
         <div onClick={() => window.location.href = "/capitulo/1"}
-          style={{ background: "#0f0f18", border: "1px solid #c9a84c44", borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", cursor: "pointer", transition: "border-color 0.2s" }}
-          onMouseEnter={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c"}
-          onMouseLeave={e => (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"}>
-          <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "#1a1a0e", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>▶️</div>
+          style={{ background: "#111827", border: "1px solid rgba(59,130,246,0.4)", borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", cursor: "pointer", transition: "border-color 0.2s, box-shadow 0.2s" }}
+          onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#3b82f6"; (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 4px rgba(59,130,246,0.12)"; }}
+          onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
+          <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>▶️</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div style={{ fontSize: "10px", color: "#5a5a6a", marginBottom: "2px", letterSpacing: "0.04em" }}>CONTINUAR</div>
-            <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Cap. 1 — Fundamentos de Teste</div>
-            <div style={{ fontSize: "12px", color: "#5a5a6a" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "2px", letterSpacing: "0.04em" }}>CONTINUAR</div>
+            <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Cap. 1 — Fundamentos de Teste</div>
+            <div style={{ fontSize: "12px", color: "#9ca3af" }}>
               {totalConcluidos === 0 ? "Começar do início" : `${progresso.find(p => p.capitulo === 1)?.concluidos || 0}/4 tópicos concluídos`}
             </div>
           </div>
-          <span style={{ color: "#c9a84c", fontSize: "1.4rem", flexShrink: 0 }}>›</span>
+          <span style={{ color: "#3b82f6", fontSize: "1.4rem", flexShrink: 0 }}>›</span>
         </div>
 
         {cert && userId && (
@@ -314,10 +321,10 @@ export default function Dashboard() {
         )}
 
         {/* ABAS */}
-        <div style={{ display: "flex", gap: "4px", marginBottom: "1rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "10px", padding: "4px" }}>
+        <div style={{ display: "flex", gap: "4px", marginBottom: "1rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "10px", padding: "4px" }}>
           {(["trilha", "capitulos"] as const).map(aba => (
             <button key={aba} onClick={() => setAbaSelecionada(aba)}
-              style={{ flex: 1, padding: "8px", borderRadius: "7px", border: "none", background: abaSelecionada === aba ? "#1e1e2e" : "transparent", color: abaSelecionada === aba ? "#e8d5a3" : "#5a5a6a", fontSize: "13px", cursor: "pointer", fontWeight: abaSelecionada === aba ? "bold" : "normal", transition: "all 0.15s" }}>
+              style={{ flex: 1, padding: "8px", borderRadius: "7px", border: "none", background: abaSelecionada === aba ? "rgba(59,130,246,0.12)" : "transparent", color: abaSelecionada === aba ? "#3b82f6" : "#9ca3af", fontSize: "13px", cursor: "pointer", fontWeight: abaSelecionada === aba ? "bold" : "normal", transition: "all 0.15s" }}>
               {aba === "trilha" ? "📅 Trilha" : "📚 Capítulos"}
             </button>
           ))}
@@ -335,27 +342,27 @@ export default function Dashboard() {
 
               return (
                 <div key={s.num} onClick={() => !isBloqueada && (window.location.href = s.rota)}
-                  style={{ background: isAtiva ? "#1a1a0e" : "#0f0f18", border: `1px solid ${isAtiva ? "#c9a84c" : concluida ? "#2e3e2e" : "#1e1e2e"}`, borderRadius: "12px", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "0.875rem", opacity: isBloqueada ? 0.4 : 1, cursor: isBloqueada ? "not-allowed" : "pointer", transition: "all 0.15s" }}>
-                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: concluida ? "#1e3e1e" : isAtiva ? "#c9a84c22" : "#1a1a2a", border: `2px solid ${concluida ? "#4e7e4e" : isAtiva ? "#c9a84c" : "#2e2e4e"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.9rem" }}>
+                  style={{ background: isAtiva ? "rgba(59,130,246,0.08)" : "#111827", border: `1px solid ${isAtiva ? "#3b82f6" : concluida ? "rgba(34,197,94,0.4)" : "#1f2937"}`, borderRadius: "12px", padding: "1rem 1.1rem", display: "flex", alignItems: "center", gap: "0.875rem", opacity: isBloqueada ? 0.4 : 1, cursor: isBloqueada ? "not-allowed" : "pointer", transition: "all 0.15s" }}>
+                  <div style={{ width: "36px", height: "36px", borderRadius: "50%", background: concluida ? "rgba(34,197,94,0.12)" : isAtiva ? "rgba(59,130,246,0.15)" : "#1f2937", border: `2px solid ${concluida ? "#22c55e" : isAtiva ? "#3b82f6" : "#374151"}`, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "0.9rem", color: concluida ? "#22c55e" : isAtiva ? "#3b82f6" : "#9ca3af" }}>
                     {concluida ? "✓" : isAtiva ? "▶" : s.num === 8 ? "🏆" : s.num}
                   </div>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "3px", flexWrap: "wrap" }}>
-                      <span style={{ fontSize: "13px", fontWeight: "bold", color: isAtiva ? "#e8d5a3" : concluida ? "#6a8a6a" : "#5a5a6a" }}>{s.titulo}</span>
-                      {isAtiva && <span style={{ fontSize: "10px", background: "#c9a84c22", color: "#c9a84c", border: "1px solid #c9a84c44", padding: "1px 6px", borderRadius: "99px", whiteSpace: "nowrap" }}>▶ Em andamento</span>}
-                      {concluida && <span style={{ fontSize: "10px", background: "#1e3e1e", color: "#4e9e4e", border: "1px solid #2e5e2e", padding: "1px 6px", borderRadius: "99px" }}>✓</span>}
+                      <span style={{ fontSize: "13px", fontWeight: "bold", color: isAtiva ? "#e5e7eb" : concluida ? "#86efac" : "#9ca3af" }}>{s.titulo}</span>
+                      {isAtiva && <span style={{ fontSize: "10px", background: "rgba(59,130,246,0.12)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.4)", padding: "1px 6px", borderRadius: "99px", whiteSpace: "nowrap" }}>▶ Em andamento</span>}
+                      {concluida && <span style={{ fontSize: "10px", background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.4)", padding: "1px 6px", borderRadius: "99px" }}>✓</span>}
                     </div>
                     {s.cap > 0 && !isBloqueada && (
                       <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
-                        <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "3px", flex: 1 }}>
-                          <div style={{ background: concluida ? "#4e9e4e" : "#c9a84c", width: `${pctSemana}%`, height: "3px", borderRadius: "99px" }} />
+                        <div style={{ background: "#1f2937", borderRadius: "99px", height: "3px", flex: 1 }}>
+                          <div style={{ background: concluida ? "#22c55e" : "#3b82f6", width: `${pctSemana}%`, height: "3px", borderRadius: "99px" }} />
                         </div>
-                        <span style={{ fontSize: "11px", color: "#3a3a4a" }}>{pctSemana}%</span>
+                        <span style={{ fontSize: "11px", color: "#6b7280" }}>{pctSemana}%</span>
                       </div>
                     )}
-                    {isBloqueada && <div style={{ fontSize: "11px", color: "#3a3a4a" }}>🔒 Complete o capítulo anterior primeiro</div>}
+                    {isBloqueada && <div style={{ fontSize: "11px", color: "#6b7280" }}>🔒 Complete o capítulo anterior primeiro</div>}
                   </div>
-                  {!isBloqueada && <span style={{ color: "#3a3a5a", fontSize: "1.1rem", flexShrink: 0 }}>›</span>}
+                  {!isBloqueada && <span style={{ color: "#4b5563", fontSize: "1.1rem", flexShrink: 0 }}>›</span>}
                 </div>
               );
             })}
@@ -381,20 +388,20 @@ export default function Dashboard() {
 
               return (
                 <div key={c.num} onClick={() => desbloqueado && (window.location.href = c.rota)}
-                  style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "12px", padding: "1.1rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
-                  onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#c9a84c44"; }}
-                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1e1e2e"; }}>
+                  style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "12px", padding: "1.1rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
+                  onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"; }}
+                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1f2937"; }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
-                    <span style={{ fontSize: "12px", color: "#5a5a6a" }}>Cap. {c.num}</span>
-                    <span style={{ fontSize: "11px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
+                    <span style={{ fontSize: "12px", color: "#9ca3af" }}>Cap. {c.num}</span>
+                    <span style={{ fontSize: "11px", background: "rgba(59,130,246,0.12)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.25)", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
                   </div>
-                  <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "8px" }}>{c.titulo}</div>
-                  <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "4px", marginBottom: "5px" }}>
-                    <div style={{ background: pct === 100 ? "#4e9e4e" : "#c9a84c", width: `${pct}%`, height: "4px", borderRadius: "99px" }} />
+                  <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "8px" }}>{c.titulo}</div>
+                  <div style={{ background: "#1f2937", borderRadius: "99px", height: "4px", marginBottom: "5px" }}>
+                    <div style={{ background: pct === 100 ? "#22c55e" : "#3b82f6", width: `${pct}%`, height: "4px", borderRadius: "99px" }} />
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "11px", color: "#3a3a4a" }}>{concluidos}/{total} tópicos</span>
-                    <span style={{ fontSize: "11px", color: pct === 100 ? "#4e9e4e" : "#3a3a4a" }}>{pct === 100 ? "✓ Completo" : `${pct}%`}</span>
+                    <span style={{ fontSize: "11px", color: "#6b7280" }}>{concluidos}/{total} tópicos</span>
+                    <span style={{ fontSize: "11px", color: pct === 100 ? "#22c55e" : "#6b7280" }}>{pct === 100 ? "✓ Completo" : `${pct}%`}</span>
                   </div>
                 </div>
               );
@@ -403,14 +410,14 @@ export default function Dashboard() {
         )}
 
         {/* BANNER PROVA */}
-        <div style={{ marginTop: "1.5rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "14px", padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", flexWrap: "wrap" }}>
+        <div style={{ marginTop: "1.5rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "14px", padding: "1rem 1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", flexWrap: "wrap" }}>
           <span style={{ fontSize: "1.5rem" }}>📋</span>
           <div style={{ flex: 1, minWidth: "180px" }}>
-            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e8d5a3", marginBottom: "2px" }}>Agendar o exame CTFL</div>
-            <div style={{ fontSize: "11px", color: "#5a5a6a", lineHeight: 1.5 }}>Aplicado pela BSTQB. ~R$ 800. Recomendamos após concluir todos os capítulos.</div>
+            <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "2px" }}>Agendar o exame CTFL</div>
+            <div style={{ fontSize: "11px", color: "#9ca3af", lineHeight: 1.5 }}>Aplicado pela BSTQB. ~R$ 800. Recomendamos após concluir todos os capítulos.</div>
           </div>
           <a href="https://bstqb.qa/credito-exame" target="_blank" rel="noopener noreferrer"
-            style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "8px 14px", color: "#a0998e", fontSize: "12px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0 }}>
+            style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "8px 14px", color: "#9ca3af", fontSize: "12px", textDecoration: "none", whiteSpace: "nowrap", flexShrink: 0, transition: "border-color 0.15s, color 0.15s" }}>
             Ver site →
           </a>
         </div>

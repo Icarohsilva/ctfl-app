@@ -29,7 +29,6 @@ type PerfilUsuario = {
   pontos: number;
 };
 
-// URLs dos vídeos — preenche conforme você vai gravando
 const videosTopicos: Record<string, string | null> = {
   "por-que-testar": "https://www.youtube.com/embed/GWs-BjMtcVc", "7-principios": null, "erro-defeito-falha": null,
   "atividades-e-papeis": null, "modelos-desenvolvimento": null, "niveis-teste": null,
@@ -90,7 +89,6 @@ export default function TopicoGenerico({
     const { data: perfilData } = await supabase.from("profiles").select("*").eq("id", user.id).single();
     if (perfilData) setPerfil(perfilData);
 
-    // Carrega conteúdo fixo
     setMsgCarregando("Carregando conteúdo...");
     if (conteudoFixo) {
       const dica = perfilData?.nivel === "iniciante"
@@ -105,7 +103,6 @@ export default function TopicoGenerico({
         dicaPersonalizada: dica,
       });
     } else {
-      // Fallback via API se não tiver conteúdo fixo
       try {
         const res = await fetch("/api/conteudo", {
           method: "POST",
@@ -202,14 +199,13 @@ export default function TopicoGenerico({
     }
   };
 
-  // Estilos
-  const cor = capitulo?.cor || "#c9a84c";
+  const cor = capitulo?.cor || "#3b82f6";
   const s = {
-    main: { background: "#0a0a0f", minHeight: "100vh", color: "#f0ede8", fontFamily: "sans-serif" } as React.CSSProperties,
+    main: { background: "#0b0f1a", minHeight: "100vh", color: "#e5e7eb", fontFamily: "sans-serif" } as React.CSSProperties,
     inner: { maxWidth: "680px", margin: "0 auto", padding: "2rem 1.5rem 4rem" } as React.CSSProperties,
-    card: { background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", marginBottom: "1rem" } as React.CSSProperties,
-    btn: { background: cor, border: "none", borderRadius: "10px", padding: "13px 28px", color: "#0a0a0f", fontSize: "15px", fontWeight: "bold" as const, cursor: "pointer", width: "100%", marginTop: "1.25rem" } as React.CSSProperties,
-    btnSec: { background: "transparent", border: "1px solid #2e2e3e", borderRadius: "10px", padding: "11px 28px", color: "#a0998e", fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "8px" } as React.CSSProperties,
+    card: { background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", marginBottom: "1rem" } as React.CSSProperties,
+    btn: { background: cor, border: "none", borderRadius: "10px", padding: "13px 28px", color: "#0b0f1a", fontSize: "15px", fontWeight: "bold" as const, cursor: "pointer", width: "100%", marginTop: "1.25rem" } as React.CSSProperties,
+    btnSec: { background: "transparent", border: "1px solid #374151", borderRadius: "10px", padding: "11px 28px", color: "#9ca3af", fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "8px" } as React.CSSProperties,
   };
 
   const etapas = ["narrativa", "cards", "video", "simulado", "conclusao"];
@@ -218,13 +214,13 @@ export default function TopicoGenerico({
   const renderNav = () => (
     <div style={{ marginBottom: "2rem" }}>
       <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.75rem" }}>
-        <a href={`/capitulo/${numeroCapitulo}`} style={{ color: "#5a5a6a", fontSize: "13px", textDecoration: "none" }}>
+        <a href={`/capitulo/${numeroCapitulo}`} style={{ color: "#6b7280", fontSize: "13px", textDecoration: "none" }}>
           ← Cap. {numeroCapitulo}
         </a>
-        {perfil && <span style={{ fontSize: "12px", color: "#5a5a6a" }}>{perfil.nome?.split(" ")[0]} · ⭐ {perfil.pontos} XP</span>}
+        {perfil && <span style={{ fontSize: "12px", color: "#6b7280" }}>{perfil.nome?.split(" ")[0]} · ⭐ {perfil.pontos} XP</span>}
       </div>
-      <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "5px", marginBottom: "1rem" }}>
-        <div style={{ background: `linear-gradient(90deg, ${cor}, #e8d5a3)`, width: `${progressoPct}%`, height: "5px", borderRadius: "99px", transition: "width 0.5s ease" }} />
+      <div style={{ background: "#1f2937", borderRadius: "99px", height: "5px", marginBottom: "1rem" }}>
+        <div style={{ background: `linear-gradient(90deg, ${cor}, #9ca3af)`, width: `${progressoPct}%`, height: "5px", borderRadius: "99px", transition: "width 0.5s ease" }} />
       </div>
       <div style={{ display: "flex", justifyContent: "space-between" }}>
         {[{ e: "narrativa", icon: "📖", label: "História" }, { e: "cards", icon: "🃏", label: "Conceitos" }, { e: "video", icon: "🎬", label: "Vídeo" }, { e: "simulado", icon: "🎯", label: "Simulado" }, { e: "conclusao", icon: "🏆", label: "Fim" }]
@@ -234,7 +230,7 @@ export default function TopicoGenerico({
             return (
               <div key={item.e} style={{ textAlign: "center", opacity: idx <= atual ? 1 : 0.3 }}>
                 <div style={{ fontSize: "1.1rem" }}>{idx < atual ? "✅" : item.icon}</div>
-                <div style={{ fontSize: "10px", color: idx === atual ? cor : "#5a5a6a", marginTop: "2px" }}>{item.label}</div>
+                <div style={{ fontSize: "10px", color: idx === atual ? cor : "#6b7280", marginTop: "2px" }}>{item.label}</div>
               </div>
             );
           })}
@@ -242,7 +238,6 @@ export default function TopicoGenerico({
     </div>
   );
 
-  // ---- CARREGANDO ----
   if (etapa === "carregando") return (
     <main style={{ ...s.main, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ textAlign: "center" }}>
@@ -252,36 +247,36 @@ export default function TopicoGenerico({
     </main>
   );
 
-  if (!topicoMeta) return <main style={s.main}><div style={s.inner}><p style={{ color: "#c06060" }}>Tópico não encontrado.</p></div></main>;
+  if (!topicoMeta) return <main style={s.main}><div style={s.inner}><p style={{ color: "#ef4444" }}>Tópico não encontrado.</p></div></main>;
 
   // ---- NARRATIVA ----
   if (etapa === "narrativa") return (
     <main style={s.main}><div style={s.inner}>
       {renderNav()}
       <div style={{ marginBottom: "1.5rem" }}>
-        <span style={{ fontSize: "12px", background: "#1a1a0e", color: cor, border: `1px solid ${cor}44`, padding: "3px 10px", borderRadius: "99px" }}>
+        <span style={{ fontSize: "12px", background: "#111827", color: cor, border: `1px solid ${cor}44`, padding: "3px 10px", borderRadius: "99px" }}>
           Cap. {numeroCapitulo} · +{topicoMeta.xp} XP
         </span>
-        <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", margin: "0.75rem 0 0.25rem" }}>
+        <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", margin: "0.75rem 0 0.25rem" }}>
           {topicoMeta.titulo}
         </h1>
-        <p style={{ color: "#7a7a8a", fontSize: "14px", margin: 0 }}>{topicoMeta.subtitulo}</p>
+        <p style={{ color: "#9ca3af", fontSize: "14px", margin: 0 }}>{topicoMeta.subtitulo}</p>
       </div>
 
       {conteudo ? (
         <>
           <div style={s.card}>
-            <h2 style={{ fontSize: "1.15rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginTop: 0, marginBottom: "1.25rem" }}>
+            <h2 style={{ fontSize: "1.15rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginTop: 0, marginBottom: "1.25rem" }}>
               {conteudo.narrativa.titulo}
             </h2>
             {conteudo.narrativa.paragrafos.map((p, i) => (
-              <p key={i} style={{ color: "#c0bab0", lineHeight: 1.8, fontSize: "15px", margin: "0 0 1rem" }}>{p}</p>
+              <p key={i} style={{ color: "#e5e7eb", lineHeight: 1.8, fontSize: "15px", margin: "0 0 1rem" }}>{p}</p>
             ))}
           </div>
           {conteudo.dicaPersonalizada && (
-            <div style={{ background: "#1a1a0e", border: `1px solid ${cor}33`, borderRadius: "12px", padding: "1rem 1.25rem", display: "flex", gap: "10px" }}>
+            <div style={{ background: "#111827", border: `1px solid ${cor}33`, borderRadius: "12px", padding: "1rem 1.25rem", display: "flex", gap: "10px" }}>
               <span style={{ fontSize: "1.2rem" }}>💡</span>
-              <div style={{ fontSize: "13px", color: "#a09060", lineHeight: 1.6 }}>
+              <div style={{ fontSize: "13px", color: "#9ca3af", lineHeight: 1.6 }}>
                 <strong style={{ color: cor }}>Dica de estudo:</strong> {conteudo.dicaPersonalizada}
               </div>
             </div>
@@ -289,7 +284,7 @@ export default function TopicoGenerico({
         </>
       ) : (
         <div style={{ ...s.card, textAlign: "center", padding: "3rem" }}>
-          <p style={{ color: "#5a5a6a" }}>Carregando conteúdo...</p>
+          <p style={{ color: "#6b7280" }}>Carregando conteúdo...</p>
         </div>
       )}
 
@@ -306,19 +301,19 @@ export default function TopicoGenerico({
       <main style={s.main}><div style={s.inner}>
         {renderNav()}
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1rem" }}>
-          <span style={{ fontSize: "13px", color: "#7a7a8a" }}>Conceito {cardAtual + 1} de {conteudo.cards.length}</span>
+          <span style={{ fontSize: "13px", color: "#9ca3af" }}>Conceito {cardAtual + 1} de {conteudo.cards.length}</span>
           <span style={{ fontSize: "13px", color: cor }}>{Math.round(((cardAtual + 1) / conteudo.cards.length) * 100)}%</span>
         </div>
-        <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "3px", marginBottom: "1.5rem" }}>
+        <div style={{ background: "#1f2937", borderRadius: "99px", height: "3px", marginBottom: "1.5rem" }}>
           <div style={{ background: cor, width: `${((cardAtual + 1) / conteudo.cards.length) * 100}%`, height: "3px", borderRadius: "99px", transition: "width 0.3s" }} />
         </div>
-        <div style={{ ...s.card, borderColor: "#2a2a3e" }}>
+        <div style={{ ...s.card, borderColor: "#374151" }}>
           <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>{card.emoji}</div>
-          <h2 style={{ fontSize: "1.1rem", fontFamily: "Georgia, serif", color: "#e8d5a3", fontWeight: "normal", marginTop: 0, marginBottom: "1rem" }}>{card.titulo}</h2>
-          <p style={{ color: "#c0bab0", lineHeight: 1.8, fontSize: "15px", margin: "0 0 1.25rem" }}>{card.explicacao}</p>
-          <div style={{ background: "#0a0a14", border: "1px solid #2e2e4e", borderRadius: "10px", padding: "1rem 1.25rem" }}>
-            <div style={{ fontSize: "11px", color: "#5a5a8a", marginBottom: "6px", fontWeight: "bold", letterSpacing: "0.05em" }}>EXEMPLO REAL</div>
-            <p style={{ color: "#9090c0", fontSize: "13px", lineHeight: 1.7, margin: 0 }}>{card.exemplo}</p>
+          <h2 style={{ fontSize: "1.1rem", fontFamily: "Georgia, serif", color: "#e5e7eb", fontWeight: "normal", marginTop: 0, marginBottom: "1rem" }}>{card.titulo}</h2>
+          <p style={{ color: "#e5e7eb", lineHeight: 1.8, fontSize: "15px", margin: "0 0 1.25rem" }}>{card.explicacao}</p>
+          <div style={{ background: "#0b0f1a", border: "1px solid #374151", borderRadius: "10px", padding: "1rem 1.25rem" }}>
+            <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "6px", fontWeight: "bold", letterSpacing: "0.05em" }}>EXEMPLO REAL</div>
+            <p style={{ color: "#9ca3af", fontSize: "13px", lineHeight: 1.7, margin: 0 }}>{card.exemplo}</p>
           </div>
         </div>
         <div style={{ display: "flex", gap: "10px" }}>
@@ -338,10 +333,10 @@ export default function TopicoGenerico({
     return (
       <main style={s.main}><div style={s.inner}>
         {renderNav()}
-        <h2 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "0.5rem" }}>
+        <h2 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", marginBottom: "0.5rem" }}>
           Videoaula — {topicoMeta.titulo}
         </h2>
-        <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "1.5rem" }}>Reforça o que você aprendeu antes do simulado.</p>
+        <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.5rem" }}>Reforça o que você aprendeu antes do simulado.</p>
         {videoUrl ? (
           <div style={{ borderRadius: "12px", overflow: "hidden", marginBottom: "1.5rem", aspectRatio: "16/9" }}>
             <iframe src={videoUrl} style={{ width: "100%", height: "100%", border: "none" }} allowFullScreen />
@@ -349,19 +344,19 @@ export default function TopicoGenerico({
         ) : (
           <div style={{ ...s.card, textAlign: "center", padding: "3rem 2rem", marginBottom: "1.5rem" }}>
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🎬</div>
-            <h3 style={{ color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", fontSize: "1.1rem", marginBottom: "0.5rem" }}>Vídeo em produção...</h3>
-            <p style={{ color: "#5a5a6a", fontSize: "13px", lineHeight: 1.6, maxWidth: "340px", margin: "0 auto" }}>
-              O vídeo sobre <strong style={{ color: "#7a7a8a" }}>{topicoMeta.titulo}</strong> será adicionado em breve.
+            <h3 style={{ color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", fontSize: "1.1rem", marginBottom: "0.5rem" }}>Vídeo em produção...</h3>
+            <p style={{ color: "#6b7280", fontSize: "13px", lineHeight: 1.6, maxWidth: "340px", margin: "0 auto" }}>
+              O vídeo sobre <strong style={{ color: "#9ca3af" }}>{topicoMeta.titulo}</strong> será adicionado em breve.
             </p>
           </div>
         )}
 
         {temRevisao > 0 && (
-          <div style={{ background: "#1a0e0e", border: "1px solid #5e2e2e", borderRadius: "12px", padding: "1rem 1.25rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
+          <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "12px", padding: "1rem 1.25rem", marginBottom: "1rem", display: "flex", alignItems: "center", gap: "10px" }}>
             <span style={{ fontSize: "1.3rem" }}>📌</span>
             <div>
-              <div style={{ fontSize: "13px", color: "#c06060", fontWeight: "bold" }}>Você tem {temRevisao} questão(ões) pendente(s) de revisão!</div>
-              <div style={{ fontSize: "12px", color: "#7a4a4a" }}>Quer revisar primeiro antes do novo simulado?</div>
+              <div style={{ fontSize: "13px", color: "#ef4444", fontWeight: "bold" }}>Você tem {temRevisao} questão(ões) pendente(s) de revisão!</div>
+              <div style={{ fontSize: "12px", color: "#9ca3af" }}>Quer revisar primeiro antes do novo simulado?</div>
             </div>
           </div>
         )}
@@ -384,39 +379,39 @@ export default function TopicoGenerico({
     );
 
     const questao = questoes[questaoAtual];
-    const dificuldadeCor = questao.dificuldade === "facil" ? "#4e9e4e" : questao.dificuldade === "medio" ? "#c9a84c" : questao.dificuldade === "dificil" ? "#c08030" : "#c06060";
+    const dificuldadeCor = questao.dificuldade === "facil" ? "#22c55e" : questao.dificuldade === "medio" ? "#f59e0b" : questao.dificuldade === "dificil" ? "#ef4444" : "#dc2626";
 
     return (
       <main style={s.main}><div style={s.inner}>
         {renderNav()}
         <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "1.25rem" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <span style={{ fontSize: "13px", color: "#7a7a8a" }}>Questão {questaoAtual + 1}/{questoes.length}</span>
+            <span style={{ fontSize: "13px", color: "#9ca3af" }}>Questão {questaoAtual + 1}/{questoes.length}</span>
             <span style={{ fontSize: "11px", color: dificuldadeCor, border: `1px solid ${dificuldadeCor}44`, padding: "1px 7px", borderRadius: "99px" }}>
               {questao.dificuldade}
             </span>
           </div>
           <span style={{ fontSize: "13px", color: cor }}>⭐ {acertos * 10} pts</span>
         </div>
-        <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "3px", marginBottom: "1.5rem" }}>
+        <div style={{ background: "#1f2937", borderRadius: "99px", height: "3px", marginBottom: "1.5rem" }}>
           <div style={{ background: cor, width: `${((questaoAtual + 1) / questoes.length) * 100}%`, height: "3px", borderRadius: "99px", transition: "width 0.3s" }} />
         </div>
 
         <div style={{ ...s.card, marginBottom: "8px" }}>
-          <div style={{ fontSize: "11px", color: "#5a5a6a", marginBottom: "8px" }}>Conceito: {questao.conceito}</div>
-          <p style={{ color: "#e8d5a3", fontSize: "16px", lineHeight: 1.7, margin: 0, fontFamily: "Georgia, serif" }}>{questao.pergunta}</p>
+          <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "8px" }}>Conceito: {questao.conceito}</div>
+          <p style={{ color: "#e5e7eb", fontSize: "16px", lineHeight: 1.7, margin: 0, fontFamily: "Georgia, serif" }}>{questao.pergunta}</p>
         </div>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "10px", marginBottom: "1rem" }}>
           {questao.opcoes.map((opcao, i) => {
-            let borderColor = "#1e1e2e", textoCor = "#c0bab0";
+            let borderColor = "#1f2937", textoCor = "#e5e7eb";
             if (respostaConfirmada) {
-              if (i === questao.correta) { borderColor = "#2e5e2e"; textoCor = "#6ec06e"; }
-              else if (i === respostaSelecionada) { borderColor = "#5e2e2e"; textoCor = "#c06060"; }
-            } else if (respostaSelecionada === i) { borderColor = cor; textoCor = "#e8d5a3"; }
+              if (i === questao.correta) { borderColor = "rgba(34,197,94,0.4)"; textoCor = "#22c55e"; }
+              else if (i === respostaSelecionada) { borderColor = "rgba(239,68,68,0.4)"; textoCor = "#ef4444"; }
+            } else if (respostaSelecionada === i) { borderColor = cor; textoCor = "#e5e7eb"; }
             return (
               <button key={i} disabled={respostaConfirmada} onClick={() => setRespostaSelecionada(i)}
-                style={{ background: "#0f0f18", border: `1px solid ${borderColor}`, borderRadius: "10px", padding: "14px 16px", color: textoCor, fontSize: "14px", textAlign: "left", cursor: respostaConfirmada ? "default" : "pointer", display: "flex", alignItems: "center", gap: "10px", transition: "all 0.15s", lineHeight: 1.5 }}>
+                style={{ background: "#111827", border: `1px solid ${borderColor}`, borderRadius: "10px", padding: "14px 16px", color: textoCor, fontSize: "14px", textAlign: "left", cursor: respostaConfirmada ? "default" : "pointer", display: "flex", alignItems: "center", gap: "10px", transition: "all 0.15s", lineHeight: 1.5 }}>
                 <span style={{ width: "22px", height: "22px", borderRadius: "50%", border: `1.5px solid ${textoCor}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", flexShrink: 0, fontWeight: "bold" }}>
                   {respostaConfirmada && i === questao.correta ? "✓" : respostaConfirmada && i === respostaSelecionada && i !== questao.correta ? "✗" : ["A", "B", "C", "D"][i]}
                 </span>
@@ -427,11 +422,11 @@ export default function TopicoGenerico({
         </div>
 
         {respostaConfirmada && (
-          <div style={{ background: respostaSelecionada === questao.correta ? "#0e2e0e" : "#2e0e0e", border: `1px solid ${respostaSelecionada === questao.correta ? "#2e5e2e" : "#5e2e2e"}`, borderRadius: "12px", padding: "1rem 1.25rem", marginBottom: "1rem" }}>
-            <div style={{ fontWeight: "bold", color: respostaSelecionada === questao.correta ? "#6ec06e" : "#c06060", marginBottom: "6px", fontSize: "14px" }}>
+          <div style={{ background: respostaSelecionada === questao.correta ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${respostaSelecionada === questao.correta ? "rgba(34,197,94,0.3)" : "rgba(239,68,68,0.3)"}`, borderRadius: "12px", padding: "1rem 1.25rem", marginBottom: "1rem" }}>
+            <div style={{ fontWeight: "bold", color: respostaSelecionada === questao.correta ? "#22c55e" : "#ef4444", marginBottom: "6px", fontSize: "14px" }}>
               {respostaSelecionada === questao.correta ? "✅ Correto!" : "❌ Não dessa vez..."}
             </div>
-            <div style={{ fontSize: "13px", color: "#a0a090", lineHeight: 1.6 }}>{questao.explicacao}</div>
+            <div style={{ fontSize: "13px", color: "#9ca3af", lineHeight: 1.6 }}>{questao.explicacao}</div>
           </div>
         )}
 
@@ -455,32 +450,32 @@ export default function TopicoGenerico({
     <main style={s.main}><div style={s.inner}>
       <div style={{ textAlign: "center", padding: "2rem 0" }}>
         <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>{aprovado ? "🏆" : "💪"}</div>
-        <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "0.5rem" }}>
+        <h1 style={{ fontSize: "1.8rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", marginBottom: "0.5rem" }}>
           {aprovado ? "Arrasou!" : "Quase lá!"}
         </h1>
-        <p style={{ color: "#7a7a8a", fontSize: "14px", marginBottom: "2rem" }}>{topicoMeta.titulo}</p>
+        <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "2rem" }}>{topicoMeta.titulo}</p>
 
-        <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "2rem", marginBottom: "1.5rem", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1rem" }}>
-          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e8d5a3" }}>{stats.acertos}/{stats.total}</div><div style={{ fontSize: "12px", color: "#5a5a6a" }}>acertos</div></div>
-          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: stats.pct >= 65 ? "#6ec06e" : "#c06060" }}>{stats.pct}%</div><div style={{ fontSize: "12px", color: "#5a5a6a" }}>aproveitamento</div></div>
-          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: cor }}>+{stats.xpGanho}</div><div style={{ fontSize: "12px", color: "#5a5a6a" }}>XP ganho</div></div>
+        <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "2rem", marginBottom: "1.5rem", display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: "1rem" }}>
+          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: "#e5e7eb" }}>{stats.acertos}/{stats.total}</div><div style={{ fontSize: "12px", color: "#6b7280" }}>acertos</div></div>
+          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: stats.pct >= 65 ? "#22c55e" : "#ef4444" }}>{stats.pct}%</div><div style={{ fontSize: "12px", color: "#6b7280" }}>aproveitamento</div></div>
+          <div><div style={{ fontSize: "2rem", fontWeight: "bold", color: cor }}>+{stats.xpGanho}</div><div style={{ fontSize: "12px", color: "#6b7280" }}>XP ganho</div></div>
         </div>
 
         {stats.conceitosErrados.length > 0 && (
-          <div style={{ background: "#1a0e0e", border: "1px solid #3e1e1e", borderRadius: "12px", padding: "1rem", marginBottom: "1.5rem", textAlign: "left" }}>
-            <div style={{ fontSize: "13px", color: "#c06060", fontWeight: "bold", marginBottom: "6px" }}>📌 Revisão agendada para:</div>
-            {stats.conceitosErrados.map((c, i) => <div key={i} style={{ fontSize: "12px", color: "#7a4a4a", marginTop: "3px" }}>• {c}</div>)}
+          <div style={{ background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "12px", padding: "1rem", marginBottom: "1.5rem", textAlign: "left" }}>
+            <div style={{ fontSize: "13px", color: "#ef4444", fontWeight: "bold", marginBottom: "6px" }}>📌 Revisão agendada para:</div>
+            {stats.conceitosErrados.map((c, i) => <div key={i} style={{ fontSize: "12px", color: "#9ca3af", marginTop: "3px" }}>• {c}</div>)}
           </div>
         )}
 
         {aprovado && proximoTopico && (
-          <div style={{ background: "#1a1a0e", border: `1px solid ${cor}33`, borderRadius: "12px", padding: "1rem", marginBottom: "1.5rem", fontSize: "13px", color: "#a09060" }}>
+          <div style={{ background: "#111827", border: `1px solid ${cor}33`, borderRadius: "12px", padding: "1rem", marginBottom: "1.5rem", fontSize: "13px", color: "#9ca3af" }}>
             🎯 Próximo: <strong style={{ color: cor }}>{proximoTopico.titulo}</strong>
           </div>
         )}
 
         <a href={`/capitulo/${numeroCapitulo}`}
-          style={{ background: cor, color: "#0a0a0f", padding: "13px 32px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "inline-block" }}>
+          style={{ background: cor, color: "#0b0f1a", padding: "13px 32px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "inline-block" }}>
           {aprovado ? "Continuar trilha →" : "Voltar ao capítulo"}
         </a>
 

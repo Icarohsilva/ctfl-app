@@ -259,48 +259,56 @@ export default function PerfilPage() {
   };
 
   const inputStyle: React.CSSProperties = {
-    width: "100%", background: "#0a0a0f", border: "1px solid #2e2e3e",
-    borderRadius: "8px", padding: "10px 14px", color: "#f0ede8",
+    width: "100%", background: "#0b0f1a", border: "1px solid #374151",
+    borderRadius: "8px", padding: "10px 14px", color: "#e5e7eb",
     fontSize: "14px", fontFamily: "sans-serif", outline: "none", boxSizing: "border-box",
+    transition: "border-color 0.15s, box-shadow 0.15s",
   };
-  const inputErro: React.CSSProperties = { ...inputStyle, borderColor: "#aa3333" };
-  const labelStyle: React.CSSProperties = { fontSize: "12px", color: "#7a7a8a", marginBottom: "5px", display: "block" };
-  const erroStyle: React.CSSProperties = { fontSize: "11px", color: "#c06060", marginTop: "4px" };
+  const inputErro: React.CSSProperties = { ...inputStyle, borderColor: "#ef4444" };
+  const labelStyle: React.CSSProperties = { fontSize: "12px", color: "#9ca3af", marginBottom: "5px", display: "block" };
+  const erroStyle: React.CSSProperties = { fontSize: "11px", color: "#ef4444", marginTop: "4px" };
 
   if (loading) return (
-    <main style={{ background: "#0a0a0f", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <div style={{ color: "#c9a84c", fontFamily: "Georgia, serif" }}>Carregando perfil...</div>
+    <main style={{ background: "#0b0f1a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ color: "#3b82f6", fontFamily: "Georgia, serif" }}>Carregando perfil...</div>
     </main>
   );
 
   const xpTotal = perfil?.pontos || 0;
   const nivel_label = xpTotal < 100 ? "🌱 Aprendiz" : xpTotal < 300 ? "📖 Praticante" : xpTotal < 600 ? "🎯 Analista" : "🏆 Especialista";
 
+  const logoGold: React.CSSProperties = {
+    background: "linear-gradient(135deg, #d4af37, #f5d76e)",
+    WebkitBackgroundClip: "text",
+    WebkitTextFillColor: "transparent",
+    backgroundClip: "text",
+  };
+
   return (
-    <main style={{ background: "#0a0a0f", minHeight: "100vh", color: "#f0ede8", fontFamily: "sans-serif" }}>
+    <main style={{ background: "#0b0f1a", minHeight: "100vh", color: "#e5e7eb", fontFamily: "sans-serif" }}>
 
       {/* MODAL DE CONFIRMAÇÃO */}
       {confirmandoAlteracao && (
-        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.8)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: "1.5rem" }}>
-          <div style={{ background: "#0f0f18", border: "1px solid #3e2e2e", borderRadius: "16px", padding: "2rem", maxWidth: "420px", width: "100%" }}>
+        <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.75)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: "1.5rem" }}>
+          <div style={{ background: "#111827", border: "1px solid #374151", borderRadius: "16px", padding: "2rem", maxWidth: "420px", width: "100%" }}>
             <div style={{ fontSize: "2rem", marginBottom: "1rem", textAlign: "center" }}>⚠️</div>
-            <h3 style={{ fontSize: "1.1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.75rem", textAlign: "center" }}>
+            <h3 style={{ fontSize: "1.1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.75rem", textAlign: "center" }}>
               Alterar nível de conhecimento
             </h3>
-            <p style={{ color: "#7a7a8a", fontSize: "13px", lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "center" }}>
-              Deseja <strong style={{ color: "#c06060" }}>reiniciar o progresso</strong> para adaptar a trilha ao novo nível, ou <strong style={{ color: "#c9a84c" }}>manter o progresso atual</strong>?
+            <p style={{ color: "#9ca3af", fontSize: "13px", lineHeight: 1.6, marginBottom: "1.5rem", textAlign: "center" }}>
+              Deseja <strong style={{ color: "#ef4444" }}>reiniciar o progresso</strong> para adaptar a trilha ao novo nível, ou <strong style={{ color: "#3b82f6" }}>manter o progresso atual</strong>?
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               <button onClick={() => salvarConfiguracoes(true)}
-                style={{ background: "#3e1e1e", border: "1px solid #5e2e2e", borderRadius: "8px", padding: "12px", color: "#c06060", fontSize: "14px", cursor: "pointer", fontWeight: "bold" }}>
+                style={{ background: "rgba(239,68,68,0.12)", border: "1px solid rgba(239,68,68,0.4)", borderRadius: "8px", padding: "12px", color: "#ef4444", fontSize: "14px", cursor: "pointer", fontWeight: "600" }}>
                 Reiniciar progresso e aplicar
               </button>
               <button onClick={() => salvarConfiguracoes(false)}
-                style={{ background: "#1a1a0e", border: "1px solid #c9a84c44", borderRadius: "8px", padding: "12px", color: "#c9a84c", fontSize: "14px", cursor: "pointer", fontWeight: "bold" }}>
+                style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", cursor: "pointer", fontWeight: "600" }}>
                 Manter progresso e aplicar
               </button>
               <button onClick={() => setConfirmandoAlteracao(false)}
-                style={{ background: "transparent", border: "1px solid #2e2e3e", borderRadius: "8px", padding: "10px", color: "#5a5a6a", fontSize: "13px", cursor: "pointer" }}>
+                style={{ background: "transparent", border: "1px solid #374151", borderRadius: "8px", padding: "10px", color: "#9ca3af", fontSize: "13px", cursor: "pointer" }}>
                 Cancelar
               </button>
             </div>
@@ -309,71 +317,71 @@ export default function PerfilPage() {
       )}
 
       {/* NAV */}
-      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 2rem", borderBottom: "1px solid #1e1e2e", position: "sticky", top: 0, background: "rgba(10,10,15,0.95)", backdropFilter: "blur(12px)", zIndex: 100 }}>
+      <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "1rem 2rem", borderBottom: "1px solid #1f2937", position: "sticky", top: 0, background: "rgba(11,15,26,0.92)", backdropFilter: "blur(12px)", zIndex: 100 }}>
         <a href="/dashboard" style={{ display: "flex", alignItems: "center", gap: "8px", textDecoration: "none" }}>
           <img src="/icons/favicon-96x96.png" alt="TestPath" style={{ width: "24px", height: "24px", objectFit: "contain" }} />
-          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", color: "#e8d5a3" }}>TestPath</span>
+          <span style={{ fontFamily: "Georgia, serif", fontWeight: "bold", fontSize: "1.1rem", ...logoGold }}>TestPath</span>
         </a>
-        <a href="/dashboard" style={{ color: "#5a5a6a", fontSize: "13px", textDecoration: "none" }}>← Dashboard</a>
+        <a href="/dashboard" style={{ color: "#9ca3af", fontSize: "13px", textDecoration: "none" }}>← Dashboard</a>
       </nav>
 
       <div style={{ maxWidth: "760px", margin: "0 auto", padding: "2rem" }}>
 
         {/* HEADER */}
-        <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "2rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
+        <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "2rem", marginBottom: "1.5rem", display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
           <div style={{ position: "relative", flexShrink: 0 }}>
             <div onClick={() => fileRef.current?.click()}
-              style={{ width: "80px", height: "80px", borderRadius: "50%", background: perfil?.foto_url ? "transparent" : "#1a1a2e", border: "2px solid #c9a84c44", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", overflow: "hidden", position: "relative" }}>
+              style={{ width: "80px", height: "80px", borderRadius: "50%", background: perfil?.foto_url ? "transparent" : "#1f2937", border: "2px solid rgba(59,130,246,0.4)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", overflow: "hidden", position: "relative" }}>
               {perfil?.foto_url
                 ? <img src={perfil.foto_url} alt="avatar" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
                 : <span style={{ fontSize: "2rem" }}>👤</span>}
-              {uploadando && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#c9a84c" }}>...</div>}
+              {uploadando && <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.6)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "12px", color: "#3b82f6" }}>...</div>}
             </div>
             <div onClick={() => fileRef.current?.click()}
-              style={{ position: "absolute", bottom: 0, right: 0, width: "24px", height: "24px", borderRadius: "50%", background: "#c9a84c", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" }}>
+              style={{ position: "absolute", bottom: 0, right: 0, width: "24px", height: "24px", borderRadius: "50%", background: "#3b82f6", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", fontSize: "12px" }}>
               ✏️
             </div>
             <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={uploadFoto} />
           </div>
 
           <div style={{ flex: 1 }}>
-            <h1 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e8d5a3", marginBottom: "4px" }}>{perfil?.nome || "Sem nome"}</h1>
-            <p style={{ color: "#5a5a6a", fontSize: "13px", marginBottom: "8px" }}>{perfil?.email}</p>
+            <h1 style={{ fontSize: "1.4rem", fontFamily: "Georgia, serif", fontWeight: "normal", color: "#e5e7eb", marginBottom: "4px" }}>{perfil?.nome || "Sem nome"}</h1>
+            <p style={{ color: "#9ca3af", fontSize: "13px", marginBottom: "8px" }}>{perfil?.email}</p>
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
-              <span style={{ fontSize: "12px", background: "#1a1a0e", color: "#c9a84c", border: "1px solid #c9a84c33", padding: "3px 10px", borderRadius: "99px" }}>{nivel_label}</span>
-              <span style={{ fontSize: "12px", background: "#1e1e2e", color: "#5a5a7a", padding: "3px 10px", borderRadius: "99px" }}>⭐ {xpTotal} XP</span>
-              <span style={{ fontSize: "12px", background: "#1a1000", color: "#c9a84c", border: "1px solid #c9a84c22", padding: "3px 10px", borderRadius: "99px" }}>🔥 {perfil?.streak || 0} dias</span>
+              <span style={{ fontSize: "12px", background: "rgba(59,130,246,0.12)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.25)", padding: "3px 10px", borderRadius: "99px" }}>{nivel_label}</span>
+              <span style={{ fontSize: "12px", background: "rgba(212,175,55,0.08)", color: "#d4af37", border: "1px solid rgba(212,175,55,0.25)", padding: "3px 10px", borderRadius: "99px" }}>⭐ {xpTotal} XP</span>
+              <span style={{ fontSize: "12px", background: "rgba(212,175,55,0.08)", color: "#d4af37", border: "1px solid rgba(212,175,55,0.25)", padding: "3px 10px", borderRadius: "99px" }}>🔥 {perfil?.streak || 0} dias</span>
             </div>
           </div>
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", minWidth: "200px" }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e8d5a3" }}>{perfil?.semana_atual || 1}/8</div>
-              <div style={{ fontSize: "11px", color: "#5a5a6a" }}>semana</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e5e7eb" }}>{perfil?.semana_atual || 1}/8</div>
+              <div style={{ fontSize: "11px", color: "#9ca3af" }}>semana</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#c9a84c" }}>{perfil?.maior_streak || 0}</div>
-              <div style={{ fontSize: "11px", color: "#5a5a6a" }}>recorde</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#d4af37" }}>{perfil?.maior_streak || 0}</div>
+              <div style={{ fontSize: "11px", color: "#9ca3af" }}>recorde</div>
             </div>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#7c9e6e" }}>{xpTotal}</div>
-              <div style={{ fontSize: "11px", color: "#5a5a6a" }}>XP total</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#10b981" }}>{xpTotal}</div>
+              <div style={{ fontSize: "11px", color: "#9ca3af" }}>XP total</div>
             </div>
           </div>
         </div>
 
         {/* MENSAGEM */}
         {msg && (
-          <div style={{ background: msg.tipo === "sucesso" ? "#0e2e0e" : "#2e0e0e", border: `1px solid ${msg.tipo === "sucesso" ? "#2e5e2e" : "#5e2e2e"}`, borderRadius: "10px", padding: "12px 16px", marginBottom: "1.5rem", color: msg.tipo === "sucesso" ? "#6ec06e" : "#c06060", fontSize: "14px" }}>
+          <div style={{ background: msg.tipo === "sucesso" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", border: `1px solid ${msg.tipo === "sucesso" ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`, borderRadius: "10px", padding: "12px 16px", marginBottom: "1.5rem", color: msg.tipo === "sucesso" ? "#22c55e" : "#fca5a5", fontSize: "14px" }}>
             {msg.tipo === "sucesso" ? "✅" : "❌"} {msg.texto}
           </div>
         )}
 
         {/* ABAS */}
-        <div style={{ display: "flex", gap: "4px", marginBottom: "1.5rem", background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "10px", padding: "4px" }}>
+        <div style={{ display: "flex", gap: "4px", marginBottom: "1.5rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "10px", padding: "4px" }}>
           {([{ id: "perfil", label: "👤 Meu Perfil" }, { id: "conta", label: "⚙️ Configurações" }, { id: "senha", label: "🔒 Segurança" }] as const).map(a => (
             <button key={a.id} onClick={() => setAba(a.id)}
-              style={{ flex: 1, padding: "8px", borderRadius: "7px", border: "none", background: aba === a.id ? "#1e1e2e" : "transparent", color: aba === a.id ? "#e8d5a3" : "#5a5a6a", fontSize: "13px", cursor: "pointer", fontWeight: aba === a.id ? "bold" : "normal", transition: "all 0.15s" }}>
+              style={{ flex: 1, padding: "8px", borderRadius: "7px", border: "none", background: aba === a.id ? "rgba(59,130,246,0.12)" : "transparent", color: aba === a.id ? "#3b82f6" : "#9ca3af", fontSize: "13px", cursor: "pointer", fontWeight: aba === a.id ? "bold" : "normal", transition: "all 0.15s" }}>
               {a.label}
             </button>
           ))}
@@ -381,8 +389,8 @@ export default function PerfilPage() {
 
         {/* ---- ABA PERFIL ---- */}
         {aba === "perfil" && (
-          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
-            <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Informações pessoais</h2>
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
+            <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Informações pessoais</h2>
 
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
               <div>
@@ -426,7 +434,7 @@ export default function PerfilPage() {
             </div>
 
             <button onClick={salvarPerfil} disabled={salvando}
-              style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "12px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.7 : 1 }}>
+              style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.6 : 1, boxShadow: salvando ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
               {salvando ? "Salvando..." : "Salvar alterações"}
             </button>
           </div>
@@ -434,22 +442,22 @@ export default function PerfilPage() {
 
         {/* ---- ABA CONFIGURAÇÕES ---- */}
         {aba === "conta" && (
-          <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-            <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Configurações de estudo</h2>
+          <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+            <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Configurações de estudo</h2>
 
-            <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "#a09060", lineHeight: 1.5 }}>
-              🎓 O ritmo e data meta de cada certificação são configurados diretamente no <a href="/dashboard" style={{ color: "#c9a84c", textDecoration: "none" }}>dashboard da trilha</a>.
+            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "#93c5fd", lineHeight: 1.5 }}>
+              🎓 O ritmo e data meta de cada certificação são configurados diretamente no <a href="/dashboard" style={{ color: "#3b82f6", textDecoration: "none" }}>dashboard da trilha</a>.
             </div>
 
             {nivel !== nivelOriginal && (
-              <div style={{ background: "#1a1000", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#a09060" }}>
+              <div style={{ background: "rgba(212,175,55,0.08)", border: "1px solid rgba(212,175,55,0.3)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#d4af37" }}>
                 ⚠️ Você tem alterações não salvas.
               </div>
             )}
 
             <div>
-              <label style={{ ...labelStyle, fontSize: "13px", color: "#a0998e", marginBottom: "8px" }}>Nível de conhecimento em QA</label>
-              <p style={{ fontSize: "12px", color: "#5a5a6a", marginBottom: "12px", lineHeight: 1.5 }}>
+              <label style={{ ...labelStyle, fontSize: "13px", color: "#e5e7eb", marginBottom: "8px" }}>Nível de conhecimento em QA</label>
+              <p style={{ fontSize: "12px", color: "#9ca3af", marginBottom: "12px", lineHeight: 1.5 }}>
                 Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
@@ -459,20 +467,20 @@ export default function PerfilPage() {
                   { valor: "intermediario", emoji: "🎯", titulo: "Especialista", desc: "Tenho experiência sólida — quero questões desafiadoras e foco nas nuances" },
                 ].map(n => (
                   <button key={n.valor} onClick={() => setNivel(n.valor)}
-                    style={{ background: nivel === n.valor ? "#1a1a0e" : "#0a0a0f", border: `1px solid ${nivel === n.valor ? "#c9a84c" : "#2e2e3e"}`, borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
+                    style={{ background: nivel === n.valor ? "rgba(59,130,246,0.08)" : "#0b0f1a", border: `1px solid ${nivel === n.valor ? "#3b82f6" : "#374151"}`, borderRadius: "10px", padding: "12px 16px", display: "flex", alignItems: "center", gap: "12px", cursor: "pointer", textAlign: "left", width: "100%", transition: "all 0.15s" }}>
                     <span style={{ fontSize: "1.3rem" }}>{n.emoji}</span>
                     <div>
-                      <div style={{ color: "#e8d5a3", fontSize: "13px", fontWeight: "bold" }}>{n.titulo}</div>
-                      <div style={{ color: "#7a7a8a", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
+                      <div style={{ color: "#e5e7eb", fontSize: "13px", fontWeight: "bold" }}>{n.titulo}</div>
+                      <div style={{ color: "#9ca3af", fontSize: "12px", lineHeight: 1.4 }}>{n.desc}</div>
                     </div>
-                    {nivel === n.valor && <span style={{ marginLeft: "auto", color: "#c9a84c" }}>✓</span>}
+                    {nivel === n.valor && <span style={{ marginLeft: "auto", color: "#3b82f6" }}>✓</span>}
                   </button>
                 ))}
               </div>
             </div>
 
             <button onClick={tentarSalvarConfiguracoes} disabled={salvando}
-              style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "12px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.7 : 1 }}>
+              style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.6 : 1, boxShadow: salvando ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
               {salvando ? "Salvando..." : "Salvar configurações"}
             </button>
           </div>
@@ -483,10 +491,10 @@ export default function PerfilPage() {
           <div style={{ display: "flex", flexDirection: "column", gap: "1.25rem" }}>
 
             {/* Alterar email */}
-            <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar e-mail</h2>
-              <div style={{ background: "#1a1a0e", border: "1px solid #c9a84c33", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#a09060" }}>
-                💡 E-mail atual: <strong style={{ color: "#c9a84c" }}>{perfil?.email}</strong>
+            <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar e-mail</h2>
+              <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "10px", padding: "10px 14px", fontSize: "13px", color: "#93c5fd" }}>
+                💡 E-mail atual: <strong style={{ color: "#3b82f6" }}>{perfil?.email}</strong>
               </div>
               <div>
                 <label style={labelStyle}>Novo e-mail</label>
@@ -497,14 +505,14 @@ export default function PerfilPage() {
                 <input style={inputStyle} type="password" value={senhaParaEmail} onChange={e => setSenhaParaEmail(e.target.value)} placeholder="Digite sua senha atual" />
               </div>
               <button onClick={alterarEmail} disabled={alterandoEmail}
-                style={{ background: "transparent", border: "1px solid #c9a84c", borderRadius: "8px", padding: "11px", color: "#c9a84c", fontSize: "14px", fontWeight: "bold", cursor: alterandoEmail ? "not-allowed" : "pointer", opacity: alterandoEmail ? 0.7 : 1 }}>
+                style={{ background: "transparent", border: "1px solid #3b82f6", borderRadius: "8px", padding: "11px", color: "#3b82f6", fontSize: "14px", fontWeight: "600", cursor: alterandoEmail ? "not-allowed" : "pointer", opacity: alterandoEmail ? 0.6 : 1 }}>
                 {alterandoEmail ? "Enviando confirmação..." : "Alterar e-mail"}
               </button>
             </div>
 
             {/* Alterar senha */}
-            <div style={{ background: "#0f0f18", border: "1px solid #1e1e2e", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
-              <h2 style={{ fontSize: "1rem", color: "#e8d5a3", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar senha</h2>
+            <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1rem" }}>
+              <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Alterar senha</h2>
               <div>
                 <label style={labelStyle}>Senha atual</label>
                 <input style={inputStyle} type="password" value={senhaAtual} onChange={e => setSenhaAtual(e.target.value)} placeholder="Digite sua senha atual" />
@@ -514,10 +522,10 @@ export default function PerfilPage() {
                 <input style={inputStyle} type="password" value={novaSenha} onChange={e => setNovaSenha(e.target.value)} placeholder="Mínimo 6 caracteres" />
                 {novaSenha.length > 0 && (
                   <div style={{ marginTop: "6px" }}>
-                    <div style={{ background: "#1e1e2e", borderRadius: "99px", height: "3px" }}>
-                      <div style={{ background: novaSenha.length < 6 ? "#c06060" : novaSenha.length < 10 ? "#c9a84c" : "#4e9e4e", width: `${Math.min(100, (novaSenha.length / 12) * 100)}%`, height: "3px", borderRadius: "99px", transition: "all 0.3s" }} />
+                    <div style={{ background: "#1f2937", borderRadius: "99px", height: "3px" }}>
+                      <div style={{ background: novaSenha.length < 6 ? "#ef4444" : novaSenha.length < 10 ? "#f59e0b" : "#22c55e", width: `${Math.min(100, (novaSenha.length / 12) * 100)}%`, height: "3px", borderRadius: "99px", transition: "all 0.3s" }} />
                     </div>
-                    <div style={{ fontSize: "11px", color: novaSenha.length < 6 ? "#c06060" : novaSenha.length < 10 ? "#c9a84c" : "#4e9e4e", marginTop: "3px" }}>
+                    <div style={{ fontSize: "11px", color: novaSenha.length < 6 ? "#ef4444" : novaSenha.length < 10 ? "#f59e0b" : "#22c55e", marginTop: "3px" }}>
                       {novaSenha.length < 6 ? "Muito curta" : novaSenha.length < 10 ? "Razoável" : "Forte ✓"}
                     </div>
                   </div>
@@ -529,16 +537,16 @@ export default function PerfilPage() {
                 {confirmarSenha && novaSenha !== confirmarSenha && <div style={erroStyle}>As senhas não coincidem</div>}
               </div>
               <button onClick={alterarSenha} disabled={salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha}
-                style={{ background: "#c9a84c", border: "none", borderRadius: "8px", padding: "12px", color: "#0a0a0f", fontSize: "14px", fontWeight: "bold", cursor: "pointer", opacity: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? 0.4 : 1 }}>
+                style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: "pointer", opacity: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? 0.4 : 1, boxShadow: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
                 {salvando && verificandoSenha ? "Verificando..." : salvando ? "Alterando..." : "Alterar senha"}
               </button>
             </div>
 
             {/* Zona de perigo */}
-            <div style={{ background: "#0f0f18", border: "1px solid #3e1e1e", borderRadius: "16px", padding: "1.75rem" }}>
-              <h3 style={{ fontSize: "13px", color: "#c06060", marginBottom: "12px" }}>⚠️ Zona de perigo</h3>
+            <div style={{ background: "#111827", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "16px", padding: "1.75rem" }}>
+              <h3 style={{ fontSize: "13px", color: "#ef4444", marginBottom: "12px" }}>⚠️ Zona de perigo</h3>
               <button onClick={async () => { if (confirm("Sair de todas as sessões?")) { await supabase.auth.signOut(); window.location.href = "/login"; } }}
-                style={{ background: "transparent", border: "1px solid #5e2e2e", borderRadius: "8px", padding: "10px 16px", color: "#c06060", fontSize: "13px", cursor: "pointer", width: "100%" }}>
+                style={{ background: "transparent", border: "1px solid rgba(239,68,68,0.4)", borderRadius: "8px", padding: "10px 16px", color: "#ef4444", fontSize: "13px", cursor: "pointer", width: "100%" }}>
                 Sair de todas as sessões
               </button>
             </div>
