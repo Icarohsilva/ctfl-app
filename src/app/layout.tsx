@@ -56,6 +56,9 @@ export const metadata: Metadata = {
     statusBarStyle: "black-translucent",
     title: "TestPath",
   },
+  other: {
+    "google-adsense-account": "ca-pub-1108191012937979",
+  },
 };
 
 import type { Viewport } from "next";
