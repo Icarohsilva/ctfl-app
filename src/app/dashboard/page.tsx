@@ -232,7 +232,7 @@ export default function Dashboard() {
 
       {/* Overlay para fechar menu mobile */}
       {menuAberto && (
-        <div onClick={() => setMenuAberto(false)} style={{ position: "fixed", inset: 0, zIndex: 150 }} />
+        <div onClick={() => setMenuAberto(false)} style={{ position: "fixed", inset: 0, zIndex: 90 }} />
       )}
 
       <div className="padding-main" style={{ maxWidth: "900px", margin: "0 auto", padding: "1.5rem 2rem" }}>

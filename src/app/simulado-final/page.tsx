@@ -204,6 +204,7 @@ export default function SimuladoFinal() {
     if (d === "medio") return { bg: "rgba(245,158,11,0.12)", fg: "#f59e0b" };
     return { bg: "rgba(239,68,68,0.12)", fg: "#ef4444" };
   };
+  const labelDificuldade: Record<string, string> = { facil: "Fácil", medio: "Médio", dificil: "Difícil", muito_dificil: "Muito difícil" };
 
   // INTRO
   if (estado === "intro") return (
@@ -339,7 +340,7 @@ export default function SimuladoFinal() {
               {questao.conceito}
             </span>
             <span style={{ fontSize: "11px", background: dif.bg, color: dif.fg, padding: "2px 8px", borderRadius: "99px" }}>
-              {questao.dificuldade}
+              {labelDificuldade[questao.dificuldade] ?? questao.dificuldade}
             </span>
           </div>
 

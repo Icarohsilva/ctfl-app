@@ -148,7 +148,7 @@ export default function CardMetaCTFL({ cert, userId, progressoGeral, onAtualizar
             </div>
           </div>
 
-          <div style={{ background: "#0b0f1a", border: "1px solid #374151", borderRadius: "10px", padding: "1rem", marginBottom: "1rem" }}>
+          <div style={{ background: "#0b0f1a", border: "1px solid #374151", borderRadius: "10px", padding: "1rem", marginBottom: "1rem", boxSizing: "border-box", overflow: "hidden" }}>
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: semMeta ? 0 : "10px" }}>
               <div>
                 <div style={{ fontSize: "13px", color: "#e5e7eb", fontWeight: "bold" }}>📅 Data alvo para o exame</div>
@@ -162,7 +162,7 @@ export default function CardMetaCTFL({ cert, userId, progressoGeral, onAtualizar
             {!semMeta && (
               <input type="date" value={dataMeta} min={new Date().toISOString().split("T")[0]}
                 onChange={e => setDataMeta(e.target.value)}
-                style={{ width: "100%", background: "#111827", border: "1px solid #374151", borderRadius: "8px", padding: "8px 12px", color: "#e5e7eb", fontSize: "14px", outline: "none", boxSizing: "border-box", marginTop: "10px" }} />
+                style={{ width: "100%", maxWidth: "100%", background: "#111827", border: "1px solid #374151", borderRadius: "8px", padding: "8px 12px", color: "#e5e7eb", fontSize: "14px", outline: "none", boxSizing: "border-box", marginTop: "10px", display: "block" }} />
             )}
           </div>
 

@@ -446,6 +446,7 @@ export default function TopicoGenerico({
 
     const questao = questoes[questaoAtual];
     const dificuldadeCor = questao.dificuldade === "facil" ? "#22c55e" : questao.dificuldade === "medio" ? "#f59e0b" : questao.dificuldade === "dificil" ? "#ef4444" : "#dc2626";
+    const labelDificuldade: Record<string, string> = { facil: "Fácil", medio: "Médio", dificil: "Difícil", muito_dificil: "Muito difícil" };
 
     return (
       <main style={s.main}><div style={s.inner}>
@@ -454,7 +455,7 @@ export default function TopicoGenerico({
           <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <span style={{ fontSize: "13px", color: "#9ca3af" }}>Questão {questaoAtual + 1}/{questoes.length}</span>
             <span style={{ fontSize: "11px", color: dificuldadeCor, border: `1px solid ${dificuldadeCor}44`, padding: "1px 7px", borderRadius: "99px" }}>
-              {questao.dificuldade}
+              {labelDificuldade[questao.dificuldade] ?? questao.dificuldade}
             </span>
           </div>
           <span style={{ fontSize: "13px", color: cor }}>⭐ {acertos * 10} pts</span>
