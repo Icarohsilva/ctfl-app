@@ -82,6 +82,7 @@ export default function TopicoGenerico({
   const [xpAtual, setXpAtual] = useState(0);
   const [capituloCompleto, setCapituloCompleto] = useState(false);
   const [certStreak, setCertStreak] = useState(0);
+  const [textoCopiado, setTextoCopiado] = useState(false);
 
   useEffect(() => { inicializar(); }, [id]);
 
@@ -598,19 +599,25 @@ export default function TopicoGenerico({
         </a>
 
         {aprovado && (
-          <button
-            onClick={() => {
-              const titulo = encodeURIComponent(`Concluí mais um tópico na certificação CTFL v4.0! 🎓`);
-              const resumo = encodeURIComponent(
-                `Acabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online`
-              );
-              const url = encodeURIComponent("https://testpath.online");
-              window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${titulo}&summary=${resumo}`, "_blank");
-            }}
-            style={{ background: "transparent", border: "1px solid #0077b5", borderRadius: "10px", padding: "11px 28px", color: "#0077b5", fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "8px" }}
-          >
-            Compartilhar no LinkedIn
-          </button>
+          <div style={{ marginTop: "8px" }}>
+            <button
+              onClick={() => {
+                const texto = `Concluí mais um tópico na certificação CTFL v4.0! 🎓\n\nAcabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online`;
+                navigator.clipboard.writeText(texto).catch(() => {});
+                setTextoCopiado(true);
+                setTimeout(() => setTextoCopiado(false), 4000);
+                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://testpath.online")}`, "_blank");
+              }}
+              style={{ background: "transparent", border: "1px solid #0077b5", borderRadius: "10px", padding: "11px 28px", color: "#0077b5", fontSize: "14px", cursor: "pointer", width: "100%" }}
+            >
+              Compartilhar no LinkedIn
+            </button>
+            {textoCopiado && (
+              <p style={{ fontSize: "12px", color: "#22c55e", textAlign: "center", margin: "6px 0 0" }}>
+                ✅ Texto copiado — cole no post do LinkedIn (Ctrl+V)
+              </p>
+            )}
+          </div>
         )}
 
         {!aprovado && (
