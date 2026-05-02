@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { usePathname } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -19,7 +19,9 @@ export default function FeedbackWidget() {
   const [tipo, setTipo] = useState<Tipo | null>(null);
   const [enviando, setEnviando] = useState(false);
   const [sucesso, setSucesso] = useState(false);
+  const [erro, setErro] = useState(false);
   const [hover, setHover] = useState(false);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Formulário opinião
   const [estrelas, setEstrelas] = useState(0);
@@ -43,9 +45,14 @@ export default function FeedbackWidget() {
     setNomeCert(""); setOrgCert(""); setMotivoCert("");
     setLocalBug(""); setDescBug(""); setUrlBug("");
     setSucesso(false);
+    setErro(false);
   };
 
-  const fechar = () => { setAberto(false); resetar(); };
+  const fechar = () => {
+    if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    setAberto(false);
+    resetar();
+  };
 
   const podeSalvar = () => {
     if (!tipo) return false;
@@ -55,21 +62,23 @@ export default function FeedbackWidget() {
     return false;
   };
 
+  const canSave = podeSalvar();
+
   const enviar = async () => {
-    if (!tipo || !podeSalvar()) return;
+    if (!tipo || !canSave) return;
     setEnviando(true);
+    setErro(false);
 
     let dados: Record<string, string | number> = {};
     if (tipo === "opiniao")      dados = { avaliacao: estrelas, mensagem };
     if (tipo === "certificacao") dados = { nome: nomeCert, organizacao: orgCert, motivo: motivoCert };
     if (tipo === "bug")          dados = { local: localBug, descricao: descBug, ...(urlBug ? { url: urlBug } : {}) };
 
-    // Tentar obter token do usuário logado
-    const { data: { session } } = await supabase.auth.getSession();
-    const headers: Record<string, string> = { "Content-Type": "application/json" };
-    if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
-
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      const headers: Record<string, string> = { "Content-Type": "application/json" };
+      if (session?.access_token) headers["Authorization"] = `Bearer ${session.access_token}`;
+
       const res = await fetch("/api/feedback", {
         method: "POST",
         headers,
@@ -77,8 +86,12 @@ export default function FeedbackWidget() {
       });
       if (res.ok) {
         setSucesso(true);
-        setTimeout(() => fechar(), 2000);
+        timeoutRef.current = setTimeout(() => fechar(), 2000);
+      } else {
+        setErro(true);
       }
+    } catch {
+      setErro(true);
     } finally {
       setEnviando(false);
     }
@@ -109,7 +122,7 @@ export default function FeedbackWidget() {
           transition: "border-color 0.15s, color 0.15s",
         }}
       >
-        <span>💬</span>
+        <span aria-hidden="true">💬</span>
         <span>Feedback</span>
       </button>
 
@@ -137,7 +150,7 @@ export default function FeedbackWidget() {
               <h2 style={{ margin: 0, fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
                 Enviar feedback
               </h2>
-              <button onClick={fechar} style={{ background: "none", border: "none", color: "#6b7280", fontSize: "18px", cursor: "pointer", lineHeight: 1 }}>✕</button>
+              <button onClick={fechar} aria-label="Fechar" style={{ background: "none", border: "none", color: "#6b7280", fontSize: "18px", cursor: "pointer", lineHeight: 1 }}>✕</button>
             </div>
 
             {sucesso ? (
@@ -176,6 +189,7 @@ export default function FeedbackWidget() {
                       <div style={{ display: "flex", gap: "6px" }}>
                         {[1, 2, 3, 4, 5].map(n => (
                           <button key={n} onClick={() => setEstrelas(n)}
+                            aria-label={`${n} estrela${n > 1 ? "s" : ""}`}
                             style={{ background: "none", border: "none", fontSize: "24px", cursor: "pointer", padding: "2px", lineHeight: 1 }}>
                             {n <= estrelas ? "★" : "☆"}
                           </button>
@@ -240,21 +254,28 @@ export default function FeedbackWidget() {
 
                 {/* Botão enviar */}
                 {tipo && (
-                  <button
-                    onClick={enviar}
-                    disabled={!podeSalvar() || enviando}
-                    style={{
-                      width: "100%", marginTop: "1.25rem",
-                      background: podeSalvar() && !enviando ? "#3b82f6" : "#1f2937",
-                      border: "none", borderRadius: "10px",
-                      padding: "12px", color: podeSalvar() && !enviando ? "#fff" : "#4b5563",
-                      fontSize: "14px", fontWeight: "bold",
-                      cursor: podeSalvar() && !enviando ? "pointer" : "not-allowed",
-                      transition: "background 0.15s",
-                    }}
-                  >
-                    {enviando ? "Enviando..." : "Enviar feedback"}
-                  </button>
+                  <>
+                    <button
+                      onClick={enviar}
+                      disabled={!canSave || enviando}
+                      style={{
+                        width: "100%", marginTop: "1.25rem",
+                        background: canSave && !enviando ? "#3b82f6" : "#1f2937",
+                        border: "none", borderRadius: "10px",
+                        padding: "12px", color: canSave && !enviando ? "#fff" : "#4b5563",
+                        fontSize: "14px", fontWeight: "bold",
+                        cursor: canSave && !enviando ? "pointer" : "not-allowed",
+                        transition: "background 0.15s",
+                      }}
+                    >
+                      {enviando ? "Enviando..." : "Enviar feedback"}
+                    </button>
+                    {erro && (
+                      <p style={{ fontSize: "12px", color: "#ef4444", marginTop: "8px", textAlign: "center" }}>
+                        Erro ao enviar. Tente novamente.
+                      </p>
+                    )}
+                  </>
                 )}
               </>
             )}
