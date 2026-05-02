@@ -602,7 +602,7 @@ export default function TopicoGenerico({
           <div style={{ marginTop: "8px" }}>
             <button
               onClick={() => {
-                const texto = `Concluí mais um tópico na certificação CTFL v4.0! 🎓\n\nAcabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online`;
+                const texto = `Concluí mais um tópico na certificação CTFL v4.0! 🎓\n\nAcabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online\n\n#CTFL #ISTQB #QA #TesteSoftware #QualidadeDeSoftware #Certificação #AprendizadoContinuo #DesenvolvimentoProfissional`;
                 navigator.clipboard.writeText(texto).catch(() => {});
                 setTextoCopiado(true);
                 setTimeout(() => setTextoCopiado(false), 4000);
