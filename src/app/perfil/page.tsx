@@ -393,7 +393,7 @@ export default function PerfilPage() {
           <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "16px", padding: "1.75rem", display: "flex", flexDirection: "column", gap: "1.25rem" }}>
             <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Informações pessoais</h2>
 
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
               <div>
                 <label style={labelStyle}>Nome completo</label>
                 <input style={inputStyle} value={nome} onChange={e => setNome(e.target.value)} placeholder="Seu nome completo" />
