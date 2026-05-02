@@ -597,6 +597,15 @@ export default function TopicoGenerico({
           {aprovado ? "Continuar trilha →" : "Voltar ao capítulo"}
         </a>
 
+        {aprovado && (
+          <button
+            onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://testpath.online")}`, "_blank")}
+            style={{ background: "transparent", border: "1px solid #0077b5", borderRadius: "10px", padding: "11px 28px", color: "#0077b5", fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "8px" }}
+          >
+            Compartilhar no LinkedIn
+          </button>
+        )}
+
         {!aprovado && (
           <button style={s.btnSec} onClick={() => window.location.href = `/capitulo/${numeroCapitulo}/topico/${id}`}>
             Tentar novamente
