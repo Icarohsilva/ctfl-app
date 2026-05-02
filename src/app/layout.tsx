@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import PWAInstaller from "../components/PWAInstaller";
 import BFCacheReload from "../components/BFCacheReload";
+import FeedbackWidget from "../components/FeedbackWidget";
 import Script from "next/script";
 
 const geistSans = Geist({
@@ -114,6 +115,7 @@ export default function RootLayout({
             strategy="afterInteractive"
           />
         )}
+        <FeedbackWidget />
       </body>
     </html>
   );
