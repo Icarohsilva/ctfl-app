@@ -1,6 +1,15 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
 
+function escapeHtml(s: string | number): string {
+  return String(s)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
 const TIPOS_VALIDOS = ["opiniao", "certificacao", "bug"] as const;
 type Tipo = typeof TIPOS_VALIDOS[number];
 
@@ -11,6 +20,14 @@ const rotuloTipo: Record<Tipo, string> = {
 };
 
 export async function POST(req: NextRequest) {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+  const resendKey = process.env.RESEND_API_KEY;
+  if (!supabaseUrl || !supabaseKey || !resendKey) {
+    console.error("Variáveis de ambiente ausentes");
+    return NextResponse.json({ error: "Configuração inválida" }, { status: 500 });
+  }
+
   let body: { tipo: string; dados: Record<string, string | number> };
   try {
     body = await req.json();
@@ -25,16 +42,14 @@ export async function POST(req: NextRequest) {
   }
 
   // Identificar usuário logado (opcional)
-  const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-  );
+  const supabase = createClient(supabaseUrl, supabaseKey);
 
   const authHeader = req.headers.get("authorization");
   let userId: string | null = null;
   if (authHeader) {
-    const token = authHeader.replace("Bearer ", "");
-    const { data: { user } } = await supabase.auth.getUser(token);
+    const token = authHeader.startsWith("Bearer ") ? authHeader.slice(7) : authHeader;
+    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    if (authError) console.warn("Auth lookup failed:", authError.message);
     userId = user?.id ?? null;
   }
 
@@ -52,7 +67,7 @@ export async function POST(req: NextRequest) {
 
   // Enviar e-mail via Resend
   const linhasDados = Object.entries(dados)
-    .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#9ca3af;font-size:13px">${k}</td><td style="padding:6px 12px;color:#e5e7eb;font-size:13px">${v}</td></tr>`)
+    .map(([k, v]) => `<tr><td style="padding:6px 12px;color:#9ca3af;font-size:13px">${escapeHtml(k)}</td><td style="padding:6px 12px;color:#e5e7eb;font-size:13px">${escapeHtml(v)}</td></tr>`)
     .join("");
 
   const html = `
@@ -78,7 +93,7 @@ export async function POST(req: NextRequest) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+      "Authorization": `Bearer ${resendKey}`,
     },
     body: JSON.stringify({
       from: "TestPath <noreply@testpath.online>",
