@@ -599,7 +599,14 @@ export default function TopicoGenerico({
 
         {aprovado && (
           <button
-            onClick={() => window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent("https://testpath.online")}`, "_blank")}
+            onClick={() => {
+              const titulo = encodeURIComponent(`Concluí mais um tópico na certificação CTFL v4.0! 🎓`);
+              const resumo = encodeURIComponent(
+                `Acabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online`
+              );
+              const url = encodeURIComponent("https://testpath.online");
+              window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${url}&title=${titulo}&summary=${resumo}`, "_blank");
+            }}
             style={{ background: "transparent", border: "1px solid #0077b5", borderRadius: "10px", padding: "11px 28px", color: "#0077b5", fontSize: "14px", cursor: "pointer", width: "100%", marginTop: "8px" }}
           >
             Compartilhar no LinkedIn
