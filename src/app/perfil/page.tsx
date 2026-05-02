@@ -265,6 +265,12 @@ export default function PerfilPage() {
     fontSize: "14px", fontFamily: "sans-serif", outline: "none", boxSizing: "border-box",
     transition: "border-color 0.15s, box-shadow 0.15s",
   };
+  const inputDateStyle: React.CSSProperties = {
+    ...inputStyle,
+    WebkitAppearance: "none",
+    appearance: "none",
+    minWidth: 0,
+  };
   const inputErro: React.CSSProperties = { ...inputStyle, borderColor: "#ef4444" };
   const labelStyle: React.CSSProperties = { fontSize: "12px", color: "#9ca3af", marginBottom: "5px", display: "block" };
   const erroStyle: React.CSSProperties = { fontSize: "11px", color: "#ef4444", marginTop: "4px" };
@@ -408,7 +414,7 @@ export default function PerfilPage() {
               </div>
               <div>
                 <label style={labelStyle}>Data de nascimento</label>
-                <input style={erroData ? inputErro : inputStyle} type="date" value={dataNascimento}
+                <input style={erroData ? { ...inputDateStyle, borderColor: "#ef4444" } : inputDateStyle} type="date" value={dataNascimento}
                   max={new Date().toISOString().split("T")[0]}
                   onChange={e => { setDataNascimento(e.target.value); setErroData(""); }}
                   onBlur={() => { const v = validarDataNascimento(dataNascimento); if (!v.valida) setErroData(v.erro); }} />

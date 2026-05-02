@@ -162,7 +162,7 @@ export default function CardMetaCTFL({ cert, userId, progressoGeral, onAtualizar
             {!semMeta && (
               <input type="date" value={dataMeta} min={new Date().toISOString().split("T")[0]}
                 onChange={e => setDataMeta(e.target.value)}
-                style={{ width: "100%", maxWidth: "100%", background: "#111827", border: "1px solid #374151", borderRadius: "8px", padding: "8px 12px", color: "#e5e7eb", fontSize: "14px", outline: "none", boxSizing: "border-box", marginTop: "10px", display: "block" }} />
+                style={{ width: "100%", maxWidth: "100%", minWidth: 0, background: "#111827", border: "1px solid #374151", borderRadius: "8px", padding: "8px 12px", color: "#e5e7eb", fontSize: "14px", outline: "none", boxSizing: "border-box", marginTop: "10px", display: "block", WebkitAppearance: "none", appearance: "none" }} />
             )}
           </div>
 
