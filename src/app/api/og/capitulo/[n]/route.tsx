@@ -41,31 +41,33 @@ export async function GET(
           </span>
         </div>
 
-        {/* Content */}
+        {/* Conteúdo */}
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <div style={{ fontSize: "22px", color: "#6b7280", marginBottom: "14px" }}>
-            Concluí o Capítulo {n}
+          <div style={{ display: "flex", fontSize: "22px", color: "#6b7280", marginBottom: "14px" }}>
+            {`Concluí o Capítulo ${n}`}
           </div>
-          <div style={{ fontSize: "50px", fontWeight: "bold", color: "#f9fafb", lineHeight: 1.15, marginBottom: "44px" }}>
+          <div style={{ display: "flex", fontSize: "50px", fontWeight: "bold", color: "#f9fafb", lineHeight: 1.15, marginBottom: "44px" }}>
             {cap.titulo}
           </div>
 
           {/* Barra de progresso */}
           <div style={{ display: "flex", alignItems: "center", gap: "18px", marginBottom: "44px" }}>
-            <div style={{ flex: 1, height: "12px", background: "#1f2937", borderRadius: "99px", overflow: "hidden" }}>
-              <div style={{ width: `${progressoPct}%`, height: "12px", background: "#3b82f6", borderRadius: "99px" }} />
+            <div style={{ display: "flex", flex: 1, height: "12px", background: "#1f2937", borderRadius: "99px" }}>
+              <div style={{ display: "flex", width: `${progressoPct}%`, height: "12px", background: "#3b82f6", borderRadius: "99px" }} />
             </div>
-            <span style={{ fontSize: "20px", color: "#9ca3af", whiteSpace: "nowrap" }}>
-              {n} / {totalCaps} caps
+            <span style={{ display: "flex", fontSize: "20px", color: "#9ca3af" }}>
+              {`${n} / ${totalCaps} caps`}
             </span>
           </div>
 
           {/* XP e streak */}
           <div style={{ display: "flex", gap: "28px" }}>
-            <span style={{ fontSize: "24px", color: "#d4af37" }}>⭐ {xp} XP</span>
+            <span style={{ display: "flex", fontSize: "24px", color: "#d4af37" }}>
+              {`⭐ ${xp} XP`}
+            </span>
             {streak > 0 && (
-              <span style={{ fontSize: "24px", color: "#d4af37" }}>
-                🔥 {streak} dia{streak > 1 ? "s" : ""} seguido{streak > 1 ? "s" : ""}
+              <span style={{ display: "flex", fontSize: "24px", color: "#d4af37" }}>
+                {`🔥 ${streak} dia${streak > 1 ? "s" : ""} seguido${streak > 1 ? "s" : ""}`}
               </span>
             )}
           </div>
@@ -73,7 +75,7 @@ export async function GET(
 
         {/* Footer */}
         <div style={{ display: "flex", justifyContent: "flex-end" }}>
-          <span style={{ fontSize: "20px", color: "#374151" }}>testpath.online</span>
+          <span style={{ display: "flex", fontSize: "20px", color: "#374151" }}>testpath.online</span>
         </div>
       </div>
     ),
