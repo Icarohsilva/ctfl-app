@@ -1,6 +1,6 @@
 // -------------------------------------------------------
 // CONTEÚDO FIXO — 24 tópicos CTFL v4.0
-// Narrativa + Cards por tópico
+// Narrativa + Cards por tópico (pipeline de vídeo: ver scripts/gerar-videos.py)
 // -------------------------------------------------------
 
 export type Card = {
