@@ -4,6 +4,7 @@ import { supabase } from "@/lib/supabase";
 import mapaCaptulos from "@/data/mapa-capitulos";
 import conteudoTopicos from "@/data/conteudo-topicos";
 import AdBanner from "@/components/AdBanner";
+import videoUrls from "@/data/video-urls";
 
 type Etapa = "carregando" | "narrativa" | "cards" | "video" | "simulado" | "conclusao";
 
@@ -30,16 +31,6 @@ type PerfilUsuario = {
   pontos: number;
 };
 
-const videosTopicos: Record<string, string | null> = {
-  "por-que-testar": "https://www.youtube.com/embed/GWs-BjMtcVc", "7-principios": null, "erro-defeito-falha": null,
-  "atividades-e-papeis": null, "modelos-desenvolvimento": null, "niveis-teste": null,
-  "tipos-teste": null, "teste-manutencao": null, "fundamentos-estatico": null,
-  "processo-revisao": null, "analise-estatica": null, "particao-equivalencia": null,
-  "analise-valor-limite": null, "tabela-decisao": null, "transicao-estado": null,
-  "caixa-branca": null, "baseado-experiencia": null, "planejamento-teste": null,
-  "monitoramento-controle": null, "gestao-risco": null, "gestao-defeitos": null,
-  "ferramentas-suporte": null, "automacao-teste": null, "selecao-ferramenta": null,
-};
 
 function calcularEstatisticas(questoes: QuestaoGerada[], respostas: number[]) {
   const resultado = questoes.map((q, i) => ({
@@ -394,7 +385,7 @@ export default function TopicoGenerico({
 
   // ---- VÍDEO ----
   if (etapa === "video") {
-    const videoUrl = videosTopicos[id];
+    const videoUrl = videoUrls[id];
     return (
       <main style={s.main}><div style={s.inner}>
         {renderNav()}

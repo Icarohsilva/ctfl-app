@@ -1,0 +1,28 @@
+const videoUrls: Record<string, string | null> = {
+  "por-que-testar":          "https://www.youtube.com/embed/GWs-BjMtcVc",
+  "7-principios":            null,
+  "erro-defeito-falha":      null,
+  "atividades-e-papeis":     null,
+  "modelos-desenvolvimento": null,
+  "niveis-teste":            null,
+  "tipos-teste":             null,
+  "teste-manutencao":        null,
+  "fundamentos-estatico":    null,
+  "processo-revisao":        null,
+  "analise-estatica":        null,
+  "particao-equivalencia":   null,
+  "analise-valor-limite":    null,
+  "tabela-decisao":          null,
+  "transicao-estado":        null,
+  "caixa-branca":            null,
+  "baseado-experiencia":     null,
+  "planejamento-teste":      null,
+  "monitoramento-controle":  null,
+  "gestao-risco":            null,
+  "gestao-defeitos":         null,
+  "ferramentas-suporte":     null,
+  "automacao-teste":         null,
+  "selecao-ferramenta":      null,
+};
+
+export default videoUrls;
