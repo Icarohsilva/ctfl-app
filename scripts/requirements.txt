@@ -1,4 +1,4 @@
-edge-tts==7.0.2
+gtts==2.5.3
 Pillow==11.2.1
 google-api-python-client==2.167.0
 google-auth-oauthlib==1.2.1

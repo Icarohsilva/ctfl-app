@@ -6,13 +6,12 @@ Lê:    scripts/conteudo.json, src/data/video-urls.ts
 Escreve: scripts/video-urls-new.json
 
 Requisitos:
-    pip install edge-tts Pillow google-api-python-client google-auth-oauthlib
+    pip install gtts Pillow google-api-python-client google-auth-oauthlib
 
 Variáveis de ambiente:
     YOUTUBE_CLIENT_ID, YOUTUBE_CLIENT_SECRET, YOUTUBE_REFRESH_TOKEN
 """
 
-import asyncio
 import json
 import os
 import re
@@ -22,7 +21,7 @@ import unicodedata
 from pathlib import Path
 
 from PIL import Image, ImageDraw, ImageFont
-import edge_tts
+from gtts import gTTS
 from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.http import MediaFileUpload
@@ -38,7 +37,6 @@ DARK  = (31, 41, 55)
 
 FONT  = "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf"
 FONTB = "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"
-VOICE = "pt-BR-FranciscaNeural"
 MAX_UPLOADS = 5  # Quota de segurança (YouTube: ~6/dia)
 
 
@@ -51,7 +49,7 @@ def load_font(path: str, size: int) -> ImageFont.FreeTypeFont:
         return ImageFont.load_default()
 
 def strip_emoji(text: str) -> str:
-    """Remove emojis e símbolos especiais — Edge TTS lida melhor com texto limpo."""
+    """Remove emojis e símbolos especiais do texto de narração."""
     return "".join(
         c for c in text
         if unicodedata.category(c) not in ("So", "Sm", "Sk", "Cs")
@@ -119,8 +117,8 @@ def slide_dica(dica: str) -> Image.Image:
 
 # ── Geração de áudio ─────────────────────────────────────────────────────────
 
-async def gerar_audio(texto: str, path: str) -> None:
-    await edge_tts.Communicate(strip_emoji(texto), VOICE).save(path)
+def gerar_audio(texto: str, path: str) -> None:
+    gTTS(text=strip_emoji(texto), lang="pt", tld="com.br").save(path)
 
 def duracao_audio(path: str) -> float:
     r = subprocess.run(
@@ -208,7 +206,7 @@ def upload_youtube(yt, video_path: str, titulo: str, descricao: str) -> str:
 
 # ── Processamento de um tópico ────────────────────────────────────────────────
 
-async def processar_topico(
+def processar_topico(
     topico_id: str,
     dados: dict,
     cap_info: dict,
@@ -224,21 +222,21 @@ async def processar_topico(
 
     slides_audios: list[tuple[str, str]] = []
 
-    async def add_slide(img: Image.Image, nome: str, texto_narr: str) -> None:
+    def add_slide(img: Image.Image, nome: str, texto_narr: str) -> None:
         sp = f"{tmpdir}/{nome}.png"
         ap = f"{tmpdir}/{nome}.mp3"
         img.save(sp)
-        await gerar_audio(texto_narr, ap)
+        gerar_audio(texto_narr, ap)
         slides_audios.append((sp, ap))
 
-    await add_slide(
+    add_slide(
         slide_intro(topico_titulo, cap_numero, cap_titulo),
         "intro",
         f"Olá! Neste vídeo vamos estudar {topico_titulo}, "
         f"do Capítulo {cap_numero}, {cap_titulo}.",
     )
 
-    await add_slide(
+    add_slide(
         slide_contexto(narrativa["paragrafos"][0], narrativa["titulo"]),
         "contexto",
         narrativa["paragrafos"][0],
@@ -246,13 +244,13 @@ async def processar_topico(
 
     for i, card in enumerate(cards):
         narr = f"{card['titulo']}. {card['explicacao']} Exemplo: {card['exemplo']}"
-        await add_slide(
+        add_slide(
             slide_card(i + 1, card["titulo"], card["explicacao"], card["exemplo"]),
             f"card_{i}",
             narr,
         )
 
-    await add_slide(
+    add_slide(
         slide_dica(dica),
         "dica",
         f"Dica de estudo: {dica} Acesse TestPath para praticar com simulados!",
@@ -285,7 +283,7 @@ async def processar_topico(
 
 # ── Main ──────────────────────────────────────────────────────────────────────
 
-async def main() -> None:
+def main() -> None:
     data      = json.loads(Path("scripts/conteudo.json").read_text("utf-8"))
     topicos   = data["topicos"]
     capitulos = data["capitulos"]
@@ -306,7 +304,7 @@ async def main() -> None:
     with tempfile.TemporaryDirectory() as tmpdir:
         for topico_id in pendentes[:MAX_UPLOADS]:
             print(f"\nProcessando: {topico_id}")
-            resultado = await processar_topico(
+            resultado = processar_topico(
                 topico_id, topicos[topico_id], capitulos[topico_id], yt, tmpdir
             )
             novos.append(resultado)
@@ -316,4 +314,4 @@ async def main() -> None:
 
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    main()
