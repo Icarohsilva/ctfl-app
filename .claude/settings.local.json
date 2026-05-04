@@ -10,7 +10,13 @@
       "Bash(npm run *)",
       "Bash(npx next *)",
       "Bash(git add *)",
-      "Bash(git commit *)"
+      "Bash(git commit *)",
+      "Bash(npx tsx *)",
+      "Bash(node -e \"const d = require\\('./scripts/conteudo.json'\\); console.log\\('topicos keys:', Object.keys\\(d.topicos\\).length\\); console.log\\('capitulos keys:', Object.keys\\(d.capitulos\\).length\\); console.log\\('sample:', JSON.stringify\\(d.capitulos['por-que-testar'], null, 2\\)\\);\")",
+      "Bash(npx tsc *)",
+      "Bash(node -e ' *)",
+      "Bash(node scripts/injetar-urls.mjs)",
+      "Bash(git checkout *)"
     ]
   }
 }
