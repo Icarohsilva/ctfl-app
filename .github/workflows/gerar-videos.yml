@@ -69,7 +69,11 @@ jobs:
           git add src/data/video-urls.ts
           if ! git diff --staged --quiet; then
             git commit -m "chore: atualiza urls de vídeo [skip ci]"
-            git push origin HEAD:main
+            for i in 1 2 3; do
+              git push origin HEAD:main && break
+              echo "Push falhou (tentativa $i/3), aguardando 15s..."
+              sleep 15
+            done
           else
             echo "Nenhuma URL nova para commitar."
           fi
