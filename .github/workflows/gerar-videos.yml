@@ -14,7 +14,7 @@ permissions:
 jobs:
   gerar:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - name: Checkout
@@ -45,6 +45,31 @@ jobs:
 
       - name: Install Node dependencies
         run: npm ci
+
+      - name: Cache Piper TTS
+        uses: actions/cache@v4
+        with:
+          path: |
+            scripts/piper
+            scripts/piper-models
+          key: piper-2023.11.14-pt-BR-faber-medium
+
+      - name: Download Piper TTS
+        run: |
+          if [ ! -f scripts/piper/piper ]; then
+            mkdir -p scripts/piper
+            wget -q "https://github.com/rhasspy/piper/releases/download/2023.11.14-2/piper_linux_x86_64.tar.gz" \
+              -O /tmp/piper.tar.gz
+            tar -xzf /tmp/piper.tar.gz -C scripts/
+            chmod +x scripts/piper/piper
+          fi
+          mkdir -p scripts/piper-models
+          if [ ! -f scripts/piper-models/pt_BR-faber-medium.onnx ]; then
+            wget -q "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx" \
+              -O scripts/piper-models/pt_BR-faber-medium.onnx
+            wget -q "https://huggingface.co/rhasspy/piper-voices/resolve/main/pt/pt_BR/faber/medium/pt_BR-faber-medium.onnx.json" \
+              -O scripts/piper-models/pt_BR-faber-medium.onnx.json
+          fi
 
       - name: Limpar artefatos anteriores
         run: rm -f scripts/video-urls-new.json
