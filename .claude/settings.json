@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node -e ' *)",
+      "Bash(node)",
+      "Bash(node -e \"const fs = require\\('fs'\\); const gi = fs.readFileSync\\('.gitignore', 'utf8'\\); console.log\\(gi.includes\\('conteudo.json'\\) ? 'conteudo.json IS in .gitignore' : 'conteudo.json NOT in .gitignore'\\);\")",
+      "Bash(gh workflow *)",
+      "PowerShell(gh workflow run gerar-videos.yml --ref main 2>&1)",
+      "Bash(bash \"C:/Users/conta/.claude/plugins/cache/claude-plugins-official/superpowers/5.0.7/skills/brainstorming/scripts/start-server.sh\" --project-dir \"c:/ctfl-app\")",
+      "Bash(git pull *)",
+      "Bash(git fetch *)",
+      "Bash(git rebase *)",
+      "Bash(node -e \"const d=require\\('./scripts/conteudo.json'\\); console.log\\(JSON.stringify\\(d.capitulos['7-principios'], null, 2\\)\\)\")"
+    ]
+  }
+}

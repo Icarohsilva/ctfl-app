@@ -453,7 +453,7 @@ export default function PerfilPage() {
             <h2 style={{ fontSize: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", margin: 0 }}>Configurações de estudo</h2>
 
             <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "10px", padding: "12px 16px", fontSize: "13px", color: "#93c5fd", lineHeight: 1.5 }}>
-              🎓 O ritmo e data meta de cada certificação são configurados diretamente no <a href="/dashboard" style={{ color: "#3b82f6", textDecoration: "none" }}>dashboard da trilha</a>.
+              O ritmo e as metas de conclusão de cada certificação são definidas diretamente <a href="/dashboard" style={{ color: "#3b82f6", textDecoration: "none" }}>Dashboard da trilha</a>.
             </div>
 
             {nivel !== nivelOriginal && (
@@ -465,7 +465,7 @@ export default function PerfilPage() {
             <div>
               <label style={{ ...labelStyle, fontSize: "13px", color: "#e5e7eb", marginBottom: "8px" }}>Nível de conhecimento em QA</label>
               <p style={{ fontSize: "12px", color: "#9ca3af", marginBottom: "12px", lineHeight: 1.5 }}>
-                Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
+                Define o nível de complexidade do conteúdo e das questões em todas as certificações
               </p>
               <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
                 {[
@@ -551,7 +551,6 @@ export default function PerfilPage() {
 
             {/* Zona de perigo */}
             <div style={{ background: "#111827", border: "1px solid rgba(239,68,68,0.3)", borderRadius: "16px", padding: "1.75rem" }}>
-              <h3 style={{ fontSize: "13px", color: "#ef4444", marginBottom: "12px" }}>⚠️ Zona de perigo</h3>
               <button onClick={async () => { if (confirm("Sair de todas as sessões?")) { await supabase.auth.signOut(); window.location.href = "/login"; } }}
                 style={{ background: "transparent", border: "1px solid rgba(239,68,68,0.4)", borderRadius: "8px", padding: "10px 16px", color: "#ef4444", fontSize: "13px", cursor: "pointer", width: "100%" }}>
                 Sair de todas as sessões

@@ -289,7 +289,7 @@ export default function Cadastro() {
                   Qual é o seu nível em QA?
                 </h2>
                 <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.5rem", lineHeight: 1.6 }}>
-                  Define o tom do conteúdo e dificuldade das questões em todas as suas certificações.
+                  Define o nível de complexidade do conteúdo e das questões em todas as certificações
                 </p>
                 <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                   {niveis.map(n => (

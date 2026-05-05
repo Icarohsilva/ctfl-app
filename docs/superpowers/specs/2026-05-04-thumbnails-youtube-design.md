@@ -146,3 +146,5 @@ O canal precisa estar **verificado por telefone** para usar thumbnails customiza
 - Thumbnails para vídeos de capítulo (próximo ciclo)
 - Upload retroativo automático via workflow (feito manualmente uma vez)
 - Fallback para canal não verificado
+
+
