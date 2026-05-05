@@ -217,6 +217,74 @@ def slide_dica(dica: str) -> Image.Image:
     return img
 
 
+# ── Thumbnails ────────────────────────────────────────────────────────────────
+
+def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+    h = hex_color.lstrip("#")
+    return (int(h[0:2], 16), int(h[2:4], 16), int(h[4:6], 16))
+
+def gerar_thumbnail(
+    topico_titulo: str,
+    cap_numero: int,
+    cap_titulo: str,
+    topico_numero: int,
+    cor_hex: str,
+    path: str,
+) -> None:
+    cor     = hex_to_rgb(cor_hex)
+    cor_dim = tuple(int(c * 0.45) for c in cor)
+
+    img = make_bg()
+    d   = ImageDraw.Draw(img)
+
+    left_w  = int(W * 0.60)   # 768 px
+    right_x = left_w + 3      # 771 px (3px divider)
+
+    # Painel direito com tint da cor do capítulo
+    right_bg = tuple(int(BG_TOP[i] * 0.90 + cor[i] * 0.10) for i in range(3))
+    d.rectangle([(left_w, 0), (W, H)], fill=right_bg)
+
+    # Barra esquerda e divisor
+    d.rectangle([(0, 0), (5, H)], fill=cor)
+    d.rectangle([(left_w, 0), (left_w + 2, H)], fill=cor)
+
+    # ── Painel esquerdo ──────────────────────────────────────
+    pad = 28
+
+    # Logo "TESTPATH"
+    d.text((pad, 38), "TEST", font=load_font(FONTB, 34), fill=cor)
+    tw = d.textbbox((0, 0), "TEST", font=load_font(FONTB, 34))[2]
+    d.text((pad + tw + 3, 38), "PATH", font=load_font(FONTB, 34), fill=WHITE)
+
+    # Capítulo
+    d.text((pad, 88), f"Capítulo {cap_numero}  ·  {cap_titulo}",
+           font=load_font(FONT, 15), fill=GRAY)
+    d.rectangle([(pad, 116), (pad + 60, 118)], fill=cor)
+
+    # Título do tópico
+    draw_wrapped(d, topico_titulo, load_font(FONTB, 46), pad, 132,
+                 left_w - pad * 2, WHITE, spacing=12)
+
+    # Badge CTFL
+    d.text((pad, H - 56), "CTFL v4.0", font=load_font(FONTB, 14), fill=cor)
+
+    # ── Painel direito ────────────────────────────────────────
+    rc = right_x + (W - right_x) // 2   # centro horizontal do painel direito
+
+    num_str  = f"{topico_numero:02d}"
+    num_font = load_font(FONTB, 150)
+    num_bbox = d.textbbox((0, 0), num_str, font=num_font)
+    d.text((rc - (num_bbox[2] - num_bbox[0]) // 2, H // 2 - 95),
+           num_str, font=num_font, fill=cor)
+
+    lbl_font = load_font(FONT, 13)
+    lbl_bbox = d.textbbox((0, 0), "TÓPICO", font=lbl_font)
+    d.text((rc - (lbl_bbox[2] - lbl_bbox[0]) // 2, H // 2 + 68),
+           "TÓPICO", font=lbl_font, fill=cor_dim)
+
+    img.save(path)
+
+
 # ── Áudio (Piper TTS) ────────────────────────────────────────────────────────
 
 def gerar_audio(texto: str, path: str) -> None:
@@ -310,6 +378,12 @@ def upload_youtube(yt, video_path: str, titulo: str, descricao: str) -> str:
         _, resp = req.next_chunk()
     return resp["id"]
 
+def upload_thumbnail(yt, video_id: str, thumb_path: str) -> None:
+    yt.thumbnails().set(
+        videoId=video_id,
+        media_body=MediaFileUpload(thumb_path, mimetype="image/png"),
+    ).execute()
+
 
 # ── Processamento de um tópico ────────────────────────────────────────────────
 
@@ -318,8 +392,10 @@ def processar_topico(topico_id: str, dados: dict, cap_info: dict, yt, tmpdir: st
     cards         = dados["cards"]
     dica          = dados["dicaEstudo"]
     topico_titulo = cap_info["topicoTitulo"]
+    topico_numero = cap_info["topicoNumero"]
     cap_numero    = cap_info["capituloNumero"]
     cap_titulo    = cap_info["capituloTitulo"]
+    cor_hex       = cap_info["cor"]
     total_cards   = len(cards)
 
     slides_audios: list[tuple[str, str]] = []
@@ -375,9 +451,59 @@ def processar_topico(topico_id: str, dados: dict, cap_info: dict, yt, tmpdir: st
         f"Estude para a certificação CTFL v4.0 em testpath.online"
     )
     video_id = upload_youtube(yt, output_path, titulo_yt, desc_yt)
+
+    # Thumbnail
+    thumb_path = f"{tmpdir}/{topico_id}_thumb.png"
+    gerar_thumbnail(topico_titulo, cap_numero, cap_titulo, topico_numero, cor_hex, thumb_path)
+    upload_thumbnail(yt, video_id, thumb_path)
+
     url = f"https://www.youtube.com/embed/{video_id}"
     print(f"  ✅ {topico_id} → {url} ({dur_label})")
     return {"topicoId": topico_id, "url": url, "duracao": dur_label}
+
+
+THUMBS_JSON = Path("scripts/thumbnails-enviadas.json")
+
+
+def atualizar_thumbnails_existentes(
+    yt, topicos: dict, capitulos: dict, vurls_text: str, tmpdir: str
+) -> None:
+    existentes = re.findall(
+        r'"([^"]+)":\s+"https://www\.youtube\.com/embed/([^"]+)"', vurls_text
+    )
+    if not existentes:
+        return
+
+    enviadas: list[str] = (
+        json.loads(THUMBS_JSON.read_text("utf-8")) if THUMBS_JSON.exists() else []
+    )
+    enviadas_set = set(enviadas)
+    pendentes = [(tid, vid) for tid, vid in existentes if vid not in enviadas_set]
+
+    if not pendentes:
+        print("Thumbnails retroativas: todas já enviadas.")
+        return
+
+    print(f"Thumbnails retroativas: {len(pendentes)} pendentes")
+    for topico_id, video_id in pendentes:
+        if topico_id not in topicos or topico_id not in capitulos:
+            continue
+        cap_info = capitulos[topico_id]
+        thumb_path = f"{tmpdir}/{topico_id}_retro_thumb.png"
+        gerar_thumbnail(
+            cap_info["topicoTitulo"],
+            cap_info["capituloNumero"],
+            cap_info["capituloTitulo"],
+            cap_info["topicoNumero"],
+            cap_info["cor"],
+            thumb_path,
+        )
+        upload_thumbnail(yt, video_id, thumb_path)
+        enviadas.append(video_id)
+        THUMBS_JSON.write_text(
+            json.dumps(enviadas, indent=2, ensure_ascii=False), encoding="utf-8"
+        )
+        print(f"  🖼 thumbnail retroativa: {topico_id}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -392,22 +518,31 @@ def main() -> None:
     pendentes  = [tid for tid in topicos if tid not in ja_tem]
 
     print(f"Pendentes: {len(pendentes)}/{len(topicos)}")
-    if not pendentes:
-        print("Todos os tópicos já têm vídeo.")
-        return
 
     yt = youtube_client()
-    output_json = Path("scripts/video-urls-new.json")
-    novos: list[dict] = json.loads(output_json.read_text("utf-8")) if output_json.exists() else []
 
     with tempfile.TemporaryDirectory() as tmpdir:
+        # Thumbnails retroativas (vídeos já publicados sem thumbnail)
+        atualizar_thumbnails_existentes(yt, topicos, capitulos, vurls_text, tmpdir)
+
+        if not pendentes:
+            print("Todos os tópicos já têm vídeo.")
+            return
+
+        output_json = Path("scripts/video-urls-new.json")
+        novos: list[dict] = (
+            json.loads(output_json.read_text("utf-8")) if output_json.exists() else []
+        )
+
         for topico_id in pendentes[:MAX_UPLOADS]:
             print(f"\nProcessando: {topico_id}")
             resultado = processar_topico(
                 topico_id, topicos[topico_id], capitulos[topico_id], yt, tmpdir
             )
             novos.append(resultado)
-            output_json.write_text(json.dumps(novos, indent=2, ensure_ascii=False), encoding="utf-8")
+            output_json.write_text(
+                json.dumps(novos, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
 
     print(f"\n{len(novos)} URLs salvas em scripts/video-urls-new.json")
 
