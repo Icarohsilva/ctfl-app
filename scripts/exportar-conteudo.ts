@@ -6,6 +6,7 @@ import { writeFileSync } from "node:fs";
 
 const capitulos: Record<string, {
   topicoTitulo: string;
+  topicoNumero: number;
   capituloNumero: number;
   capituloTitulo: string;
   cor: string;
@@ -15,6 +16,7 @@ for (const [numStr, cap] of Object.entries(mapaCaptulos)) {
   for (const topico of cap.topicos) {
     capitulos[topico.id] = {
       topicoTitulo: topico.titulo,
+      topicoNumero: topico.numero,
       capituloNumero: Number(numStr),
       capituloTitulo: cap.titulo,
       cor: cap.cor,
