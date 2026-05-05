@@ -86,9 +86,9 @@ export default function Home() {
         </div>
 
         <h1 className="hero-title" style={{ fontSize: "clamp(2.2rem, 6vw, 3.8rem)", lineHeight: 1.1, marginBottom: "1.25rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
-          Do iniciante ao especialista —{" "}
-          <span style={{ color: "#3b82f6", fontStyle: "italic" }}>todas as certificações</span>{" "}
-          em um só lugar
+          Do fundamentos ao especialista:{" "}
+          <span style={{ color: "#3b82f6", fontStyle: "italic" }}>cada certificação</span>{" "}
+          no seu ritmo.
         </h1>
 
         <p style={{ fontSize: "1.05rem", color: "#9ca3af", maxWidth: "580px", margin: "0 auto 2rem", lineHeight: 1.7 }}>
