@@ -213,6 +213,60 @@ export default function Home() {
         </div>
       </section>
 
+      {/* SOBRE O CRIADOR */}
+      <section className="section-pad" style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1f2937" }}>
+        <div style={{ textAlign: "center", marginBottom: "2rem" }}>
+          <div style={{ fontSize: "11px", color: "#d4af37", letterSpacing: "0.08em", marginBottom: "0.75rem", fontWeight: "600" }}>QUEM FEZ ISSO</div>
+          <h2 style={{ fontSize: "1.8rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
+            Feito por um QA de verdade
+          </h2>
+          <p style={{ color: "#9ca3af", fontSize: "14px" }}>Não por uma empresa. Por alguém que passou pelo mesmo desafio que você.</p>
+        </div>
+
+        <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "20px", padding: "2rem 2.5rem" }}>
+          <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap", marginBottom: "1.5rem" }}>
+            {/* Avatar inicial */}
+            <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg, #d4af37, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1.5rem", fontWeight: "bold", color: "#0b0f1a", fontFamily: "Georgia, serif" }}>
+              IH
+            </div>
+            <div style={{ flex: 1, minWidth: "200px" }}>
+              <div style={{ fontSize: "15px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "2px" }}>Ícaro Henrique</div>
+              <div style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "6px" }}>QA Engineer · Analista de Testes Pleno na Eteg · BH, Brasil</div>
+              <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                {["Cypress", "Playwright", "Selenium", "Python", "SQL"].map(t => (
+                  <span key={t} style={{ fontSize: "11px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "#93c5fd", padding: "2px 8px", borderRadius: "99px" }}>{t}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.8, marginBottom: "1.5rem" }}>
+            <p style={{ margin: "0 0 1rem" }}>
+              São mais de <strong style={{ color: "#e5e7eb" }}>5 anos trabalhando com QA</strong> — testes manuais, automação com Cypress e Playwright, pipelines, SQL, times ágeis. Tudo isso na prática, no dia a dia.
+            </p>
+            <p style={{ margin: "0 0 1rem" }}>
+              O maior desafio sempre foi <strong style={{ color: "#e5e7eb" }}>me manter atualizado e estudando</strong> em paralelo com o trabalho. Eu aprendo fazendo. Então decidi construir a plataforma que eu gostaria de ter tido quando fui estudar para o CTFL.
+            </p>
+            <p style={{ margin: 0 }}>
+              O TestPath nasceu da combinação do meu conhecimento em QA com as ferramentas de IA que uso no trabalho. É um projeto real, em produção, feito por uma pessoa — com muito esforço e propósito.
+            </p>
+          </div>
+
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", paddingTop: "1.25rem", borderTop: "1px solid #1f2937" }}>
+            <a
+              href="https://www.linkedin.com/in/icarosilvaqa/"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", color: "#3b82f6", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              LinkedIn
+            </a>
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎙️ Criador do <strong style={{ color: "#9ca3af" }}>QA Insider Cast</strong></span>
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎓 CTFL · Playwright · Git</span>
+          </div>
+        </div>
+      </section>
+
       {/* CTA FINAL */}
       <section className="section-pad" style={{ maxWidth: "640px", margin: "0 auto", padding: "4rem 2rem 5rem", textAlign: "center", borderTop: "1px solid #1f2937" }}>
         <h2 style={{ fontSize: "2rem", marginBottom: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
