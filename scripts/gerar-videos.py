@@ -17,6 +17,7 @@ import os
 import re
 import subprocess
 import tempfile
+import time
 import unicodedata
 from pathlib import Path
 
@@ -510,6 +511,7 @@ def atualizar_thumbnails_existentes(
                 json.dumps(enviadas, indent=2, ensure_ascii=False), encoding="utf-8"
             )
             print(f"  🖼 thumbnail retroativa: {topico_id}")
+            time.sleep(3)  # evita 429 uploadRateLimitExceeded
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -542,9 +544,16 @@ def main() -> None:
 
         for topico_id in pendentes[:MAX_UPLOADS]:
             print(f"\nProcessando: {topico_id}")
-            resultado = processar_topico(
-                topico_id, topicos[topico_id], capitulos[topico_id], yt, tmpdir
-            )
+            try:
+                resultado = processar_topico(
+                    topico_id, topicos[topico_id], capitulos[topico_id], yt, tmpdir
+                )
+            except Exception as e:
+                msg = str(e)
+                if "uploadLimitExceeded" in msg:
+                    print(f"  ⛔ limite de uploads do canal atingido — verifique o canal no YouTube Studio")
+                    break
+                raise
             novos.append(resultado)
             output_json.write_text(
                 json.dumps(novos, indent=2, ensure_ascii=False), encoding="utf-8"
