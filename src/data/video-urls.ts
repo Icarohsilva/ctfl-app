@@ -20,9 +20,9 @@ const videoUrls: Record<string, string | null> = {
   "monitoramento-controle":  "https://www.youtube.com/embed/1sphwbuzI7c",
   "gestao-risco":            "https://www.youtube.com/embed/v_ZULMqqbp4",
   "gestao-defeitos":         "https://www.youtube.com/embed/cN2_RL0MqOA",
-  "ferramentas-suporte":     null,
-  "automacao-teste":         null,
-  "selecao-ferramenta":      null,
+  "ferramentas-suporte":     "https://www.youtube.com/embed/Re82WN3vi4w",
+  "automacao-teste":         "https://www.youtube.com/embed/FzbbO4mytxA",
+  "selecao-ferramenta":      "https://www.youtube.com/embed/1WbPYUYIky0",
 };
 
 export default videoUrls;
