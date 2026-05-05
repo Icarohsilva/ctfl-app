@@ -225,10 +225,8 @@ export default function Home() {
 
         <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "20px", padding: "2rem 2.5rem" }}>
           <div style={{ display: "flex", gap: "1.5rem", alignItems: "flex-start", flexWrap: "wrap", marginBottom: "1.5rem" }}>
-            {/* Avatar inicial */}
-            <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "linear-gradient(135deg, #d4af37, #3b82f6)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, fontSize: "1.5rem", fontWeight: "bold", color: "#0b0f1a", fontFamily: "Georgia, serif" }}>
-              IH
-            </div>
+            {/* Avatar foto */}
+            <img src="/foto-icaro.jpg" alt="Ícaro Henrique" style={{ width: "64px", height: "64px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, border: "2px solid rgba(212,175,55,0.4)" }} />
             <div style={{ flex: 1, minWidth: "200px" }}>
               <div style={{ fontSize: "15px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "2px" }}>Ícaro Henrique</div>
               <div style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "6px" }}>QA Engineer · Analista de Testes Pleno na Eteg · BH, Brasil</div>
