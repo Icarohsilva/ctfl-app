@@ -377,13 +377,6 @@ export default function PerfilPage() {
           </div>
         </div>
 
-        {/* MENSAGEM */}
-        {msg && (
-          <div style={{ background: msg.tipo === "sucesso" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", border: `1px solid ${msg.tipo === "sucesso" ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`, borderRadius: "10px", padding: "12px 16px", marginBottom: "1.5rem", color: msg.tipo === "sucesso" ? "#22c55e" : "#fca5a5", fontSize: "14px" }}>
-            {msg.tipo === "sucesso" ? "✅" : "❌"} {msg.texto}
-          </div>
-        )}
-
         {/* ABAS */}
         <div style={{ display: "flex", gap: "4px", marginBottom: "1.5rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "10px", padding: "4px" }}>
           {([{ id: "perfil", label: "👤 Meu Perfil" }, { id: "conta", label: "⚙️ Configurações" }, { id: "senha", label: "🔒 Segurança" }] as const).map(a => (
@@ -444,6 +437,11 @@ export default function PerfilPage() {
               style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.6 : 1, boxShadow: salvando ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
               {salvando ? "Salvando..." : "Salvar alterações"}
             </button>
+            {msg && aba === "perfil" && (
+              <div style={{ background: msg.tipo === "sucesso" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", border: `1px solid ${msg.tipo === "sucesso" ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`, borderRadius: "10px", padding: "12px 16px", color: msg.tipo === "sucesso" ? "#22c55e" : "#fca5a5", fontSize: "14px", marginTop: "0.5rem" }}>
+                {msg.tipo === "sucesso" ? "✅" : "❌"} {msg.texto}
+              </div>
+            )}
           </div>
         )}
 
@@ -490,6 +488,11 @@ export default function PerfilPage() {
               style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: salvando ? "not-allowed" : "pointer", opacity: salvando ? 0.6 : 1, boxShadow: salvando ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
               {salvando ? "Salvando..." : "Salvar configurações"}
             </button>
+            {msg && aba === "conta" && (
+              <div style={{ background: msg.tipo === "sucesso" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", border: `1px solid ${msg.tipo === "sucesso" ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`, borderRadius: "10px", padding: "12px 16px", color: msg.tipo === "sucesso" ? "#22c55e" : "#fca5a5", fontSize: "14px", marginTop: "0.5rem" }}>
+                {msg.tipo === "sucesso" ? "✅" : "❌"} {msg.texto}
+              </div>
+            )}
           </div>
         )}
 
@@ -547,6 +550,11 @@ export default function PerfilPage() {
                 style={{ background: "#3b82f6", border: "1px solid #3b82f6", borderRadius: "8px", padding: "12px", color: "#ffffff", fontSize: "14px", fontWeight: "600", cursor: "pointer", opacity: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? 0.4 : 1, boxShadow: (salvando || !senhaAtual || novaSenha.length < 6 || novaSenha !== confirmarSenha) ? "none" : "0 0 0 1px rgba(59,130,246,0.4), 0 8px 24px rgba(59,130,246,0.15)" }}>
                 {salvando && verificandoSenha ? "Verificando..." : salvando ? "Alterando..." : "Alterar senha"}
               </button>
+              {msg && aba === "senha" && (
+                <div style={{ background: msg.tipo === "sucesso" ? "rgba(34,197,94,0.12)" : "rgba(239,68,68,0.12)", border: `1px solid ${msg.tipo === "sucesso" ? "rgba(34,197,94,0.4)" : "rgba(239,68,68,0.4)"}`, borderRadius: "10px", padding: "12px 16px", color: msg.tipo === "sucesso" ? "#22c55e" : "#fca5a5", fontSize: "14px", marginTop: "0.5rem" }}>
+                  {msg.tipo === "sucesso" ? "✅" : "❌"} {msg.texto}
+                </div>
+              )}
             </div>
 
             {/* Zona de perigo */}
