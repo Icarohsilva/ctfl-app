@@ -378,11 +378,16 @@ def upload_youtube(yt, video_path: str, titulo: str, descricao: str) -> str:
         _, resp = req.next_chunk()
     return resp["id"]
 
-def upload_thumbnail(yt, video_id: str, thumb_path: str) -> None:
-    yt.thumbnails().set(
-        videoId=video_id,
-        media_body=MediaFileUpload(thumb_path, mimetype="image/png"),
-    ).execute()
+def upload_thumbnail(yt, video_id: str, thumb_path: str) -> bool:
+    try:
+        yt.thumbnails().set(
+            videoId=video_id,
+            media_body=MediaFileUpload(thumb_path, mimetype="image/png"),
+        ).execute()
+        return True
+    except Exception as e:
+        print(f"  ⚠️  thumbnail ignorada ({video_id}): {e}")
+        return False
 
 
 # ── Processamento de um tópico ────────────────────────────────────────────────
@@ -455,7 +460,7 @@ def processar_topico(topico_id: str, dados: dict, cap_info: dict, yt, tmpdir: st
     # Thumbnail
     thumb_path = f"{tmpdir}/{topico_id}_thumb.png"
     gerar_thumbnail(topico_titulo, cap_numero, cap_titulo, topico_numero, cor_hex, thumb_path)
-    upload_thumbnail(yt, video_id, thumb_path)
+    upload_thumbnail(yt, video_id, thumb_path)  # falha silenciosa se canal não verificado
 
     url = f"https://www.youtube.com/embed/{video_id}"
     print(f"  ✅ {topico_id} → {url} ({dur_label})")
@@ -498,12 +503,13 @@ def atualizar_thumbnails_existentes(
             cap_info["cor"],
             thumb_path,
         )
-        upload_thumbnail(yt, video_id, thumb_path)
-        enviadas.append(video_id)
-        THUMBS_JSON.write_text(
-            json.dumps(enviadas, indent=2, ensure_ascii=False), encoding="utf-8"
-        )
-        print(f"  🖼 thumbnail retroativa: {topico_id}")
+        ok = upload_thumbnail(yt, video_id, thumb_path)
+        if ok:
+            enviadas.append(video_id)
+            THUMBS_JSON.write_text(
+                json.dumps(enviadas, indent=2, ensure_ascii=False), encoding="utf-8"
+            )
+            print(f"  🖼 thumbnail retroativa: {topico_id}")
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
