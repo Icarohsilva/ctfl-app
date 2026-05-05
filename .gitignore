@@ -46,3 +46,9 @@ scripts/video-urls-new.json
 scripts/piper/
 scripts/piper-models/
 .superpowers/
+
+# E2E
+e2e/.auth/user.json
+.env.test
+playwright-report/
+test-results/
