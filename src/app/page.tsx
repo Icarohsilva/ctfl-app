@@ -259,6 +259,24 @@ export default function Home() {
               <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
               LinkedIn
             </a>
+            <a
+              href="https://github.com/Icarohsilva"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(240, 59, 246, 0.08)", border: "1px solid rgba(117, 82, 59, 0.25)", color: "#a536f0", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+              GitHub
+            </a>
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎙️ Criador do <strong style={{ color: "#9ca3af" }}>QA Insider Cast</strong></span>
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎓 CTFL · Playwright · Git</span>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA FINAL */}
+      <section className="section-pad" style={{ maxWidth: "640px", margin: "0 auto", padding: "4rem 2rem 5rem", textAlign: "center", borderTop: "1px solid #1f2937" }}>
+        <h2 style={{ fontSize: "2rem", marginBottom: "1rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal" }}>
+            </a>
             <span style={{ fontSize: "12px", color: "#6b7280" }}>🎙️ Criador do <strong style={{ color: "#9ca3af" }}>QA Insider Cast</strong></span>
             <span style={{ fontSize: "12px", color: "#6b7280" }}>🎓 CTFL · Playwright · Git</span>
           </div>

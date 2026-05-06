@@ -29,7 +29,9 @@
       "Bash(TEST_USER_EMAIL=\"teste@testpath.online\" TEST_USER_PASSWORD=\"SenhaDoTestE2E123!\" npx playwright test --project=setup --list)",
       "Bash(xargs grep -l \"testMatch\")",
       "Bash(dir \"c:\\\\ctfl-app\\\\e2e\")",
-      "Bash(dir \"c:\\\\ctfl-app\\\\e2e\\\\pages\")"
+      "Bash(dir \"c:\\\\ctfl-app\\\\e2e\\\\pages\")",
+      "Bash(ls /mnt/c/ctfl-app/)",
+      "Read(//mnt/c/**)"
     ]
   }
 }
