@@ -229,7 +229,7 @@ export default function Home() {
             <img src="/foto-icaro.jpg" alt="Ícaro Henrique" style={{ width: "64px", height: "64px", borderRadius: "50%", objectFit: "cover", flexShrink: 0, border: "2px solid rgba(212,175,55,0.4)" }} />
             <div style={{ flex: 1, minWidth: "200px" }}>
               <div style={{ fontSize: "15px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "2px" }}>Ícaro Henrique</div>
-              <div style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "6px" }}>QA Engineer · Analista de Testes Pleno na Eteg · BH, Brasil</div>
+              <div style={{ fontSize: "13px", color: "#9ca3af", marginBottom: "6px" }}>QA Engineer · Analista de Testes Pleno · BH, Brasil</div>
               <div style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
                 {["Cypress", "Playwright", "Selenium", "Python", "SQL"].map(t => (
                   <span key={t} style={{ fontSize: "11px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.2)", color: "#93c5fd", padding: "2px 8px", borderRadius: "99px" }}>{t}</span>
@@ -240,13 +240,13 @@ export default function Home() {
 
           <div style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.8, marginBottom: "1.5rem" }}>
             <p style={{ margin: "0 0 1rem" }}>
-              São mais de <strong style={{ color: "#e5e7eb" }}>5 anos trabalhando com QA</strong> — testes manuais, automação com Cypress e Playwright, pipelines, SQL, times ágeis. Tudo isso na prática, no dia a dia.
+              Formado em Análise e Desenvolvimento de Sistemas, trabalho com QA há mais de <strong style={{ color: "#e5e7eb" }}>5 anos</strong> — testes manuais, automação com Cypress e Playwright, CI/CD, SQL e times ágeis. Tudo isso em produção, com responsabilidade real.
             </p>
             <p style={{ margin: "0 0 1rem" }}>
-              O maior desafio sempre foi <strong style={{ color: "#e5e7eb" }}>me manter atualizado e estudando</strong> em paralelo com o trabalho. Eu aprendo fazendo. Então decidi construir a plataforma que eu gostaria de ter tido quando fui estudar para o CTFL.
+              Quando fui estudar para o CTFL, percebi que não existia uma plataforma que unisse conteúdo <strong style={{ color: "#e5e7eb" }}>técnico atualizado com as ferramentas de IA que já uso no dia a dia.</strong>Então decidi construir uma.
             </p>
             <p style={{ margin: 0 }}>
-              O TestPath nasceu da combinação do meu conhecimento em QA com as ferramentas de IA que uso no trabalho. É um projeto real, em produção, feito por uma pessoa — com muito esforço e propósito.
+              O TestPath é o resultado disso: um projeto real, em produção, construído por um profissional que passou pelo mesmo caminho que você está percorrendo agora.
             </p>
           </div>
 

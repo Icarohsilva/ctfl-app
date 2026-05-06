@@ -10,7 +10,26 @@
       "Bash(git pull *)",
       "Bash(git fetch *)",
       "Bash(git rebase *)",
-      "Bash(node -e \"const d=require\\('./scripts/conteudo.json'\\); console.log\\(JSON.stringify\\(d.capitulos['7-principios'], null, 2\\)\\)\")"
+      "Bash(node -e \"const d=require\\('./scripts/conteudo.json'\\); console.log\\(JSON.stringify\\(d.capitulos['7-principios'], null, 2\\)\\)\")",
+      "Bash(npm install *)",
+      "Bash(npx playwright *)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\.auth\")",
+      "Bash(Out-Null)",
+      "Bash(New-Item -ItemType File -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\.auth\\\\.gitkeep\")",
+      "Bash(Write-Output \"Created e2e/.auth/.gitkeep\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\.auth\")",
+      "PowerShell(New-Item -ItemType File -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\.auth\\\\.gitkeep\")",
+      "Bash(git check-ignore *)",
+      "Bash(python -c \"import sys,json; d=json.load\\(sys.stdin\\); s=d.get\\('scripts',{}\\); dd=d.get\\('devDependencies',{}\\); print\\('SCRIPTS:', {k:v for k,v in s.items\\(\\) if 'e2e' in k or 'playwright' in k}\\); print\\('devDeps playwright:', dd.get\\('@playwright/test','MISSING'\\)\\); print\\('devDeps dotenv:', dd.get\\('dotenv','MISSING'\\)\\)\")",
+      "Bash(git ls-tree *)",
+      "Bash(New-Item -ItemType Directory -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\fixtures\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"c:\\\\ctfl-app\\\\e2e\\\\tests\")",
+      "Bash(Write-Host \"Directories created\")",
+      "Bash(TEST_USER_EMAIL=\"teste@testpath.online\" TEST_USER_PASSWORD=\"SenhaDoTestE2E123!\" npx playwright test --project=setup)",
+      "Bash(TEST_USER_EMAIL=\"teste@testpath.online\" TEST_USER_PASSWORD=\"SenhaDoTestE2E123!\" npx playwright test --project=setup --list)",
+      "Bash(xargs grep -l \"testMatch\")",
+      "Bash(dir \"c:\\\\ctfl-app\\\\e2e\")",
+      "Bash(dir \"c:\\\\ctfl-app\\\\e2e\\\\pages\")"
     ]
   }
 }
