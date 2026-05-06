@@ -240,13 +240,13 @@ export default function Home() {
 
           <div style={{ fontSize: "14px", color: "#9ca3af", lineHeight: 1.8, marginBottom: "1.5rem" }}>
             <p style={{ margin: "0 0 1rem" }}>
-              Formado em Análise e Desenvolvimento de Sistemas, trabalho com QA há mais de <strong style={{ color: "#e5e7eb" }}>5 anos</strong> — testes manuais, automação com Cypress e Playwright, CI/CD, SQL e times ágeis. Tudo isso em produção, com responsabilidade real.
+              Formado em Análise e Desenvolvimento de Sistemas, trabalho com QA há mais de <strong style={{ color: "#e5e7eb" }}>5 anos</strong> testes manuais, automação com Cypress e Playwright, CI/CD, SQL e times ágeis. Tudo isso em produção, com responsabilidade real.
             </p>
             <p style={{ margin: "0 0 1rem" }}>
-              Quando fui estudar para o CTFL, percebi que não existia uma plataforma que unisse conteúdo <strong style={{ color: "#e5e7eb" }}>técnico atualizado com as ferramentas de IA que já uso no dia a dia.</strong>Então decidi construir uma.
+              Quando fui estudar para o CTFL, percebi que não existia uma plataforma que unisse conteúdo <strong style={{ color: "#e5e7eb" }}>técnico atualizado com as ferramentas de IA que já uso no dia a dia.</strong> Então decidi construir uma.
             </p>
             <p style={{ margin: 0 }}>
-              O TestPath é o resultado disso: um projeto real, em produção, construído por um profissional que passou pelo mesmo caminho que você está percorrendo agora.
+              <strong style={{ color: "#e5e7eb" }}>O TestPath</strong> é o resultado disso: um projeto real, em produção, construído por um profissional que passou pelo mesmo caminho que você está percorrendo agora.
             </p>
           </div>
 
