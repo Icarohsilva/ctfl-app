@@ -64,6 +64,7 @@ export default function Home() {
           <a href="#certificacoes" className="nav-link">Certificações</a>
           <a href="#recursos" className="nav-link">Recursos</a>
           <a href="#como-funciona" className="nav-link">Como funciona</a>
+          <a href="#sobre" className="nav-link">Quem fez</a>
           <a href="/login" className="nav-link">Entrar</a>
           <a href="/cadastro" style={{ background: "#3b82f6", color: "#ffffff", padding: "8px 18px", borderRadius: "8px", fontWeight: "600", fontSize: "14px", textDecoration: "none" }}>
             Começar grátis
@@ -214,7 +215,7 @@ export default function Home() {
       </section>
 
       {/* SOBRE O CRIADOR */}
-      <section className="section-pad" style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1f2937" }}>
+      <section id="sobre" className="section-pad" style={{ maxWidth: "800px", margin: "0 auto", padding: "4rem 2rem", borderTop: "1px solid #1f2937" }}>
         <div style={{ textAlign: "center", marginBottom: "2rem" }}>
           <div style={{ fontSize: "11px", color: "#d4af37", letterSpacing: "0.08em", marginBottom: "0.75rem", fontWeight: "600" }}>QUEM FEZ ISSO</div>
           <h2 style={{ fontSize: "1.8rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>

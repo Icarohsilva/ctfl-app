@@ -25,16 +25,19 @@ Playwright + Page Object Model. Rodam contra `https://testpath.online`.
 ## Adicionando testes para novas features
 
 ### 1. Nova rota pública (ex: `/sobre`)
+
 - Criar `e2e/pages/SobrePage.ts` com seletores e ações
 - Adicionar `describe` block em spec existente ou criar `e2e/tests/sobre.spec.ts`
 - **Não** usar `test.use({ storageState })` — é página pública
 
 ### 2. Nova rota autenticada (ex: `/ranking`)
+
 - Criar `e2e/pages/RankingPage.ts`
 - Criar `e2e/tests/ranking.spec.ts` com `test.use({ storageState: 'e2e/.auth/user.json' })` no topo
 - Testar: carrega, elementos principais visíveis, rota protegida redireciona sem auth
 
 ### 3. Nova feature em rota existente (ex: novo widget no dashboard)
+
 - Adicionar locator no `DashboardPage.ts` existente
 - Adicionar `test` no `dashboard.spec.ts` existente
 
@@ -64,5 +67,6 @@ e2e/
 ## GitHub Secrets necessários
 
 Para o CI funcionar, adicione em Settings → Secrets and variables → Actions:
+
 - `TEST_USER_EMAIL` — e-mail do usuário de teste
 - `TEST_USER_PASSWORD` — senha do usuário de teste
