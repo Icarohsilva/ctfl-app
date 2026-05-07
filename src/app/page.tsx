@@ -299,6 +299,8 @@ export default function Home() {
         <span>Plataforma de certificações para QA</span>
         <a href="/login" style={{ color: "#9ca3af", textDecoration: "none" }}>Entrar</a>
         <a href="/cadastro" style={{ color: "#9ca3af", textDecoration: "none" }}>Cadastrar</a>
+        <a href="/privacidade" style={{ color: "#9ca3af", textDecoration: "none" }}>Privacidade</a>
+        <a href="/termos" style={{ color: "#9ca3af", textDecoration: "none" }}>Termos de Uso</a>
       </footer>
     </main>
   );

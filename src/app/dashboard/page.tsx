@@ -36,7 +36,7 @@ const semanas = [
   { num: 2, cap: 2, titulo: "Ciclo de Vida", rota: "/capitulo/2" },
   { num: 3, cap: 3, titulo: "Teste Estático", rota: "/capitulo/3" },
   { num: 4, cap: 4, titulo: "Técnicas Caixa-Preta", rota: "/capitulo/4" },
-  { num: 5, cap: 4, titulo: "Técnicas Caixa-Branca", rota: "/capitulo/4b" },
+  { num: 5, cap: 4, titulo: "Técnicas Caixa-Branca", rota: "/capitulo/4" },
   { num: 6, cap: 5, titulo: "Gerenciamento", rota: "/capitulo/5" },
   { num: 7, cap: 6, titulo: "Ferramentas", rota: "/capitulo/6" },
   { num: 8, cap: 0, titulo: "Simulado Final", rota: "/simulado-final" },
@@ -125,6 +125,15 @@ export default function Dashboard() {
   const totalConcluidos = progresso.reduce((acc, p) => acc + p.concluidos, 0);
   const progressoGeral = Math.round((totalConcluidos / totalTopicos) * 100);
   const semanaAtual = cert?.semana_atual || 1;
+  const semanaInfo = semanas.find(s => s.num === Math.min(semanaAtual, 8)) ?? semanas[0];
+  const progressoCap = semanaInfo.cap > 0 ? progresso.find(p => p.capitulo === semanaInfo.cap) : null;
+  const totalTopicosCap = semanaInfo.cap > 0 ? (totalTopicosPorCap[semanaInfo.cap] ?? 0) : 0;
+  const tituloAtual = semanaInfo.cap > 0 ? `Cap. ${semanaInfo.cap} — ${semanaInfo.titulo}` : "Simulado Final CTFL";
+  const subtituloAtual = semanaInfo.cap === 0
+    ? "40 questões · 60 minutos · 65% para passar"
+    : totalConcluidos === 0
+      ? "Começar do início"
+      : `${progressoCap?.concluidos ?? 0}/${totalTopicosCap} tópicos concluídos`;
   const xpTotal = cert?.pontos || 0;
   const streak = cert?.streak || 0;
   const maiorStreak = cert?.maior_streak || 0;
@@ -302,17 +311,15 @@ export default function Dashboard() {
         </div>
 
         {/* CONTINUAR */}
-        <div onClick={() => window.location.href = "/capitulo/1"}
+        <div onClick={() => window.location.href = semanaInfo.rota}
           style={{ background: "#111827", border: "1px solid rgba(59,130,246,0.4)", borderRadius: "14px", padding: "1rem 1.25rem", marginBottom: "1.25rem", display: "flex", alignItems: "center", gap: "0.875rem", cursor: "pointer", transition: "border-color 0.2s, box-shadow 0.2s" }}
           onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "#3b82f6"; (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 4px rgba(59,130,246,0.12)"; }}
           onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"; (e.currentTarget as HTMLElement).style.boxShadow = "none"; }}>
           <div style={{ width: "44px", height: "44px", borderRadius: "12px", background: "rgba(59,130,246,0.12)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.4rem", flexShrink: 0 }}>▶️</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: "10px", color: "#6b7280", marginBottom: "2px", letterSpacing: "0.04em" }}>CONTINUAR</div>
-            <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Cap. 1 — Fundamentos de Teste</div>
-            <div style={{ fontSize: "12px", color: "#9ca3af" }}>
-              {totalConcluidos === 0 ? "Começar do início" : `${progresso.find(p => p.capitulo === 1)?.concluidos || 0}/4 tópicos concluídos`}
-            </div>
+            <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "1px", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{tituloAtual}</div>
+            <div style={{ fontSize: "12px", color: "#9ca3af" }}>{subtituloAtual}</div>
           </div>
           <span style={{ color: "#3b82f6", fontSize: "1.4rem", flexShrink: 0 }}>›</span>
         </div>
