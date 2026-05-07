@@ -31,7 +31,8 @@
       "Bash(dir \"c:\\\\ctfl-app\\\\e2e\")",
       "Bash(dir \"c:\\\\ctfl-app\\\\e2e\\\\pages\")",
       "Bash(ls /mnt/c/ctfl-app/)",
-      "Read(//mnt/c/**)"
+      "Read(//mnt/c/**)",
+      "PowerShell(@\\(\\(Get-Content \"c:\\\\ctfl-app\\\\e2e\\\\tests\\\\dashboard.spec.ts\" | Select-String \"test\\\\\\(\"\\).Count\\); @\\(\\(Get-Content \"c:\\\\ctfl-app\\\\e2e\\\\tests\\\\trilha.spec.ts\" | Select-String \"test\\\\\\(\"\\).Count\\))"
     ]
   }
 }
