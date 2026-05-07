@@ -31,18 +31,39 @@ export class SimuladoPage {
     // Botão na etapa narrativa: "Entendi! Ver os conceitos →"
     // Botão nos cards: "Próximo →" / "Ver o vídeo! 🎬"
     // Botão no vídeo: "Ir pro simulado! 🎯" ou "Pular vídeo"
-    const btnAvancar = this.page.getByRole('button', {
-      name: /Entendi|Próximo|Ver o vídeo|Avançar/i,
-    });
 
-    for (let i = 0; i < 10; i++) {
-      if (await this.btnIniciar.isVisible()) break;
-      if (await btnAvancar.first().isVisible()) {
-        await btnAvancar.first().click();
-        await this.page.waitForTimeout(400);
+    for (let i = 0; i < 15; i++) {
+      // Já chegamos na etapa de vídeo?
+      if (await this.btnIniciar.isVisible({ timeout: 500 }).catch(() => false)) break;
+
+      // Tenta clicar em qualquer botão de avanço disponível e habilitado
+      // Usa seletor CSS para pegar botões que não estão desabilitados
+      const avancos = [
+        'button:not([disabled]):has-text("Entendi")',
+        'button:not([disabled]):has-text("Próximo")',
+        'button:not([disabled]):has-text("Ver o vídeo")',
+        'button:not([disabled]):has-text("Avançar")',
+      ];
+
+      let clicou = false;
+      for (const seletor of avancos) {
+        const btn = this.page.locator(seletor).first();
+        if (await btn.isVisible({ timeout: 300 }).catch(() => false)) {
+          await btn.scrollIntoViewIfNeeded();
+          await btn.click();
+          await this.page.waitForTimeout(600);
+          clicou = true;
+          break;
+        }
+      }
+
+      if (!clicou) {
+        // Aguarda um pouco caso a página ainda esteja carregando conteúdo
+        await this.page.waitForTimeout(1000);
       }
     }
 
+    await this.btnIniciar.scrollIntoViewIfNeeded();
     await this.btnIniciar.click();
   }
 

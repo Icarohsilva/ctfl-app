@@ -220,7 +220,6 @@ export default function Home() {
           <h2 style={{ fontSize: "1.8rem", color: "#e5e7eb", fontFamily: "Georgia, serif", fontWeight: "normal", marginBottom: "0.5rem" }}>
             Feito por um QA de verdade
           </h2>
-          <p style={{ color: "#9ca3af", fontSize: "14px" }}>Não por uma empresa. Por alguém que passou pelo mesmo desafio que você.</p>
         </div>
 
         <div style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "20px", padding: "2rem 2.5rem" }}>
