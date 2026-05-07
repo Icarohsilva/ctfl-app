@@ -266,8 +266,13 @@ export default function Home() {
               style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", color: "#d73bf6", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
               GitHub
             </a>
-            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎙️ Criador do <strong style={{ color: "#9ca3af" }}>QA Insider Cast</strong></span>
-            <span style={{ fontSize: "12px", color: "#6b7280" }}>🎓 CTFL · Playwright · Git</span>
+            <a
+              href="https://open.spotify.com/show/3ccVfHaLB67SLyicwgKTzq?si=bad540f93d3e4229"
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px", background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", color: "#3bf66a", padding: "8px 16px", borderRadius: "8px", fontSize: "13px", fontWeight: "600", textDecoration: "none" }}>
+              <span style={{ fontSize: "12px", color: "#6b7280" }}>🎙️ Criador do <strong style={{ color: "#9ca3af" }}>QA Insider Cast</strong></span>
+            </a>
           </div>
         </div>
       </section>
