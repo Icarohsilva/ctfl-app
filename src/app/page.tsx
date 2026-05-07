@@ -249,7 +249,7 @@ export default function Home() {
             </p>
           </div>
 
-          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", alignItems: "center", paddingTop: "1.25rem", borderTop: "1px solid #1f2937" }}>
+          <div style={{ display: "flex", gap: "10px", justifyContent: "center", flexWrap: "wrap", alignItems: "center", paddingTop: "1.25rem", borderTop: "1px solid #1f2937" }}>
             <a
               href="https://www.linkedin.com/in/icarosilvaqa/"
               target="_blank"
