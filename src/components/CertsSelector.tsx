@@ -3,10 +3,10 @@ import { useState, useEffect } from "react";
 
 const certs = [
   { id: "ctfl", nome: "CTFL v4.0", org: "ISTQB", nivel: "Foundation", cor: "#d4af37", status: "disponível", desc: "Base de toda carreira em QA. 24 tópicos, 6 capítulos.", emoji: "🎓" },
+  { id: "Playwright", nome: "Playwright", org: "Técnico", nivel: "Automação", cor: "#06b6d4", status: "disponível", desc: "Automação de testes web com Playwright.", emoji: "🤖" },
   { id: "ctfl-at", nome: "CTFL-AT", org: "ISTQB", nivel: "Foundation", cor: "#10b981", status: "em breve", desc: "Agile Tester — teste em ambientes ágeis.", emoji: "⚡" },
   { id: "ctal-ta", nome: "CTAL-TA", org: "ISTQB", nivel: "Advanced", cor: "#3b82f6", status: "em breve", desc: "Test Analyst — análise e modelagem avançada.", emoji: "🔬" },
   { id: "ctal-tm", nome: "CTAL-TM", org: "ISTQB", nivel: "Advanced", cor: "#8b5cf6", status: "em breve", desc: "Test Manager — gestão avançada de testes.", emoji: "📋" },
-  { id: "playwright", nome: "Playwright", org: "Técnico", nivel: "Automação", cor: "#06b6d4", status: "em breve", desc: "Automação de testes web com Playwright.", emoji: "🤖" },
 ];
 
 export default function CertsSelector() {
