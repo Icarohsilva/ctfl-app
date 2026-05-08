@@ -29,7 +29,7 @@ export default function Login() {
       return;
     }
 
-    window.location.href = "/dashboard";
+    window.location.href = "/cursos";
   };
 
   const inputStyle: React.CSSProperties = {
@@ -90,7 +90,7 @@ export default function Login() {
           Bem-vindo de volta
         </h2>
         <p style={{ color: "#9ca3af", fontSize: "14px", marginBottom: "1.75rem" }}>
-          Entre para continuar sua trilha CTFL.
+          Entre para continuar seus estudos.
         </p>
 
         <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
