@@ -257,4 +257,214 @@ DICA: Configure o Prettier para formatar ao salvar:
       explicacao: "Correto! A extensão oferece uma interface visual: lista todos os testes, mostra quais passaram ou falharam com ícones coloridos, permite rodar um teste específico com um clique, e tem modo debug que para na linha exata do erro.",
     },
   },
+
+  "instalacao": {
+    moduloId: 1,
+    labId: "instalacao",
+    conceito: `Agora que você tem o Node.js instalado, vamos criar seu primeiro projeto Playwright com um único comando.
+
+O comando npm init playwright@latest faz tudo automaticamente:
+• Cria o arquivo playwright.config.ts (configurações do Playwright)
+• Cria a pasta tests/ com um exemplo de teste
+• Baixa os navegadores Chrome, Firefox e Safari para rodar os testes localmente
+• Adiciona o Playwright como dependência no package.json
+
+Durante a instalação, ele faz algumas perguntas. Para este lab, responda:
+• Linguagem: TypeScript (pressione Enter — já é o padrão)
+• Pasta de testes: tests (pressione Enter)
+• GitHub Actions: N (não precisamos agora)
+• Instalar navegadores: y (sim — necessário)
+
+A instalação leva alguns minutos porque baixa os navegadores (~250MB).`,
+    codigo: `// Abra o terminal e navegue até uma pasta vazia para o projeto:
+// mkdir meu-projeto-playwright
+// cd meu-projeto-playwright
+
+// Execute o comando de instalação:
+// npm init playwright@latest
+
+// Estrutura criada após a instalação:
+// meu-projeto-playwright/
+// ├── playwright.config.ts    ← configurações (browsers, timeouts, etc.)
+// ├── package.json            ← dependências do projeto
+// ├── package-lock.json       ← versões exatas instaladas
+// └── tests/
+//     └── example.spec.ts    ← exemplo de teste pronto para rodar
+
+// Para verificar que tudo foi instalado corretamente:
+// npx playwright --version`,
+    instrucaoExecucao: `1. Abra o terminal e crie uma pasta nova:
+   mkdir meu-projeto-playwright
+   cd meu-projeto-playwright
+
+2. Execute a instalação:
+   npm init playwright@latest
+
+3. Responda as perguntas:
+   ✓ TypeScript (Enter)
+   ✓ tests (Enter)
+   ✓ N para GitHub Actions
+   ✓ y para instalar navegadores
+
+4. Aguarde (~2-5 minutos para baixar os navegadores)
+
+5. Verifique a instalação:
+   npx playwright --version
+
+Saída esperada: Version 1.x.x
+
+ERRO COMUM: timeout durante o download dos navegadores
+→ Sua rede pode estar lenta. Aguarde mais tempo ou tente novamente.`,
+    reflexao: {
+      pergunta: "O que o arquivo `playwright.config.ts` armazena?",
+      opcoes: [
+        "Os casos de teste que serão executados",
+        "As configurações do projeto: quais browsers usar, timeouts, URL base, etc.",
+        "Os resultados dos testes anteriores",
+      ],
+      correta: 1,
+      explicacao: "Correto! O playwright.config.ts é o arquivo de configuração do projeto. Nele você define: quais navegadores rodar (Chrome, Firefox, Safari), o timeout padrão, a URL base da aplicação, onde salvar relatórios, quantos testes rodar em paralelo (workers), e muito mais.",
+    },
+  },
+
+  "primeiro-teste": {
+    moduloId: 1,
+    labId: "primeiro-teste",
+    conceito: `Um teste Playwright tem sempre a mesma estrutura: um nome, e uma função que usa o objeto page para controlar o navegador.
+
+O objeto page é a sua "mão" dentro do navegador. Com ele você pode:
+• page.goto(url) — navegar para um endereço
+• page.locator("seletor") — encontrar um elemento
+• expect(elemento).toBeVisible() — verificar se algo está visível
+
+O test("nome", async ({ page }) => { ... }) é a função que o Playwright chama quando roda seus testes. O async/await garante que cada ação espera a anterior terminar.
+
+Veja o arquivo tests/example.spec.ts que foi criado na instalação. Ele já tem dois testes funcionais apontando para playwright.dev. Vamos rodá-los e depois entender o que cada linha faz.`,
+    codigo: `// tests/meu-primeiro-teste.spec.ts
+// Crie este arquivo na pasta tests/ do seu projeto
+
+import { test, expect } from "@playwright/test";
+
+test("página do Playwright abre corretamente", async ({ page }) => {
+  // Navega para a URL
+  await page.goto("https://demo.playwright.dev/todomvc");
+
+  // Verifica se o título da página contém "TodoMVC"
+  await expect(page).toHaveTitle(/TodoMVC/);
+
+  // Verifica se o campo de input está visível
+  const input = page.getByPlaceholder("What needs to be done?");
+  await expect(input).toBeVisible();
+});
+
+test("consigo adicionar uma tarefa", async ({ page }) => {
+  await page.goto("https://demo.playwright.dev/todomvc");
+
+  // Digita uma nova tarefa e pressiona Enter
+  await page.getByPlaceholder("What needs to be done?").fill("Aprender Playwright");
+  await page.keyboard.press("Enter");
+
+  // Verifica se a tarefa apareceu na lista
+  await expect(page.getByText("Aprender Playwright")).toBeVisible();
+});`,
+    instrucaoExecucao: `1. Crie o arquivo tests/meu-primeiro-teste.spec.ts com o código acima
+
+2. Rode os testes (navegador visível):
+   npx playwright test meu-primeiro-teste.spec.ts --headed
+
+3. Observe o Chrome abrindo, navegando e testando automaticamente
+
+4. Saída esperada no terminal:
+   Running 2 tests using 1 worker
+   ✓  1 página do Playwright abre corretamente (1.2s)
+   ✓  2 consigo adicionar uma tarefa (0.9s)
+   2 passed (3s)
+
+ERRO COMUM: "Timeout 30000ms exceeded"
+→ A conexão com demo.playwright.dev foi lenta.
+→ Tente novamente ou verifique sua conexão com a internet.`,
+    reflexao: {
+      pergunta: "O que o `{ page }` representa na assinatura `async ({ page }) => { ... }`?",
+      opcoes: [
+        "O nome do arquivo de teste que será executado",
+        "O objeto que representa o navegador — usado para navegar, clicar e verificar elementos",
+        "O resultado do teste anterior (pass ou fail)",
+      ],
+      correta: 1,
+      explicacao: "Correto! O page é a abstração do Playwright para o navegador. É por meio dele que você faz tudo: navegar (page.goto), encontrar elementos (page.locator), clicar, preencher formulários, tirar screenshots e muito mais. Cada teste recebe seu próprio page isolado.",
+    },
+  },
+
+  "html-report": {
+    moduloId: 1,
+    labId: "html-report",
+    conceito: `Depois de rodar os testes, o Playwright gera um relatório HTML completo. Ele mostra quais testes passaram, quais falharam, quanto tempo cada um levou, e — o mais importante — um vídeo e screenshots do que aconteceu nos testes que falharam.
+
+O relatório é gerado automaticamente na pasta playwright-report/. Para abrir:
+npx playwright show-report
+
+Isso abre o relatório no seu navegador. Na tela principal você vê:
+• ✅ Verde: teste passou
+• ❌ Vermelho: teste falhou
+• ⏭ Laranja: teste foi pulado
+
+Clicando em um teste que falhou, você vê:
+• A linha exata do erro
+• O HTML da página no momento do erro (Trace Viewer)
+• Vídeo do que aconteceu (se configurado)
+
+Entender bem o relatório é uma habilidade fundamental — é aqui que você vai passar muito do seu tempo como QA de automação.`,
+    codigo: `// playwright.config.ts — para ativar vídeo nos relatórios de falha
+// (modifique o arquivo existente na raiz do projeto)
+
+import { defineConfig, devices } from "@playwright/test";
+
+export default defineConfig({
+  testDir: "./tests",
+  reporter: "html",   // gera o relatório HTML automaticamente
+  use: {
+    // Grava vídeo apenas quando o teste falhar:
+    video: "retain-on-failure",
+    // Salva screenshot quando o teste falhar:
+    screenshot: "only-on-failure",
+    // Ativa o Trace Viewer para testes que falharam:
+    trace: "retain-on-failure",
+  },
+  projects: [
+    {
+      name: "chromium",
+      use: { ...devices["Desktop Chrome"] },
+    },
+  ],
+});`,
+    instrucaoExecucao: `1. Abra o playwright.config.ts e adicione as configurações de video,
+   screenshot e trace conforme o código acima
+
+2. Faça um teste falhar de propósito — edite meu-primeiro-teste.spec.ts:
+   Troque "Aprender Playwright" por "TEXTO QUE NAO EXISTE"
+
+3. Rode os testes:
+   npx playwright test meu-primeiro-teste.spec.ts
+
+4. Abra o relatório:
+   npx playwright show-report
+
+5. Clique no teste vermelho e explore:
+   • Aba "Error": mensagem de erro
+   • Aba "Trace": gravação do que aconteceu passo a passo
+
+6. Corrija o texto de volta para "Aprender Playwright"
+
+Saída esperada no relatório: 1 teste vermelho com trace disponível.`,
+    reflexao: {
+      pergunta: "Qual configuração faz o Playwright gravar um vídeo somente quando o teste falhar?",
+      opcoes: [
+        `video: "on"`,
+        `video: "retain-on-failure"`,
+        `video: "off-on-success"`,
+      ],
+      correta: 1,
+      explicacao: `Correto! A opção "retain-on-failure" grava vídeo de todos os testes mas descarta os de testes bem-sucedidos — economizando espaço. Use "on" para gravar sempre (útil durante desenvolvimento) ou "off" para não gravar (mais rápido em CI/CD).`,
+    },
+  },
 };
