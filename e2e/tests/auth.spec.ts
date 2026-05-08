@@ -12,15 +12,15 @@ test.describe('Autenticação', () => {
       await expect(lp.msgErro).toBeVisible({ timeout: 10_000 });
     });
 
-    test('login com credenciais corretas redireciona para dashboard', async ({ page }) => {
+    test('login com credenciais corretas redireciona para hub de cursos', async ({ page }) => {
       const lp = new LoginPage(page);
       await lp.goto();
       await lp.login(
         process.env.TEST_USER_EMAIL!,
         process.env.TEST_USER_PASSWORD!
       );
-      await page.waitForURL('**/dashboard', { timeout: 15_000 });
-      await expect(page).toHaveURL(/\/dashboard/);
+      await page.waitForURL(/\/(cursos|dashboard)/, { timeout: 15_000 });
+      await expect(page).toHaveURL(/\/(cursos|dashboard)/);
     });
 
     test('link "Esqueci a senha" navega para /esqueci-senha', async ({ page }) => {

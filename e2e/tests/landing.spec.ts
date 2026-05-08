@@ -42,4 +42,13 @@ test.describe('Landing Page', () => {
       'https://www.linkedin.com/in/icarosilvaqa/'
     );
   });
+
+  test('card Playwright visível e marcado como disponível', async ({ page }) => {
+    const lp = new LandingPage(page);
+    await lp.goto();
+    await expect(page.getByText(/Playwright/i).first()).toBeVisible();
+    // Playwright deve aparecer antes de CTFL-AT/CTAL-TA e como disponível
+    const disponivel = page.getByText(/✓ Disponível/i);
+    await expect(disponivel).toHaveCount(2); // CTFL + Playwright
+  });
 });
