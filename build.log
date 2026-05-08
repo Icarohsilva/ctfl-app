@@ -1,0 +1,46 @@
+
+> ctfl-app@0.1.0 build
+> next build
+
+▲ Next.js 16.2.4 (Turbopack)
+- Environments: .env.local
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 1582ms
+  Running TypeScript ...
+  Finished TypeScript in 2.6s ...
+  Collecting page data using 19 workers ...
+  Generating static pages using 19 workers (0/21) ...
+  Generating static pages using 19 workers (5/21) 
+  Generating static pages using 19 workers (10/21) 
+  Generating static pages using 19 workers (15/21) 
+✓ Generating static pages using 19 workers (21/21) in 268ms
+  Finalizing page optimization ...
+
+Route (app)
+┌ ○ /
+├ ○ /_not-found
+├ ƒ /api/conteudo
+├ ƒ /api/push/notificar
+├ ƒ /api/push/subscription
+├ ƒ /api/simulado
+├ ƒ /api/simulado-final
+├ ○ /aprender
+├ ○ /cadastro
+├ ○ /cancelar-notificacoes
+├ ƒ /capitulo/[capitulo]
+├ ƒ /capitulo/[capitulo]/topico/[id]
+├ ○ /confirmar-email
+├ ○ /dashboard
+├ ○ /esqueci-senha
+├ ○ /inicio/ctfl
+├ ○ /login
+├ ○ /offline
+├ ○ /perfil
+├ ○ /redefinir-senha
+└ ○ /simulado-final
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
