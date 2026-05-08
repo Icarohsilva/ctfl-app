@@ -47,15 +47,19 @@ export default function LabPage({
       concluido: true,
       xp_ganho: xp,
       atualizado_em: new Date().toISOString(),
-    }, { onConflict: "user_id,certificacao_id,capitulo,topico_id" });
+    });
 
     const { data: cert } = await supabase.from("usuario_certificacoes")
-      .select("pontos, streak, maior_streak, semana_atual")
+      .select("pontos, streak, maior_streak, semana_atual, ultimo_estudo")
       .eq("user_id", userId).eq("certificacao_id", "playwright").single();
 
     if (cert) {
       const hoje = new Date().toISOString().split("T")[0];
-      const novoStreak = (cert.streak || 0) + 1;
+      const ontem = new Date(Date.now() - 86400000).toISOString().split("T")[0];
+      let novoStreak = cert.streak || 0;
+      if (cert.ultimo_estudo !== hoje) {
+        novoStreak = cert.ultimo_estudo === ontem ? novoStreak + 1 : 1;
+      }
       const idxAtualLab = mod.labs.findIndex(l => l.id === lab);
       const todosModuloConcluidos = idxAtualLab === mod.labs.length - 1;
       await supabase.from("usuario_certificacoes").update({
