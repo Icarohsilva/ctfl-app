@@ -328,7 +328,7 @@ export default function Dashboard() {
           <CardMetaCTFL cert={cert} userId={userId} progressoGeral={progressoGeral} onAtualizar={carregarDados} />
         )}
 
-        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HORIZONTAL || ""} format="horizontal" style={{ marginBottom: "1.25rem" }} />
+        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_HORIZONTAL || ""} format="horizontal" style={{ marginBottom: "1.25rem", marginTop: !(cert && userId) ? "1.25rem" : 0 }} />
 
         {/* ABAS */}
         <div style={{ display: "flex", gap: "4px", marginBottom: "1rem", background: "#111827", border: "1px solid #1f2937", borderRadius: "10px", padding: "4px" }}>
