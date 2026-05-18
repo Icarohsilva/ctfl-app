@@ -6,6 +6,7 @@ const features = [
   { icon: "📊", titulo: "Progresso por certificação", desc: "Cada cert tem seu próprio progresso, XP, streak e meta. Avance no seu ritmo sem misturar os conteúdos." },
   { icon: "🔔", titulo: "Lembretes inteligentes", desc: "Notificações push e e-mails personalizados por IA. Cada mensagem é contextualizada para seu momento e certificação." },
   { icon: "📱", titulo: "App instalável (PWA)", desc: "Instale direto do navegador. Funciona offline. Notificações nativas. Sem passar pela loja de apps." },
+  { icon: "🗣️", titulo: "Inglês para QA", desc: "Do zero ao inglês técnico em carreira de QA. Trilha estilo Duolingo com teste de nivelamento, avaliação de pronúncia por IA e vocabulário focado em bug reports, reuniões e entrevistas." },
   { icon: "🎯", titulo: "Nível adaptativo", desc: "O sistema ajusta a dificuldade ao seu nível — iniciante, praticante ou especialista — em cada certificação." },
   { icon: "🏆", titulo: "Simulado final cronometrado", desc: "Idêntico ao exame real em formato e distribuição. Aprovado? Link direto para agendar a prova oficial." },
 ];
@@ -13,6 +14,7 @@ const features = [
 const certs = [
   { id: "ctfl", nome: "CTFL v4.0", org: "ISTQB", nivel: "Foundation", cor: "#d4af37", status: "disponível", desc: "Base de toda carreira em QA. 24 tópicos, 6 capítulos.", emoji: "🎓" },
   { id: "playwright", nome: "Playwright", org: "Técnico", nivel: "Automação", cor: "#06b6d4", status: "disponível", desc: "Automação de testes web com Playwright.", emoji: "🤖" },
+  { id: "ingles", nome: "English for QA", org: "Idiomas", nivel: "A1 → B2", cor: "#22c55e", status: "disponível", desc: "Do A1 ao inglês técnico de QA. Lições estilo Duolingo com IA.", emoji: "🗣️" },
   { id: "ctfl-at", nome: "CTFL-AT", org: "ISTQB", nivel: "Foundation", cor: "#10b981", status: "em breve", desc: "Agile Tester — teste em ambientes ágeis.", emoji: "⚡" },
   { id: "ctal-ta", nome: "CTAL-TA", org: "ISTQB", nivel: "Advanced", cor: "#3b82f6", status: "em breve", desc: "Test Analyst — análise e modelagem avançada.", emoji: "🔬" },
   { id: "ctal-tm", nome: "CTAL-TM", org: "ISTQB", nivel: "Advanced", cor: "#8b5cf6", status: "em breve", desc: "Test Manager — gestão avançada de testes.", emoji: "📋" },

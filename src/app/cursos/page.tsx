@@ -74,6 +74,22 @@ export default function Cursos() {
       });
     }
 
+    if (certs?.find(c => c.certificacao_id === "ingles")) {
+      const { data: progData } = await supabase
+        .from("ingles_progresso")
+        .select("nivel_atual, licoes_concluidas")
+        .eq("user_id", user.id).single();
+
+      const cert = certs.find(c => c.certificacao_id === "ingles")!;
+      const concluidos = progData?.licoes_concluidas?.length ?? 0;
+      ativos.push({
+        id: "ingles", nome: "English for QA", emoji: "🗣️", cor: "#22c55e",
+        tipo: "curso", rota: "/ingles", rotaInicio: "/inicio/ingles",
+        progresso: Math.round((concluidos / 160) * 100),
+        posicaoAtual: `Nível ${progData?.nivel_atual ?? "A1"} · ${concluidos} lições`,
+      });
+    }
+
     setCursosAtivos(ativos);
     setLoading(false);
   };
@@ -222,6 +238,46 @@ export default function Cursos() {
                   </div>
                 </div>
                 <div style={{ background: "#06b6d4", color: "#000", fontSize: "11px",
+                  fontWeight: "bold", padding: "4px 10px", borderRadius: "99px" }}>
+                  Iniciar
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Iniciar English for QA se não inscrito */}
+        {!cursosAtivos.find(c => c.id === "ingles") && (
+          <div style={{ marginBottom: "28px" }}>
+            <div style={{ fontSize: "10px", color: "#6b7280", letterSpacing: "0.08em",
+              marginBottom: "10px" }}>
+              {cursosAtivos.length > 0 ? "ADICIONAR CURSO" : "COMEÇAR AGORA"}
+            </div>
+            <div onClick={() => window.location.href = "/inicio/ingles"}
+              style={{ background: "#111827", border: "1px solid rgba(34,197,94,0.4)",
+                borderRadius: "14px", padding: "16px", cursor: "pointer",
+                transition: "border-color 0.2s, box-shadow 0.2s" }}
+              onMouseEnter={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "#22c55e";
+                (e.currentTarget as HTMLElement).style.boxShadow = "0 0 0 4px rgba(34,197,94,0.12)";
+              }}
+              onMouseLeave={e => {
+                (e.currentTarget as HTMLElement).style.borderColor = "rgba(34,197,94,0.4)";
+                (e.currentTarget as HTMLElement).style.boxShadow = "none";
+              }}>
+              <div style={{ display: "flex", gap: "14px", alignItems: "center" }}>
+                <div style={{ width: "44px", height: "44px", borderRadius: "12px",
+                  background: "rgba(34,197,94,0.1)", border: "1px solid rgba(34,197,94,0.3)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: "1.3rem", flexShrink: 0 }}>🗣️</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: "14px", fontWeight: "bold", color: "#e5e7eb",
+                    marginBottom: "2px" }}>English for QA</div>
+                  <div style={{ fontSize: "12px", color: "#6b7280" }}>
+                    Do zero ao inglês técnico · 4 níveis · ~160 lições
+                  </div>
+                </div>
+                <div style={{ background: "#22c55e", color: "#000", fontSize: "11px",
                   fontWeight: "bold", padding: "4px 10px", borderRadius: "99px" }}>
                   Iniciar
                 </div>
