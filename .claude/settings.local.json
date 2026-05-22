@@ -16,7 +16,17 @@
       "Bash(npx tsc *)",
       "Bash(node -e ' *)",
       "Bash(node scripts/injetar-urls.mjs)",
-      "Bash(git checkout *)"
+      "Bash(git checkout *)",
+      "Bash(mkdir -p \"c:\\\\ctfl-app\\\\docs\\\\superpowers\\\\specs\")",
+      "Bash(New-Item -ItemType Directory -Force -Path \"c:\\\\ctfl-app\\\\src\\\\components\\\\guia\")",
+      "Bash(Test-Path \"c:\\\\ctfl-app\\\\src\\\\components\\\\guia\")",
+      "PowerShell(New-Item -ItemType Directory -Force -Path \"C:\\\\ctfl-app\\\\src\\\\components\\\\guia\")",
+      "Bash(git stash *)",
+      "Bash(mkdir -p \"c:\\\\ctfl-app\\\\src\\\\app\\\\guia\\\\[slug]\" && echo done)"
+    ],
+    "additionalDirectories": [
+      "c:\\ctfl-app\\docs\\superpowers\\specs",
+      "c:\\ctfl-app\\src\\app\\guia"
     ]
   }
 }
