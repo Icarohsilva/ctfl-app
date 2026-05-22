@@ -7,7 +7,7 @@ type Props = {
   slugArtigo: string;
 };
 
-export default function QuizArtigo({ perguntas, slugArtigo }: Props) {
+export default function QuizArtigo({ perguntas }: Props) {
   const [atual, setAtual] = useState(0);
   const [selecionada, setSelecionada] = useState<number | null>(null);
   const [confirmada, setConfirmada] = useState(false);
