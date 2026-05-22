@@ -67,6 +67,7 @@ export default function Home() {
           <a href="#recursos" className="nav-link">Recursos</a>
           <a href="#como-funciona" className="nav-link">Como funciona</a>
           <a href="#sobre" className="nav-link">Quem fez</a>
+          <a href="/guia" className="nav-link">Guia</a>
           <a href="/login" className="nav-link">Entrar</a>
           <a href="/cadastro" style={{ background: "#3b82f6", color: "#ffffff", padding: "8px 18px", borderRadius: "8px", fontWeight: "600", fontSize: "14px", textDecoration: "none" }}>
             Começar grátis
@@ -75,6 +76,7 @@ export default function Home() {
 
         {/* Botões mobile */}
         <div className="nav-mobile">
+          <a href="/guia" style={{ color: "#9ca3af", textDecoration: "none", fontSize: "13px" }}>Guia</a>
           <a href="/login" style={{ color: "#9ca3af", textDecoration: "none", fontSize: "13px" }}>Entrar</a>
           <a href="/cadastro" style={{ background: "#3b82f6", color: "#ffffff", padding: "7px 14px", borderRadius: "8px", fontWeight: "600", fontSize: "13px", textDecoration: "none" }}>
             Começar grátis
