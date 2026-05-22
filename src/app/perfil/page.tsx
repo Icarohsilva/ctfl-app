@@ -566,7 +566,7 @@ export default function PerfilPage() {
             </div>
           </div>
         )}
-        <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECTANGLE || ""} format="rectangle" style={{ marginTop: "2rem" }} />
+        {perfil && <AdBanner slotId={process.env.NEXT_PUBLIC_ADSENSE_SLOT_RECTANGLE || ""} format="rectangle" style={{ marginTop: "2rem" }} />}
       </div>
     </main>
   );
