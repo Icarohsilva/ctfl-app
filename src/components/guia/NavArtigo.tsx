@@ -1,3 +1,5 @@
+"use client";
+
 import type { ArtigoMeta } from "@/data/guia/types";
 
 type Props = {
