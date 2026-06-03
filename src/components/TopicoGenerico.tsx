@@ -178,12 +178,14 @@ export default function TopicoGenerico({
     const foiAprovado = stats.pct >= 65;
 
     // Preserva concluído anterior se o usuário já tinha aprovado
-    const { data: existente } = await supabase
+    const { count: jaConcluidoCount } = await supabase
       .from("progresso_topicos")
-      .select("concluido")
+      .select("*", { count: "exact", head: true })
       .eq("user_id", userId)
       .eq("topico_id", id)
-      .maybeSingle();
+      .eq("certificacao_id", "ctfl")
+      .eq("concluido", true);
+    const jaConcluidoAntes = (jaConcluidoCount || 0) > 0;
 
     await supabase.from("progresso_topicos").upsert({
       user_id: userId,
@@ -193,9 +195,9 @@ export default function TopicoGenerico({
       acertos: stats.acertos,
       total: stats.total,
       xp_ganho: stats.xpGanho,
-      concluido: foiAprovado || existente?.concluido === true,
+      concluido: foiAprovado || jaConcluidoAntes,
       atualizado_em: new Date().toISOString(),
-    });
+    }, { onConflict: "user_id,topico_id,certificacao_id" });
 
     const registros = stats.resultado.map(r => ({
       user_id: userId, topico_id: id, conceito: r.conceito,

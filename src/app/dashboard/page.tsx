@@ -393,24 +393,26 @@ export default function Dashboard() {
               const concluidos = p?.concluidos || 0;
               const total = totalTopicosPorCap[c.num] || 0;
               const pct = total > 0 ? Math.round((concluidos / total) * 100) : 0;
-              const desbloqueado = c.num === 1 || (progresso.find(x => x.capitulo === c.num - 1)?.concluidos === totalTopicosPorCap[c.num - 1]);
+              const desbloqueado = c.num === 1
+                || semanaAtual >= c.num
+                || (progresso.find(x => x.capitulo === c.num - 1)?.concluidos === totalTopicosPorCap[c.num - 1]);
 
               return (
                 <div key={c.num} onClick={() => desbloqueado && (window.location.href = c.rota)}
-                  style={{ background: "#111827", border: "1px solid #1f2937", borderRadius: "12px", padding: "1.1rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
-                  onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "rgba(59,130,246,0.4)"; }}
-                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = "#1f2937"; }}>
+                  style={{ background: "#111827", border: `1px solid ${pct === 100 ? "rgba(34,197,94,0.3)" : "#1f2937"}`, borderRadius: "12px", padding: "1.1rem", opacity: desbloqueado ? 1 : 0.4, cursor: desbloqueado ? "pointer" : "not-allowed", transition: "border-color 0.2s" }}
+                  onMouseEnter={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = pct === 100 ? "rgba(34,197,94,0.5)" : "rgba(59,130,246,0.4)"; }}
+                  onMouseLeave={e => { if (desbloqueado) (e.currentTarget as HTMLElement).style.borderColor = pct === 100 ? "rgba(34,197,94,0.3)" : "#1f2937"; }}>
                   <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
                     <span style={{ fontSize: "12px", color: "#9ca3af" }}>Cap. {c.num}</span>
                     <span style={{ fontSize: "11px", background: "rgba(59,130,246,0.12)", color: "#3b82f6", border: "1px solid rgba(59,130,246,0.25)", padding: "2px 7px", borderRadius: "99px" }}>{c.peso}</span>
                   </div>
-                  <div style={{ fontSize: "13px", fontWeight: "bold", color: "#e5e7eb", marginBottom: "8px" }}>{c.titulo}</div>
+                  <div style={{ fontSize: "13px", fontWeight: "bold", color: desbloqueado ? "#e5e7eb" : "#9ca3af", marginBottom: "8px" }}>{c.titulo}</div>
                   <div style={{ background: "#1f2937", borderRadius: "99px", height: "4px", marginBottom: "5px" }}>
                     <div style={{ background: pct === 100 ? "#22c55e" : "#3b82f6", width: `${pct}%`, height: "4px", borderRadius: "99px" }} />
                   </div>
                   <div style={{ display: "flex", justifyContent: "space-between" }}>
-                    <span style={{ fontSize: "11px", color: "#6b7280" }}>{concluidos}/{total} tópicos</span>
-                    <span style={{ fontSize: "11px", color: pct === 100 ? "#22c55e" : "#6b7280" }}>{pct === 100 ? "✓ Completo" : `${pct}%`}</span>
+                    <span style={{ fontSize: "11px", color: "#6b7280" }}>{desbloqueado ? `${concluidos}/${total} tópicos` : "🔒 Bloqueado"}</span>
+                    <span style={{ fontSize: "11px", color: pct === 100 ? "#22c55e" : "#6b7280" }}>{pct === 100 ? "✓ Completo" : desbloqueado ? `${pct}%` : ""}</span>
                   </div>
                 </div>
               );

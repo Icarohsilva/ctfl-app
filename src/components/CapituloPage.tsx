@@ -22,9 +22,10 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
       .select("topico_id")
       .eq("user_id", user.id)
       .eq("capitulo", numeroCapitulo)
+      .eq("certificacao_id", "ctfl")
       .eq("concluido", true);
 
-    if (data) setTopicosFeitos(data.map((d: { topico_id: string }) => d.topico_id));
+    if (data) setTopicosFeitos([...new Set(data.map((d: { topico_id: string }) => d.topico_id))]);
     setLoading(false);
   };
 
@@ -35,14 +36,12 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
   );
 
   const totalXP = capitulo.topicos.reduce((acc, t) => acc + t.xp, 0);
-  const xpGanho = capitulo.topicos.filter(t => topicosFeitos.includes(t.id)).reduce((acc, t) => acc + t.xp, 0);
+  const topicosConcluidosDoCapitulo = capitulo.topicos.filter(t => topicosFeitos.includes(t.id));
+  const xpGanho = topicosConcluidosDoCapitulo.reduce((acc, t) => acc + t.xp, 0);
+  const concluidos = topicosConcluidosDoCapitulo.length;
   const progresso = capitulo.topicos.length > 0
-    ? Math.round((topicosFeitos.length / capitulo.topicos.length) * 100)
+    ? Math.round((concluidos / capitulo.topicos.length) * 100)
     : 0;
-
-  const capAnteriorCompleto = numeroCapitulo === 1 ? true : (() => {
-    return true;
-  })();
 
   if (loading) return (
     <main style={{ background: "#0b0f1a", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
@@ -89,7 +88,7 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
             }} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between" }}>
-            <span style={{ fontSize: "12px", color: "#6b7280" }}>{topicosFeitos.length} de {capitulo.topicos.length} tópicos concluídos</span>
+            <span style={{ fontSize: "12px", color: "#6b7280" }}>{concluidos} de {capitulo.topicos.length} tópicos concluídos</span>
             <span style={{ fontSize: "12px", color: capitulo.cor }}>⭐ {xpGanho}/{totalXP} XP</span>
           </div>
         </div>
