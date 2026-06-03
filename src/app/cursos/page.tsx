@@ -16,7 +16,7 @@ type CursoAtivo = {
   posicaoAtual: string;
 };
 
-const TOTAL_TOPICOS_CTFL = 22;
+const TOTAL_TOPICOS_CTFL = 24;
 const TOTAL_LABS_PLAYWRIGHT = 21;
 
 export default function Cursos() {
@@ -52,12 +52,12 @@ export default function Cursos() {
       const cert = certs.find(c => c.certificacao_id === "ctfl")!;
       const semana = cert.semana_atual || 1;
       const titulos = ["", "Fundamentos", "Ciclo de Vida", "Teste Estático",
-        "Téc. Caixa-Preta", "Téc. Caixa-Branca", "Gerenciamento", "Ferramentas", "Simulado Final"];
+        "Análise e Modelagem", "Gerenciamento", "Ferramentas", "Simulado Final"];
       ativos.push({
         id: "ctfl", nome: "CTFL v4.0", emoji: "🎓", cor: "#d4af37",
         tipo: "certificacao", rota: "/dashboard", rotaInicio: "/inicio/ctfl",
         progresso: Math.round((concluidos / TOTAL_TOPICOS_CTFL) * 100),
-        posicaoAtual: `Semana ${semana} — ${titulos[Math.min(semana, 8)] || "Simulado Final"}`,
+        posicaoAtual: `Semana ${semana} — ${titulos[Math.min(semana, 7)] || "Simulado Final"}`,
       });
     }
 

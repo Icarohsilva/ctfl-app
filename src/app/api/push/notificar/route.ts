@@ -195,7 +195,7 @@ export async function POST(req: NextRequest) {
         : null;
 
       // Progresso estimado
-      const progresso = Math.round(((u.semana_atual || 1) - 1) / 8 * 100);
+      const progresso = Math.round(((u.semana_atual || 1) - 1) / 7 * 100);
 
       // Busca perfil
       const { data: perfil } = await supabase

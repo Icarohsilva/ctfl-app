@@ -35,14 +35,13 @@ const semanas = [
   { num: 1, cap: 1, titulo: "Fundamentos de Teste", rota: "/capitulo/1" },
   { num: 2, cap: 2, titulo: "Ciclo de Vida", rota: "/capitulo/2" },
   { num: 3, cap: 3, titulo: "Teste Estático", rota: "/capitulo/3" },
-  { num: 4, cap: 4, titulo: "Técnicas Caixa-Preta", rota: "/capitulo/4" },
-  { num: 5, cap: 4, titulo: "Técnicas Caixa-Branca", rota: "/capitulo/4" },
-  { num: 6, cap: 5, titulo: "Gerenciamento", rota: "/capitulo/5" },
-  { num: 7, cap: 6, titulo: "Ferramentas", rota: "/capitulo/6" },
-  { num: 8, cap: 0, titulo: "Simulado Final", rota: "/simulado-final" },
+  { num: 4, cap: 4, titulo: "Análise e Modelagem", rota: "/capitulo/4" },
+  { num: 5, cap: 5, titulo: "Gerenciamento", rota: "/capitulo/5" },
+  { num: 6, cap: 6, titulo: "Ferramentas", rota: "/capitulo/6" },
+  { num: 7, cap: 0, titulo: "Simulado Final", rota: "/simulado-final" },
 ];
 
-const totalTopicosPorCap: Record<number, number> = { 1: 4, 2: 4, 3: 3, 4: 4, 5: 4, 6: 3 };
+const totalTopicosPorCap: Record<number, number> = { 1: 4, 2: 4, 3: 3, 4: 6, 5: 4, 6: 3 };
 
 const frasesMotivadoras = [
   "Um passo por dia, e a certificação é sua. 🎯",
@@ -125,7 +124,7 @@ export default function Dashboard() {
   const totalConcluidos = progresso.reduce((acc, p) => acc + p.concluidos, 0);
   const progressoGeral = Math.round((totalConcluidos / totalTopicos) * 100);
   const semanaAtual = cert?.semana_atual || 1;
-  const semanaInfo = semanas.find(s => s.num === Math.min(semanaAtual, 8)) ?? semanas[0];
+  const semanaInfo = semanas.find(s => s.num === Math.min(semanaAtual, 7)) ?? semanas[0];
   const progressoCap = semanaInfo.cap > 0 ? progresso.find(p => p.capitulo === semanaInfo.cap) : null;
   const totalTopicosCap = semanaInfo.cap > 0 ? (totalTopicosPorCap[semanaInfo.cap] ?? 0) : 0;
   const tituloAtual = semanaInfo.cap > 0 ? `Cap. ${semanaInfo.cap} — ${semanaInfo.titulo}` : "Simulado Final CTFL";

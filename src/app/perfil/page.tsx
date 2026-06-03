@@ -363,7 +363,7 @@ export default function PerfilPage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "12px", minWidth: "200px" }}>
             <div style={{ textAlign: "center" }}>
-              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e5e7eb" }}>{perfil?.semana_atual || 1}/8</div>
+              <div style={{ fontSize: "1.4rem", fontWeight: "bold", color: "#e5e7eb" }}>{perfil?.semana_atual || 1}/7</div>
               <div style={{ fontSize: "11px", color: "#9ca3af" }}>semana</div>
             </div>
             <div style={{ textAlign: "center" }}>
