@@ -178,16 +178,17 @@ export default function TopicoGenerico({
     const foiAprovado = stats.pct >= 65;
 
     // Preserva concluído anterior se o usuário já tinha aprovado
-    const { count: jaConcluidoCount } = await supabase
+    const { count: jaConcluidoCount, error: errSelect } = await supabase
       .from("progresso_topicos")
       .select("*", { count: "exact", head: true })
       .eq("user_id", userId)
       .eq("topico_id", id)
       .eq("certificacao_id", "ctfl")
       .eq("concluido", true);
+    if (errSelect) console.error("[progresso] erro ao verificar conclusão anterior:", errSelect);
     const jaConcluidoAntes = (jaConcluidoCount || 0) > 0;
 
-    await supabase.from("progresso_topicos").upsert({
+    const { error: upsertErr } = await supabase.from("progresso_topicos").upsert({
       user_id: userId,
       capitulo: numeroCapitulo,
       topico_id: id,
@@ -198,13 +199,15 @@ export default function TopicoGenerico({
       concluido: foiAprovado || jaConcluidoAntes,
       atualizado_em: new Date().toISOString(),
     }, { onConflict: "user_id,topico_id,certificacao_id" });
+    if (upsertErr) console.error("[progresso] erro ao salvar progresso_topicos:", upsertErr);
 
     const registros = stats.resultado.map(r => ({
       user_id: userId, topico_id: id, conceito: r.conceito,
       acertou: r.acertou, dificuldade: r.dificuldade, criado_em: new Date().toISOString(),
     }));
     if (registros.length > 0) {
-      await supabase.from("historico_conceitos").insert(registros);
+      const { error: histErr } = await supabase.from("historico_conceitos").insert(registros);
+      if (histErr) console.error("[progresso] erro ao salvar historico_conceitos:", histErr);
     }
 
     const { data: uc } = await supabase
@@ -232,13 +235,14 @@ export default function TopicoGenerico({
 
       if (foiAprovado) {
         const totalDoCapitulo = capitulo?.topicos.length || 0;
-        const { count } = await supabase
+        const { count, error: countErr } = await supabase
           .from("progresso_topicos")
           .select("*", { count: "exact", head: true })
           .eq("user_id", userId)
           .eq("certificacao_id", "ctfl")
           .eq("capitulo", numeroCapitulo)
           .eq("concluido", true);
+        if (countErr) console.error("[progresso] erro ao contar tópicos do capítulo:", countErr);
 
         if ((count || 0) >= totalDoCapitulo && (uc.semana_atual || 1) <= numeroCapitulo) {
           updates.semana_atual = numeroCapitulo + 1;

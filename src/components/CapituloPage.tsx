@@ -17,13 +17,14 @@ export default function CapituloPage({ numeroCapitulo }: { numeroCapitulo: numbe
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) { window.location.href = "/login"; return; }
 
-    const { data } = await supabase
+    const { data, error: progressoErr } = await supabase
       .from("progresso_topicos")
       .select("topico_id")
       .eq("user_id", user.id)
       .eq("capitulo", numeroCapitulo)
       .eq("certificacao_id", "ctfl")
       .eq("concluido", true);
+    if (progressoErr) console.error("[capitulo] erro ao carregar progresso:", progressoErr);
 
     if (data) setTopicosFeitos([...new Set(data.map((d: { topico_id: string }) => d.topico_id))]);
     setLoading(false);

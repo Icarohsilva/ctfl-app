@@ -67,7 +67,6 @@ export default function Cadastro() {
         email: form.email,
         password: form.senha,
         options: {
-          emailRedirectTo: "https://www.testpath.online/confirmar-email",
           data: {
             nome: form.nome,
             nivel: form.nivel,
@@ -99,6 +98,13 @@ export default function Cadastro() {
         return;
       }
 
+      // Confirmação de e-mail desativada → sessão retornada imediatamente
+      if (data.session) {
+        window.location.href = "/inicio/ctfl";
+        return;
+      }
+
+      // Fallback caso a confirmação ainda esteja ativa no Supabase
       setPasso(3);
     } catch (e: unknown) {
       if (e instanceof Error) setErro(e.message);
@@ -178,12 +184,9 @@ export default function Cadastro() {
             <h2 style={{ fontSize: "1.5rem", color: "#e5e7eb", fontFamily: "Georgia, serif", marginBottom: "0.75rem", fontWeight: "normal" }}>
               Conta criada, {form.nome.split(" ")[0]}!
             </h2>
-            <p style={{ color: "#9ca3af", marginBottom: "0.75rem", lineHeight: 1.6, fontSize: "14px" }}>
+            <p style={{ color: "#9ca3af", marginBottom: "2rem", lineHeight: 1.6, fontSize: "14px" }}>
               Agora vamos configurar sua primeira certificação.
             </p>
-            <div style={{ background: "rgba(59,130,246,0.08)", border: "1px solid rgba(59,130,246,0.25)", borderRadius: "8px", padding: "12px", color: "#93c5fd", fontSize: "13px", marginBottom: "2rem", lineHeight: 1.5 }}>
-              📧 Verifique seu e-mail para confirmar a conta antes de continuar.
-            </div>
             <a href="/inicio/ctfl" style={{
               background: "#3b82f6",
               color: "#ffffff",

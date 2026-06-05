@@ -73,8 +73,20 @@ REGRAS:
 - Alternativas erradas devem ser plausíveis mas incorretas para quem estudou
 - Explicação detalhada de por que a correta está certa e as outras erradas
 
+CAMPO "correta" — ATENÇÃO CRÍTICA:
+- "correta" é o ÍNDICE 0-BASED da alternativa correta dentro do array "opcoes"
+- opcoes[0] = primeira alternativa → correta: 0
+- opcoes[1] = segunda alternativa  → correta: 1
+- opcoes[2] = terceira alternativa → correta: 2
+- opcoes[3] = quarta alternativa   → correta: 3
+- SEMPRE verifique: opcoes[correta] deve ser exatamente o texto da alternativa correta
+- Na explicação, cite o TEXTO LITERAL de opcoes[correta] — nunca a letra A/B/C/D sozinha
+
+EXEMPLO CORRETO:
+{"opcoes":["Encontrar todos os defeitos","Reduzir o risco de falhas em produção","Garantir software sem bugs","Substituir a revisão de código"],"correta":1,"explicacao":"A alternativa correta é 'Reduzir o risco de falhas em produção' (opcoes[1]) porque..."}
+
 RESPONDA APENAS COM JSON VÁLIDO SEM MARKDOWN:
-[{"pergunta":"...","opcoes":["A","B","C","D"],"correta":0,"explicacao":"...","conceito":"...","dificuldade":"${dificuldade}"}]`;
+[{"pergunta":"...","opcoes":["texto A","texto B","texto C","texto D"],"correta":0,"explicacao":"...","conceito":"...","dificuldade":"${dificuldade}"}]`;
 
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY });
   const completion = await groq.chat.completions.create({
@@ -88,7 +100,15 @@ RESPONDA APENAS COM JSON VÁLIDO SEM MARKDOWN:
   });
 
   const texto = completion.choices[0]?.message?.content || "[]";
-  const questoes: Questao[] = JSON.parse(texto.replace(/```json|```/g, "").trim());
+  const questoesRaw: Questao[] = JSON.parse(texto.replace(/```json|```/g, "").trim());
+
+  // Valida e descarta questões com índice "correta" fora do range do array opcoes
+  const questoes = questoesRaw.filter(q => {
+    const valido = Array.isArray(q.opcoes) && typeof q.correta === "number"
+      && q.correta >= 0 && q.correta < q.opcoes.length;
+    if (!valido) console.warn("[simulado] questão descartada — índice correta inválido:", q.pergunta?.slice(0, 60));
+    return valido;
+  });
 
   // Salva no banco compartilhado
   const supabase = criarSupabase();
