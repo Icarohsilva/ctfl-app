@@ -584,19 +584,41 @@ export default function TopicoGenerico({
           </div>
         )}
 
-        {aprovado && proximoTopico && (
-          <div style={{ background: "#111827", border: `1px solid ${cor}33`, borderRadius: "12px", padding: "1rem", marginBottom: "1.5rem", fontSize: "13px", color: "#9ca3af" }}>
-            🎯 Próximo: <strong style={{ color: cor }}>{proximoTopico.titulo}</strong>
-          </div>
-        )}
+        {aprovado ? (
+          <>
+            {/* Botão primário — navega direto para o próximo destino */}
+            {proximoTopico ? (
+              <a
+                href={`/capitulo/${numeroCapitulo}/topico/${proximoTopico.id}`}
+                style={{ background: cor, color: "#0b0f1a", padding: "13px 28px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "block", marginBottom: "8px" }}
+              >
+                Próximo: {proximoTopico.titulo} →
+              </a>
+            ) : numeroCapitulo < 6 ? (
+              <a
+                href={`/capitulo/${numeroCapitulo + 1}`}
+                style={{ background: cor, color: "#0b0f1a", padding: "13px 28px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "block", marginBottom: "8px" }}
+              >
+                Ir para o Capítulo {numeroCapitulo + 1} →
+              </a>
+            ) : (
+              <a
+                href="/dashboard"
+                style={{ background: cor, color: "#0b0f1a", padding: "13px 28px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "block", marginBottom: "8px" }}
+              >
+                Ver dashboard →
+              </a>
+            )}
 
-        <a href={`/capitulo/${numeroCapitulo}`}
-          style={{ background: cor, color: "#0b0f1a", padding: "13px 32px", borderRadius: "10px", fontWeight: "bold", fontSize: "15px", textDecoration: "none", display: "inline-block" }}>
-          {aprovado ? "Continuar trilha →" : "Voltar ao capítulo"}
-        </a>
+            {/* Secundário — voltar ao capítulo */}
+            <a
+              href={`/capitulo/${numeroCapitulo}`}
+              style={{ background: "transparent", border: "1px solid #374151", borderRadius: "10px", padding: "11px 28px", color: "#9ca3af", fontSize: "14px", textDecoration: "none", display: "block", marginBottom: "8px" }}
+            >
+              ← Voltar ao Capítulo {numeroCapitulo}
+            </a>
 
-        {aprovado && (
-          <div style={{ marginTop: "8px" }}>
+            {/* Compartilhar no LinkedIn */}
             <button
               onClick={() => {
                 const texto = `Concluí mais um tópico na certificação CTFL v4.0! 🎓\n\nAcabei de concluir "${topicoMeta.titulo}" (Capítulo ${numeroCapitulo} — ${capitulo?.titulo}) no TestPath.\n\nA plataforma é muito intuitiva e me ajuda muito nos estudos para a certificação ISTQB. Venha você também! 🚀\n\n👉 testpath.online\n\n#CTFL #ISTQB #QA #TesteSoftware #QualidadeDeSoftware #Certificação #AprendizadoContinuo #DesenvolvimentoProfissional`;
@@ -614,13 +636,22 @@ export default function TopicoGenerico({
                 ✅ Texto copiado — cole no post do LinkedIn (Ctrl+V)
               </p>
             )}
-          </div>
-        )}
-
-        {!aprovado && (
-          <button style={s.btnSec} onClick={() => window.location.href = `/capitulo/${numeroCapitulo}/topico/${id}`}>
-            Tentar novamente
-          </button>
+          </>
+        ) : (
+          <>
+            <button
+              style={s.btn}
+              onClick={() => window.location.href = `/capitulo/${numeroCapitulo}/topico/${id}`}
+            >
+              Tentar novamente
+            </button>
+            <a
+              href={`/capitulo/${numeroCapitulo}`}
+              style={{ background: "transparent", border: "1px solid #374151", borderRadius: "10px", padding: "11px 28px", color: "#9ca3af", fontSize: "14px", textDecoration: "none", display: "block", marginTop: "8px" }}
+            >
+              ← Voltar ao Capítulo {numeroCapitulo}
+            </a>
+          </>
         )}
       </div>
     </div>
