@@ -467,4 +467,79 @@ Saída esperada no relatório: 1 teste vermelho com trace disponível.`,
       explicacao: `Correto! A opção "retain-on-failure" grava vídeo de todos os testes mas descarta os de testes bem-sucedidos — economizando espaço. Use "on" para gravar sempre (útil durante desenvolvimento) ou "off" para não gravar (mais rápido em CI/CD).`,
     },
   },
+
+  "locators-modernos": {
+    moduloId: 2,
+    labId: "locators-modernos",
+    conceito: `Locators são a forma como o Playwright encontra elementos na página. A escolha do locator certo é a diferença entre um teste que quebra toda semana e um teste que funciona por anos.
+
+O Playwright prioriza três locators modernos que imitam como usuários reais interagem com a página:
+
+**getByRole** — busca pelo papel semântico do elemento (button, link, heading, textbox…). É o mais robusto porque reflete a acessibilidade real da página.
+  page.getByRole("button", { name: "Enviar" })
+
+**getByText** — busca pelo texto visível. Ideal para parágrafos, labels e textos estáticos.
+  page.getByText("Bem-vindo ao sistema")
+
+**getByTestId** — busca por um atributo data-testid que o dev coloca no HTML especificamente para testes. O mais estável de todos — não quebra com mudanças visuais ou de texto.
+  page.getByTestId("botao-salvar")
+
+**Por que evitar CSS e XPath?** Seletores como .btn-primary ou //div[@class="card"] quebram toda vez que o time de front-end refatora o HTML. Os locators modernos se baseiam no comportamento e no significado — não na estrutura visual.
+
+Regra prática: prefira getByRole > getByTestId > getByText > CSS/XPath.`,
+    codigo: `import { test, expect } from "@playwright/test";
+
+test("locators modernos em ação", async ({ page }) => {
+  // Usando o site de demonstração oficial do Playwright
+  await page.goto("https://demo.playwright.dev/todomvc");
+
+  // getByRole: encontra o input pelo papel "textbox" e placeholder
+  const input = page.getByRole("textbox", { name: "What needs to be done?" });
+  await input.fill("Estudar Playwright");
+  await input.press("Enter");
+
+  // getByText: encontra o item recém-criado pelo texto
+  const item = page.getByText("Estudar Playwright");
+  await expect(item).toBeVisible();
+
+  // getByRole: encontra o botão de completar (checkbox) pelo role
+  const checkbox = page.getByRole("checkbox", { name: "Estudar Playwright" });
+  await checkbox.check();
+
+  // Verifica que o item está marcado como concluído
+  await expect(item).toHaveClass(/completed/);
+});`,
+    instrucaoExecucao: `1. Dentro da pasta do seu projeto Playwright, crie o arquivo:
+   tests/locators-modernos.spec.ts
+
+2. Cole o código do painel à esquerda
+
+3. Rode apenas esse teste:
+   npx playwright test locators-modernos
+
+4. Abra o relatório para ver os passos:
+   npx playwright show-report
+
+Saída esperada no terminal:
+  1 passed (3s)
+
+DICA: No relatório, clique no teste e expanda cada passo para ver
+qual locator encontrou qual elemento — ótimo para aprender.
+
+ERRO COMUM: "Strict mode violation — locator resolved to X elements"
+→ O locator encontrou mais de um elemento. Adicione um filtro:
+   page.getByRole("button", { name: "Enviar" }).first()
+   ou torne o seletor mais específico com within():
+   page.getByRole("listitem").filter({ hasText: "Estudar" })`,
+    reflexao: {
+      pergunta: "Qual é a principal vantagem de usar getByRole em vez de seletores CSS como .btn-primary?",
+      opcoes: [
+        "getByRole é mais rápido porque não precisa percorrer o DOM",
+        "getByRole reflete o comportamento semântico da página e não quebra com mudanças visuais ou de CSS",
+        "getByRole funciona somente no Chrome, que é o navegador mais usado",
+      ],
+      correta: 1,
+      explicacao: "Correto! Seletores CSS quebram quando o time de front-end renomeia classes ou refatora o layout. getByRole se baseia no papel semântico do elemento (button, link, textbox) — que raramente muda — tornando os testes muito mais estáveis a longo prazo.",
+    },
+  },
 };

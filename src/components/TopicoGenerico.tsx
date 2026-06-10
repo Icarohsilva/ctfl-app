@@ -463,7 +463,6 @@ export default function TopicoGenerico({
         </div>
 
         <div style={{ ...s.card, marginBottom: "8px" }}>
-          <div style={{ fontSize: "11px", color: "#6b7280", marginBottom: "8px" }}>Conceito: {questao.conceito}</div>
           <p style={{ color: "#e5e7eb", fontSize: "16px", lineHeight: 1.7, margin: 0, fontFamily: "Georgia, serif" }}>{questao.pergunta}</p>
         </div>
 
